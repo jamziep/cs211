@@ -86,41 +86,34 @@ void vc_destroy(vote_count_t vc)
     }
 }
 
+
+//return the pointer to the "count" of type size_t
+//of the vote count map that matches the "name" string
 size_t* vc_update(vote_count_t vc, const char *name)
 {
-     //return the pointer to the "count" of type size_t
-    //of the vote count map that matches the "name" string
-    
+    //if the name exists in array, returns the pointer to the
+    //element of vc that has this name for candidate.
+    vote_count_t name_location = vc_find_name(vc, name);
 
-    //iterate through the candidates array and find one that
-    //matches this name. past MAX_CANDIDATES is out of bounds
+    //if an empty space exists in array, returns the pointer
+    //to the element of vc that has the empty space
+    vote_count_t empty_space = vc_find_empty(vc);
 
-    /*
-    for (size_t ii = 0; ii < MAX_CANDIDATES; ++ii) {
-
-        char* curr_name = vc[ii].candidate;
-
-        //if curr_name is null
-        if (!curr_name) {
-            //at end of the array, so extend vc to map "name"
-            //and initialize count to 0
-            vc[ii].candidate = strdup_or_else(name);
-            vc[ii].count = 0;
-            
-            return &vc[ii].count;
-        }
-        
-        if (strcmp(curr_name, name) == 0 ) {
-            //if we've found a match for the desired name
-            //in the array of vote_count objects,
-            //return the pointer to its count and break out
-            return &vc[ii].count;
-        }     
+    //if location is not null, return the pointer to its count
+    if (name_location){
+        return &name_location -> count;
     }
-    */
 
-    
-    //if we got here, means that the array is full
+    //else, if the name doesn't exist in the array yet,
+    //add the name to the array and initialize count to 0
+    else if (empty_space) {
+        empty_space -> candidate = strdup_or_else(name);
+        empty_space -> count = 0;
+
+        return &empty_space -> count;
+    }
+   
+    //if we got here, means a match wasn't found
     return NULL;
 }
 
@@ -167,11 +160,16 @@ void vc_print(vote_count_t vc)
 //Returns a pointer to the first element of 'vc' whose
 //'candidate' matches 'name', or NULL if not found.
 static struct vote_count* vc_find_name(vote_count_t vc, const char* name){
-
+    
     for (size_t ii = 0; ii < MAX_CANDIDATES; ++ii) {
 
         char* curr_name = vc[ii].candidate;
-      
+
+        //if curr_name is NULL, means we've reached the end of data
+        if (!curr_name) {
+            return NULL;
+        }
+        
         if (strcmp(curr_name, name) == 0 ) {
             //if we've found a match for the desired name
             //in the array of vote_count objects,
@@ -180,7 +178,7 @@ static struct vote_count* vc_find_name(vote_count_t vc, const char* name){
         }     
     }
     
-    //else, if we've gotten here, we haven't found that name
+    //else, if we've gotten here, array is full
     return NULL;
 }
 
