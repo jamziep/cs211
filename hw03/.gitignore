@@ -1,0 +1,5 @@
+count
+test_vc
+.bin/
+*.o
+*.dSYM

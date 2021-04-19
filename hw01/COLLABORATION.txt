@@ -1,0 +1,10 @@
+Arms-length collaboration for hw1:
+
+Lance Go: I gave him verbal, nonspecific advice about
+how to use scanf() to return the number of valid inputs.
+This helped him understand and write the read_circle()
+function.
+
+-Didn't show him my code
+-Didn't look at my code while we discussed
+-Didn't verbalize any of the specific lines of my code
