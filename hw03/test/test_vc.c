@@ -35,6 +35,14 @@ static void test_2_candidates(void)
     cp = vc_update(vc, "alice");
     CHECK( cp );
     *cp += 1;
+    //this is throwing some errors. cp is a pointer to something, as
+    //shown by gdb, but incrementing it by one causes memory overflow
+    //errors. potentially cp is a null pointer, meaning it never
+    //points to the count of a vc object.
+
+    //removing the iterative loop through vc objects in the array
+    //gets rid of this error
+    
     CHECK_STRING( vc_max(vc), "alice" );
     CHECK_STRING( vc_min(vc), "alice" );
     CHECK_SIZE( vc_lookup(vc, "alice"), 1 );
