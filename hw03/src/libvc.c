@@ -6,6 +6,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+//for determining if a matching name has been found
+#include <stdbool.h>
+
 // This definition is private to this file; code in all other files
 // can only handle pointers to it: values of type `struct vote_count*`
 // (a/k/a `vote_count_t`), not values of type `struct vote_count`. Only
@@ -35,124 +38,98 @@ struct vote_count
 vote_count_t vc_create(void)
 {
     //malloc an array of MAX_CANDIDATES * 'struct vote_counts'
-    vote_count_t candidates = malloc( MAX_CANDIDATES * sizeof(vote_count_t));
-
-    //or just malloc one instance of vote_count_t?
-    //vote_count_t candidate = malloc( sizeof(vote_count_t));
-    
-    //if memory allocation fails, return a null pointer so it can be
-    //freed safely
-    if (!candidates) {
-        //printf("\n\nThis ptocess failed");
+    vote_count_t vc = malloc( MAX_CANDIDATES * sizeof(struct vote_count));
+  
+    //if memory allocation fails, return a null pointer
+    if (!vc) {
         return NULL;
+    }
+
+    //initialize names of each item in the array. value should be null,
+    //but use malloc() to allocate size to the names
+    size_t counter = 0;
+    while (counter < MAX_CANDIDATES) {
+
+        //set name of current candidate to null
+        vc[counter].candidate = malloc(sizeof(char*));
+        vc[counter].candidate = NULL;
+        ++counter;
     }
     
     //if memory allocation went well
-    return candidates;
+    return vc;
 }
 
 void vc_destroy(vote_count_t vc)
 {
-    //vc can be null; but generally vc_destroy() will
-    //free the pointer associated with vc
+    //first: free the string name associated with each
+    //instance of struct vote_count, if it has a name
+   
+    size_t counter = 0;
+    while (counter < MAX_CANDIDATES) {
 
-    //first: free the string name associated with this
-    //instance of vote_count_t, if it has a name
-    //the "&vc" is so we can access the vote_count object
-    //at the pointer vc, from which we get the pointer to
-    //candidate name
-
-    //note: this is valid syntax on its own, but freeing
-    //this and then the vc itself caused a double free
-    /*
-    if (&vc -> candidate) {
-        //if its candidate category is not a NULL pointer
-        free(&vc -> candidate);
+        //if the candidate's name is not null, free it
+        if (vc[counter].candidate) {
+            free(vc[counter].candidate);
+        }
+        counter++;
     }
-    */
     
-    //next: free the instance of vote_count_t itself
-    free(vc);
-    //caused an address sanitizer error: double-free
-    //I think the issue is that the pointer to the candidate
-    //name, &vc -> candidate, is owned by vc, so freeing
-    //the name and then freeing the owner causes a double-free
+    //if vc is not null, free it
+    if (vc) {
+        free(vc);
+    }
 }
+
 size_t* vc_update(vote_count_t vc, const char *name)
 {
-    //
-    // TODO: replace with your code:
-    //
-
+    bool matching_name = false;
     //return the pointer to the "count" of type size_t
     //of the vote count map that matches the "name" string
-
-    //iterate through the candidates array and find one that
-    //matches this name. start with a pointer to the first index
-    vote_count_t selected_vc = vc;
-
+    
     //use this counter to make sure we don't go out of bounds
     size_t counter = 0;
 
-    
-    while (selected_vc && counter < MAX_CANDIDATES) {
-        //while the current pointer is not a null pointer
+    //iterate through the candidates array and find one that
+    //matches this name. start with 0 and go to MAX_CANDIDATES
+    while ( counter < MAX_CANDIDATES) {
 
-        //if the candidate name of this item in array matches
-        //"name", break out of the loop
-        //removed the & in front of selected_vc so as to keep
-        //the type of selected_name as char* and not char**
+        struct vote_count curr_object = vc[counter];
+        char* curr_name = curr_object.candidate;
 
-        //this is causing heap buffer overflow: 0 bytes out of
-        //bound of the 128-byte (sizeof vote_count_t * 16) region
-        //for each iteration of loop, this line is invalid
-        char** selected_name = &selected_vc -> candidate;
-
-        //currently this is reading selected_name as a null pointer
-        //group these in one if statement later; this is just for debug
+        //if curr_name is null, we're at the end of the array
+        //that has been filled in. extend vc to map "name"
+        //and initialize count to zero
+        if (!curr_name) {
+            vc[counter].candidate = name;
+            //this is where I'll want to do the strdup thing
+            vc[counter].count = 0;
+            break;
+        }
         
-        //if (selected_name){ //this part is working
-        //    if ( //strcmp(selected_name, "test") == 0 && //this part isn't
-        //        strcmp("test", name) == 0) {
-        //     break;
-        //  }
-        //}
-        
+        if (strcmp(curr_name, name) == 0 ) {
+            //if we've found a match for the desired name
+            //in the array of vote_count objects,
+            //return the pointer to its count and break out
+            matching_name = true;
+            return &curr_object.count;
+        }
+
         //increment to the next vote_count object in the array
-        ++vc;
-        ++counter;
-        
-        selected_vc = vc;        
+        ++counter;       
     }
-
     
-    //note: adding in this iterating through a loop caused an ASan error.
-    //see the vc_update_asan_error to see what this looked like
-
     //can probably fix this with what they're talking about in the pdf:
     //if name isn't present in vc yet, extend vc to map "name"
     //and initialize that element's count to 0
 
-
-    
-    
-    //first, assume that we've already found the vote_count
-    //map that matches this name. this will have to be modified later
-    //if the selected_vc pointer is not NULL and the pointer to its
-    //count is not null
-    if (selected_vc && &selected_vc -> count) {
-        //if the pointer to the count is not none
-
-        //find the value, then get a pointer to it
-        size_t* count_pointer = &selected_vc -> count;
-        //changing vc to &vc caused an address sanitizer
-        //error: heap buffer overflow
-
-        //fixed by changing initialization from a single
-        //instance of vote_count_t to an array of instances
-        return count_pointer;
+    //i.e. if we broke out of the loop, and didn't exceed the allowed
+    //number of candidates, let's make a new candidate at the first
+    //position with a name of null
+    if (counter < MAX_CANDIDATES) {
+        
     }
-    
+
     return NULL;
 }
 

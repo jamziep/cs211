@@ -1,0 +1,10 @@
+COLLABORATION
+
+- Was helped by TA Ben Fisk in Office Hours. I changed
+ part of my malloc() statement from sizeof(vote_count_t) to
+ sizeof(struct vote_count)
+- Was helped by TA Chris Song in Office Hours. Changed method
+  of checking different elements in array from pointer arithmetic
+  to array indexing using array[ind]
+     - also advised me to iterate through the vc array and
+       allocate memory for its string candidate names in a loop
