@@ -35,6 +35,14 @@ struct vote_count
  * A: libvc.h
  */
 
+
+//helper functions, written below
+static struct vote_count* vc_find_name(vote_count_t vc, const char* name);
+static struct vote_count* vc_find_empty(vote_count_t vc);
+static char* strdup_or_else(const char* src);
+
+
+
 vote_count_t vc_create(void)
 {
     //malloc an array of MAX_CANDIDATES * 'struct vote_counts'
@@ -46,14 +54,11 @@ vote_count_t vc_create(void)
     }
 
     //initialize names of each item in the array. value should be null,
-    //but use malloc() to allocate size to the names
-    size_t counter = 0;
-    while (counter < MAX_CANDIDATES) {
-
-        //set name of current candidate to null
-        vc[counter].candidate = malloc(sizeof(char*));
-        vc[counter].candidate = NULL;
-        ++counter;
+    for (size_t ii = 0; ii < MAX_CANDIDATES; ++ii) {
+    
+        //we don't need malloc here bc of strdup function
+        //vc[counter].candidate = malloc(sizeof(char*));
+        vc[ii].candidate = NULL;
     }
     
     //if memory allocation went well
@@ -83,53 +88,39 @@ void vc_destroy(vote_count_t vc)
 
 size_t* vc_update(vote_count_t vc, const char *name)
 {
-    bool matching_name = false;
-    //return the pointer to the "count" of type size_t
+     //return the pointer to the "count" of type size_t
     //of the vote count map that matches the "name" string
     
-    //use this counter to make sure we don't go out of bounds
-    size_t counter = 0;
 
     //iterate through the candidates array and find one that
-    //matches this name. start with 0 and go to MAX_CANDIDATES
-    while ( counter < MAX_CANDIDATES) {
+    //matches this name. past MAX_CANDIDATES is out of bounds
 
-        struct vote_count curr_object = vc[counter];
-        char* curr_name = curr_object.candidate;
+    /*
+    for (size_t ii = 0; ii < MAX_CANDIDATES; ++ii) {
 
-        //if curr_name is null, we're at the end of the array
-        //that has been filled in. extend vc to map "name"
-        //and initialize count to zero
+        char* curr_name = vc[ii].candidate;
+
+        //if curr_name is null
         if (!curr_name) {
-            vc[counter].candidate = name;
-            //this is where I'll want to do the strdup thing
-            vc[counter].count = 0;
-            break;
+            //at end of the array, so extend vc to map "name"
+            //and initialize count to 0
+            vc[ii].candidate = strdup_or_else(name);
+            vc[ii].count = 0;
+            
+            return &vc[ii].count;
         }
         
         if (strcmp(curr_name, name) == 0 ) {
             //if we've found a match for the desired name
             //in the array of vote_count objects,
             //return the pointer to its count and break out
-            matching_name = true;
-            return &curr_object.count;
-        }
-
-        //increment to the next vote_count object in the array
-        ++counter;       
+            return &vc[ii].count;
+        }     
     }
+    */
+
     
-    //can probably fix this with what they're talking about in the pdf:
-    //if name isn't present in vc yet, extend vc to map "name"
-    //and initialize that element's count to 0
-
-    //i.e. if we broke out of the loop, and didn't exceed the allowed
-    //number of candidates, let's make a new candidate at the first
-    //position with a name of null
-    if (counter < MAX_CANDIDATES) {
-        
-    }
-
+    //if we got here, means that the array is full
     return NULL;
 }
 
@@ -170,4 +161,61 @@ void vc_print(vote_count_t vc)
     //
     // TODO: your code here
     //
+}
+
+
+//Returns a pointer to the first element of 'vc' whose
+//'candidate' matches 'name', or NULL if not found.
+static struct vote_count* vc_find_name(vote_count_t vc, const char* name){
+
+    for (size_t ii = 0; ii < MAX_CANDIDATES; ++ii) {
+
+        char* curr_name = vc[ii].candidate;
+      
+        if (strcmp(curr_name, name) == 0 ) {
+            //if we've found a match for the desired name
+            //in the array of vote_count objects,
+            //return the pointer to that element
+            return &vc[ii];
+        }     
+    }
+    
+    //else, if we've gotten here, we haven't found that name
+    return NULL;
+}
+
+
+//Returns a pointer to the first element of 'vc' whose
+//'candidate' is NULL, or NULL if it's full
+static struct vote_count* vc_find_empty(vote_count_t vc) {
+
+    for (size_t ii = 0; ii < MAX_CANDIDATES; ++ii) {
+
+        char* curr_name = vc[ii].candidate;
+
+        //if curr_name is null, return a pointer to that element
+        if (!curr_name) {
+            return &vc[ii];
+        }   
+    }
+
+    //else, if we've gotten here, the array is full
+    return NULL;
+}
+
+
+//Clones a string onto the heap, printing a message
+//to stderr and exiting with code 1 if malloc() fails
+static char* strdup_or_else(const char* src) {
+
+    //allocate a new variable the size of the src
+    char* new_string = malloc(strlen(src) + 1);
+
+    //null-check the result
+    if (!new_string) {
+        return NULL;
+    }
+
+    //else, return the pointer to this new string
+    return new_string;
 }
