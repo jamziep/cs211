@@ -106,11 +106,14 @@ size_t* vc_update(vote_count_t vc, const char *name)
 
     //else, if the name doesn't exist in the array yet,
     //add the name to the array and initialize count to 0
-    else if (empty_space) {
+    else if (vc_find_empty(vc)) {
         empty_space -> candidate = strdup_or_else(name);
         empty_space -> count = 0;
+        //vc_find_empty(vc) -> candidate = strdup_or_else(name);
+        //vc_find_empty(vc) -> count = 0;
 
         return &empty_space -> count;
+        //return &vc_find_empty(vc) -> count;
     }
    
     //if we got here, means a match wasn't found
@@ -127,17 +130,66 @@ size_t vc_lookup(vote_count_t vc, const char* name)
 
 size_t vc_total(vote_count_t vc)
 {
-    //
-    // TODO: replace with your code:
-    //
-    return 0;
+    //initialize a count of vote
+    size_t total_count = 0;
+    
+    //iterate through all the candidates in the list
+    for (int ii = 0; ii < MAX_CANDIDATES; ++ii) {
+
+        //if this index of vc has a candidate of NULL,
+        //we've reached the end of all candidates to read
+        if (vc[ii].candidate == NULL) {
+            break;
+        }
+
+        //else, add the count of this candidate to total
+        total_count += vc[ii].count;
+    }
+    
+    return total_count;
 }
+
+//iterates through vc and finds the name of the
+//candidate with the most votes. if no candidate
+//has more than 0 votes, returns null
 
 const char* vc_max(vote_count_t vc)
 {
-    //
-    // TODO: replace with your code:
-    //
+    ///*
+    
+    //initialize the max votes observed so far
+    //and index where it was found
+    size_t curr_max = 0;
+    int index_of_max = 0;
+    
+    //if the first candidate in the array hasn't
+    //been initialized, no candidate has >0 votes
+    //if (vc[0].candidate = NULL) {
+    //  return NULL;
+    //}
+
+    for (int ii = 0; ii < MAX_CANDIDATES; ++ii) {
+
+        //if current candidate's name is NULL, we're
+        //at the end of the list of candidates
+        if (vc[ii].candidate == NULL) {
+            continue;
+        }
+
+        //else, compare the current candidate's vote
+        //count to the max we've observed so far
+        if (vc[ii].count > curr_max) {
+            curr_max = vc[ii].count;
+            index_of_max = ii;
+        }
+    }
+
+    //use the index of our max vote earner to return
+    //the name of their candidate
+    return vc[index_of_max].candidate;
+
+    //*/
+    
     return NULL;
 }
 
@@ -163,11 +215,12 @@ static struct vote_count* vc_find_name(vote_count_t vc, const char* name){
     
     for (size_t ii = 0; ii < MAX_CANDIDATES; ++ii) {
 
-        char* curr_name = vc[ii].candidate;
+        char*  curr_name = vc[ii].candidate;
 
-        //if curr_name is NULL, means we've reached the end of data
+        //if curr_name is NULL, means that's not a candidate
         if (!curr_name) {
-            return NULL;
+           //return NULL;
+           continue;
         }
         
         if (strcmp(curr_name, name) == 0 ) {
@@ -211,9 +264,12 @@ static char* strdup_or_else(const char* src) {
 
     //null-check the result
     if (!new_string) {
-        return NULL;
+        fprintf(stderr,"Error in strdup: string not allocated");
+        exit(1);
     }
 
-    //else, return the pointer to this new string
+    //put src into new_string on the heap, then return
+    //the pointer to it
+    strcpy(new_string, src);
     return new_string;
 }

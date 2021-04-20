@@ -64,12 +64,26 @@ static void test_2_candidates(void)
     vc_destroy(vc);
 }
 
+static void test_our_functions(void) {
+
+    size_t* cp;
+    vote_count_t vc = vc_create();
+    CHECK( vc != NULL );
+    if (vc == NULL) {
+        // Can't keep testing if vc is NULL
+        return;
+    }
+
+    //CHECK_STRING( strdup_or_else("CS211"), "CS211")
+}
+
 //
 // You need more tests here.
 //
 
 int main(void)
 {
+    test_our_functions();
     test_create_destroy();
     test_2_candidates();
 }
