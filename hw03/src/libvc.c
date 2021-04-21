@@ -122,9 +122,20 @@ size_t* vc_update(vote_count_t vc, const char *name)
 
 size_t vc_lookup(vote_count_t vc, const char* name)
 {
+
     //
-    // TODO: replace with your code:
-    //
+    for(size_t ii = 0; ii < MAX_CANDIDATES; ++ii){
+
+        const char* curr_name = vc[ii].candidate;
+
+        if(!curr_name){
+            continue;
+        }
+        
+        if(strcmp(curr_name, name) == 0){
+            return vc[ii].count;
+        }        
+    }
     return 0;
 }
 
