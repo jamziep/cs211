@@ -185,7 +185,8 @@ const char* vc_max(vote_count_t vc)
     }
 
     //use the index of our max vote earner to return
-    //the name of their candidate
+    //the name of their candidate. may be NULL
+    //if the array is empty
     return vc[index_of_max].candidate;
 
     //*/
@@ -195,9 +196,41 @@ const char* vc_max(vote_count_t vc)
 
 const char* vc_min(vote_count_t vc)
 {
-    //
-    // TODO: replace with your code:
-    //
+    //initialize a count to 0 because we
+    //don't know what the first number will be
+    size_t curr_min = 0;
+    int index_of_min = 0;
+    
+    //iterate through each candidate in vc and compare
+    //its count to the current min
+    for (int i = 0; i < MAX_CANDIDATES; ++i) {
+
+        //if the current candidate isn't a valid candidate, skip
+        if (vc[i].candidate == NULL) {
+            continue;
+        }
+        
+        //if we haven't found the first thing to compare against,
+        //initialize it now
+        if (curr_min == 0) {    
+            curr_min = vc[i].count;
+            
+        } else if (vc[i].count <= curr_min) {
+            //else, let's compare its count to our current max.
+            //the <= is bc of the spec where we want the most
+            //recent thing we've checked to register as min
+            curr_min = vc[i].count;
+            index_of_min = i;
+                        
+        }
+    }
+    
+    //use the index of our min vote earner to return
+    //the name of their candidate. may be NULL
+    //if the array is empty
+    return vc[index_of_min].candidate;
+
+    
     return NULL;
 }
 
@@ -206,6 +239,19 @@ void vc_print(vote_count_t vc)
     //
     // TODO: your code here
     //
+
+    //iterate through the elements of the array and print
+    for (int ii = 0; ii < MAX_CANDIDATES; ++ii) {
+
+        //if this element of array has no data, skip
+        if (vc[ii].candidate == NULL) {
+            continue;
+         }
+
+        //formatting: candidate name left aligned in 20-char
+        //column; counts right-aligned in 9-char column
+        printf("%-20s %9zu\n", vc[ii].candidate, vc[ii].count);
+    }
 }
 
 

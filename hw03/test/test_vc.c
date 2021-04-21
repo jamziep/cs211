@@ -35,14 +35,7 @@ static void test_2_candidates(void)
     cp = vc_update(vc, "alice");
     CHECK( cp );
     *cp += 1;
-    //this is throwing some errors. cp is a pointer to something, as
-    //shown by gdb, but incrementing it by one causes memory overflow
-    //errors. potentially cp is a null pointer, meaning it never
-    //points to the count of a vc object.
-
-    //removing the iterative loop through vc objects in the array
-    //gets rid of this error
-    
+ 
     CHECK_STRING( vc_max(vc), "alice" );
     CHECK_STRING( vc_min(vc), "alice" );
     CHECK_SIZE( vc_lookup(vc, "alice"), 1 );
@@ -55,6 +48,10 @@ static void test_2_candidates(void)
     cp = vc_update(vc, "alice");
     CHECK( cp );
     *cp += 1;
+
+    //my addition: to test the printer
+    //vc_print(vc);
+    
     CHECK_STRING( vc_max(vc), "alice" );
     CHECK_STRING( vc_min(vc), "bob" );
     CHECK_SIZE( vc_lookup(vc, "alice"), 2 );
@@ -66,13 +63,13 @@ static void test_2_candidates(void)
 
 static void test_our_functions(void) {
 
-    size_t* cp;
-    vote_count_t vc = vc_create();
-    CHECK( vc != NULL );
-    if (vc == NULL) {
-        // Can't keep testing if vc is NULL
-        return;
-    }
+    //size_t* cp;
+    //vote_count_t vc = vc_create();
+    //CHECK( vc != NULL );
+    //if (vc == NULL) {
+    //   // Can't keep testing if vc is NULL
+    //  return;
+    //}
 
     //CHECK_STRING( strdup_or_else("CS211"), "CS211")
 }
