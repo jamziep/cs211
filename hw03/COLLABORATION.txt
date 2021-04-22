@@ -8,3 +8,6 @@ COLLABORATION
   to array indexing using array[ind]
      - also advised me to iterate through the vc array and
        allocate memory for its string candidate names in a loop
+
+- used stackoverflow.com/questions/252782/strdup-what-does-it-do-in-c
+  as a reference for how to implement strdup_or_else()

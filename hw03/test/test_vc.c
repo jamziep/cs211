@@ -48,9 +48,6 @@ static void test_2_candidates(void)
     cp = vc_update(vc, "alice");
     CHECK( cp );
     *cp += 1;
-
-    //my addition: to test the printer
-    //vc_print(vc);
     
     CHECK_STRING( vc_max(vc), "alice" );
     CHECK_STRING( vc_min(vc), "bob" );
@@ -61,16 +58,16 @@ static void test_2_candidates(void)
     vc_destroy(vc);
 }
 
-static void test_our_functions(void) {
+static void test_vclib_functions(void) {
 
-    //size_t* cp;
-    //vote_count_t vc = vc_create();
-    //CHECK( vc != NULL );
-    //if (vc == NULL) {
-    //   // Can't keep testing if vc is NULL
-    //  return;
-    //}
-
+    //functions to test:
+    //vc_find_name()
+    //vc_find_empty()
+    //strdup_or_else()
+    //
+    //
+    //
+    //
     //CHECK_STRING( strdup_or_else("CS211"), "CS211")
 }
 
@@ -80,7 +77,7 @@ static void test_our_functions(void) {
 
 int main(void)
 {
-    test_our_functions();
+    test_vclib_functions();
     test_create_destroy();
     test_2_candidates();
 }

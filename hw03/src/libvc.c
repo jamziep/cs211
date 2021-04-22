@@ -57,7 +57,6 @@ vote_count_t vc_create(void)
     for (size_t ii = 0; ii < MAX_CANDIDATES; ++ii) {
     
         //we don't need malloc here bc of strdup function
-        //vc[counter].candidate = malloc(sizeof(char*));
         vc[ii].candidate = NULL;
     }
     
@@ -109,11 +108,8 @@ size_t* vc_update(vote_count_t vc, const char *name)
     else if (vc_find_empty(vc)) {
         empty_space -> candidate = strdup_or_else(name);
         empty_space -> count = 0;
-        //vc_find_empty(vc) -> candidate = strdup_or_else(name);
-        //vc_find_empty(vc) -> count = 0;
 
         return &empty_space -> count;
-        //return &vc_find_empty(vc) -> count;
     }
    
     //if we got here, means a match wasn't found
@@ -247,11 +243,7 @@ const char* vc_min(vote_count_t vc)
 
 void vc_print(vote_count_t vc)
 {
-    //
-    // TODO: your code here
-    //
-
-    //iterate through the elements of the array and print
+     //iterate through the elements of the array and print
     for (int ii = 0; ii < MAX_CANDIDATES; ++ii) {
 
         //if this element of array has no data, skip
@@ -276,13 +268,11 @@ static struct vote_count* vc_find_name(vote_count_t vc, const char* name){
 
         //if curr_name is NULL, means that's not a candidate
         if (!curr_name) {
-           //return NULL;
            continue;
         }
         
         if (strcmp(curr_name, name) == 0 ) {
-            //if we've found a match for the desired name
-            //in the array of vote_count objects,
+            //if we've found a match for the desired name,
             //return the pointer to that element
             return &vc[ii];
         }     
