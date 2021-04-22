@@ -17,7 +17,7 @@ int main(int argc, char* argv[])
     vote_count_t c_pool = vc_create();
 
     if(!c_pool){
-        fprintf(stderr, OOM_MESSAGE, "./count");
+        fprintf(stderr, OOM_MESSAGE, argv[0]);
         return 1;
     }
     

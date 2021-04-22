@@ -42,13 +42,14 @@ static struct vote_count* vc_find_empty(vote_count_t vc);
 static char* strdup_or_else(const char* src);
 
 
-
+//Creates an array of instances of struct vote_count using malloc().
+//If memory allocation fails, returns NULL
 vote_count_t vc_create(void)
 {
     //malloc an array of MAX_CANDIDATES * 'struct vote_counts'
     vote_count_t vc = malloc( MAX_CANDIDATES * sizeof(struct vote_count));
   
-    //if memory allocation fails, return a null pointer
+    //if memory allocation fails:
     if (!vc) {
         return NULL;
     }
@@ -64,25 +65,27 @@ vote_count_t vc_create(void)
     return vc;
 }
 
+
+//Destroys instances of vote count maps. Also destroys any
+//strings associated with each instance of struct vote_count.
 void vc_destroy(vote_count_t vc)
 {
-    //first: free the string name associated with each
-    //instance of struct vote_count, if it has a name
-   
-    size_t counter = 0;
-    while (counter < MAX_CANDIDATES) {
-
-        //if the candidate's name is not null, free it
-        if (vc[counter].candidate) {
-            free(vc[counter].candidate);
-        }
-        counter++;
+    //if vc is null, do nothing. can't access its candidates
+    if (!vc) {
+        return;
     }
     
-    //if vc is not null, free it
-    if (vc) {
-        free(vc);
+    //iterate through each item in array and check for strings
+    for (size_t ii = 0; ii < MAX_CANDIDATES; ++ii) {
+        //if the candidate's name is not null, free it
+        if (vc[ii].candidate) {
+            free(vc[ii].candidate);
+        }
     }
+    
+    //now free the whole array
+    free(vc);
+   
 }
 
 
@@ -112,14 +115,16 @@ size_t* vc_update(vote_count_t vc, const char *name)
         return &empty_space -> count;
     }
    
-    //if we got here, means a match wasn't found
+    //if we got here, means the array is full
     return NULL;
 }
 
+
+//looks up the count for a candidate with a certain name;
+//returns 0 if not found
 size_t vc_lookup(vote_count_t vc, const char* name)
 {
 
-    //
     for(size_t ii = 0; ii < MAX_CANDIDATES; ++ii){
 
         const char* curr_name = vc[ii].candidate;
@@ -135,6 +140,8 @@ size_t vc_lookup(vote_count_t vc, const char* name)
     return 0;
 }
 
+//returns the total number of votes allocated to candidates;
+//excludes any votes that were dropped
 size_t vc_total(vote_count_t vc)
 {
     //initialize a count of vote
@@ -145,7 +152,7 @@ size_t vc_total(vote_count_t vc)
 
         //if this index of vc has a candidate of NULL,
         //we've reached the end of all candidates to read
-        if (vc[ii].candidate == NULL) {
+        if (!vc[ii].candidate) {
             break;
         }
 
@@ -156,29 +163,20 @@ size_t vc_total(vote_count_t vc)
     return total_count;
 }
 
+
 //iterates through vc and finds the name of the
 //candidate with the most votes. if no candidate
 //has more than 0 votes, returns null
-
 const char* vc_max(vote_count_t vc)
 {
-    ///*
-    
     //initialize the max votes observed so far
     //and index where it was found
     size_t curr_max = 0;
     int index_of_max = 0;
     
-    //if the first candidate in the array hasn't
-    //been initialized, no candidate has >0 votes
-    //if (vc[0].candidate = NULL) {
-    //  return NULL;
-    //}
-
     for (int ii = 0; ii < MAX_CANDIDATES; ++ii) {
 
-        //if current candidate's name is NULL, we're
-        //at the end of the list of candidates
+        //if current candidate's name is NULL, skip
         if (vc[ii].candidate == NULL) {
             continue;
         }
@@ -195,12 +193,11 @@ const char* vc_max(vote_count_t vc)
     //the name of their candidate. may be NULL
     //if the array is empty
     return vc[index_of_max].candidate;
-
-    //*/
-    
-    return NULL;
 }
 
+
+//Iterates through the array of vote counts, compares the vote
+//counts of different candidates, and returns the min earner's name
 const char* vc_min(vote_count_t vc)
 {
     //initialize a count to 0 because we
@@ -210,40 +207,39 @@ const char* vc_min(vote_count_t vc)
     
     //iterate through each candidate in vc and compare
     //its count to the current min
-    for (int i = 0; i < MAX_CANDIDATES; ++i) {
+    for (int ii = 0; ii < MAX_CANDIDATES; ++ii) {
 
         //if the current candidate isn't a valid candidate, skip
-        if (vc[i].candidate == NULL) {
+        if (vc[ii].candidate == NULL) {
             continue;
         }
         
         //if we haven't found the first thing to compare against,
         //initialize it now
         if (curr_min == 0) {    
-            curr_min = vc[i].count;
+            curr_min = vc[ii].count;
             
-        } else if (vc[i].count <= curr_min) {
+        } else if (vc[ii].count <= curr_min) {
             //else, let's compare its count to our current max.
             //the <= is bc of the spec where we want the most
             //recent thing we've checked to register as min
-            curr_min = vc[i].count;
-            index_of_min = i;
+            curr_min = vc[ii].count;
+            index_of_min = ii;
                         
         }
     }
     
     //use the index of our min vote earner to return
     //the name of their candidate. may be NULL
-    //if the array is empty
+    //if no candidates have >0 votes
     return vc[index_of_min].candidate;
-
-    
-    return NULL;
 }
 
+
+//Iterates through the elements of the array of vote counts and
+//prints the name and vote count of a candidate, if available. 
 void vc_print(vote_count_t vc)
 {
-     //iterate through the elements of the array and print
     for (int ii = 0; ii < MAX_CANDIDATES; ++ii) {
 
         //if this element of array has no data, skip
@@ -278,7 +274,7 @@ static struct vote_count* vc_find_name(vote_count_t vc, const char* name){
         }     
     }
     
-    //else, if we've gotten here, array is full
+    //else, if we've gotten here, name wasn't found
     return NULL;
 }
 
@@ -311,7 +307,7 @@ static char* strdup_or_else(const char* src) {
 
     //null-check the result
     if (!new_string) {
-        fprintf(stderr,"Error in strdup: string not allocated");
+        fprintf(stderr,"strdup_or_else(): memory  not allocated");
         exit(1);
     }
 

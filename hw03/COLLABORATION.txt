@@ -1,8 +1,9 @@
 COLLABORATION
 
-- Was helped by TA Ben Fisk in Office Hours. I changed
+- Was helped by TA Ben Fisk in Office Hours 4/19. I changed
  part of my malloc() statement from sizeof(vote_count_t) to
  sizeof(struct vote_count)
+ 
 - Was helped by TA Chris Song in Office Hours. Changed method
   of checking different elements in array from pointer arithmetic
   to array indexing using array[ind]
@@ -11,3 +12,7 @@ COLLABORATION
 
 - used stackoverflow.com/questions/252782/strdup-what-does-it-do-in-c
   as a reference for how to implement strdup_or_else()
+
+- was helped by TA Ben Fisk in Office Hours 4/21. He confirmed that
+  read_line() in count.c  uses malloc() and the result must be freed.
+  I changed free(&name) to free(name), where name = read_line().
