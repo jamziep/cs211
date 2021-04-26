@@ -68,7 +68,7 @@ static void test_vc_lookup(void){
     if (MAX_CANDIDATES < 2) {
         return;
     }
-    
+
     vote_count_t vc = vc_create();
     CHECK( vc != NULL );
     if (vc == NULL) {

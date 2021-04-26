@@ -1,0 +1,6 @@
+*.o
+*.dSYM
+.bin/
+irv
+test_ballot
+test_ballot_box
