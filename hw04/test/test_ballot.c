@@ -26,6 +26,9 @@ static void test_clean_name(void);
 static void test_ballot_3(void);
 static void test_ballot_with_vc(void);
 
+//our functions
+static void test_ballot_create_destroy(void);
+
 
 ///
 /// MAIN FUNCTION
@@ -33,9 +36,10 @@ static void test_ballot_with_vc(void);
 
 int main(int argc, char* argv[])
 {
-    test_clean_name();
-    test_ballot_3();
-    test_ballot_with_vc();
+    //test_clean_name();
+    //test_ballot_3();
+    //test_ballot_with_vc();
+    test_ballot_create_destroy();
 }
 
 
@@ -105,4 +109,13 @@ static void check_clean_name(const char* name, const char* expected)
     clean_name(actual);
     CHECK_STRING(actual, expected);
     free(actual);
+}
+
+
+//check our functions
+static void test_ballot_create_destroy(void) {
+
+    ballot_t ballot = ballot_create();
+    ballot_destroy(ballot);
+
 }
