@@ -20,7 +20,8 @@ int main(int argc, char* argv[])
         fprintf(stderr, OOM_MESSAGE, argv[0]);
         return 1;
     }
-    
+    // initialize the # of candidates and the # of dropped votes
+    // keeps track of each and will be printed at the end
     size_t num_cands = 0;
     size_t dropped_votes = 0;
 
@@ -48,10 +49,11 @@ int main(int argc, char* argv[])
                 ++num_cands;   
             }
 
-            // add one to the count for curr candidate;
+            // add one to the count for current candidate
             *count_ptr +=  1;
             
         } else {
+            // dropping candidates
             printf(DROP_MESSAGE, argv[0], name);
             ++dropped_votes;     
         }

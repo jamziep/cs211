@@ -120,19 +120,24 @@ size_t* vc_update(vote_count_t vc, const char *name)
 //returns 0 if not found
 size_t vc_lookup(vote_count_t vc, const char* name)
 {
-
+    //iterate through all candidates
     for(size_t ii = 0; ii < MAX_CANDIDATES; ++ii){
-
+        
+        //stores the candidate name in curr_name
         const char* curr_name = vc[ii].candidate;
 
+        //checks that curr_name is not a null pointer
         if(!curr_name){
             continue;
         }
-        
+        // compares the current name in the list with the desired name.
+        // Returns if there's a match
         else if(strcmp(curr_name, name) == 0){
             return vc[ii].count;
         }        
     }
+    //If this point is reached: no more candidates to scan, therefore name not found
+    //returns a 0
     return 0;
 }
 

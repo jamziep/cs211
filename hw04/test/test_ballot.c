@@ -26,10 +26,6 @@ static void test_clean_name(void);
 static void test_ballot_3(void);
 static void test_ballot_with_vc(void);
 
-
-//functions I've created
-static void test_ballot_create_destroy();
-
 ///
 /// MAIN FUNCTION
 ///
@@ -108,13 +104,4 @@ static void check_clean_name(const char* name, const char* expected)
     clean_name(actual);
     CHECK_STRING(actual, expected);
     free(actual);
-}
-
-
-//Tests the creation and destruction of a ballot
-static void test_ballot_create_destroy() {
-
-
-
-
 }

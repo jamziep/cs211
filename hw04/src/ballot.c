@@ -35,22 +35,12 @@ struct ballot
     struct entry entries[MAX_CANDIDATES];
 };
 
-//Initializes a ballot, i.e. the ranked choices of all voters.
-//Contains an array of instances of struct "entry" for each candidate
-//name that the user gives. "length" keeps track of how many
-//spaces in the array are currently in use.
 ballot_t ballot_create(void)
 {
     //
     // TODO: replace with your code:
     //
 
-    //malloc an array of MAX_CANDIDATES antries and null check
-    ballot_t ballot =  malloc(MAX_CANDIDATES * sizeof(struct entry));
-    if (!ballot) {
-        return NULL;
-    }
-                     
     return NULL;
 }
 
