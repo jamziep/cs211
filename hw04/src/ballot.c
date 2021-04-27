@@ -38,10 +38,6 @@ struct ballot
 
 ballot_t ballot_create(void)
 {
-    //
-    // TODO: replace with your code:
-    //
-
     //first malloc an array of MAX_CANDIDATES entries, then null check
     ballot_t ballot = malloc(MAX_CANDIDATES * sizeof(struct entry));
     if (!ballot) {
@@ -58,10 +54,6 @@ ballot_t ballot_create(void)
 
 void ballot_destroy(ballot_t ballot)
 {
-    //
-    // TODO: your code here
-    //
-
     //first: null check the ballot
     if (!ballot){
         return;
@@ -83,6 +75,16 @@ void ballot_insert(ballot_t ballot, char* name)
     //
     // TODO: your code here
     //
+
+    //standardize the name. clean_name() returns void so
+    //modify the name in place
+    //though idk if you can do that in the stack or if it
+    //has to be in the heap already
+    clean_name(name);
+
+    //add the name to an entry and add that to the ballot
+    
+    
 }
 
 const char* ballot_leader(ballot_t ballot)
