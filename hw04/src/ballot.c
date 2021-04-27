@@ -41,7 +41,19 @@ ballot_t ballot_create(void)
     //
     // TODO: replace with your code:
     //
-    return NULL;
+
+    //first malloc an array of MAX_CANDIDATES entries, then null check
+    ballot_t ballot = malloc(MAX_CANDIDATES * sizeof(struct entry));
+    if (!ballot) {
+        exit(2);
+    }
+
+    //invariant: the length of the ballot, which starts out at 0
+    ballot -> length = 0;
+    
+    //no need to allocate the names of candidates in the ballot; those
+    //come in ballot_insert()
+    return ballot;
 }
 
 void ballot_destroy(ballot_t ballot)
@@ -49,6 +61,21 @@ void ballot_destroy(ballot_t ballot)
     //
     // TODO: your code here
     //
+
+    //first: null check the ballot
+    if (!ballot){
+        return;
+    }
+
+    //deallocate every name associated with the ballot.
+    //this means checking the length of the ballot
+    size_t ballot_length = ballot -> length;
+    for (size_t ii = 0; ii < ballot_length; ++ii) {
+        free(ballot -> entries[ii].name);
+    }
+
+    //free the array itself
+    free(ballot);
 }
 
 void ballot_insert(ballot_t ballot, char* name)

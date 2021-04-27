@@ -33,9 +33,9 @@ static void three_candidates_tied(void),
 
 int main(void)
 {
-    three_candidates_tied();
-    win_on_third_round();
-    example_from_wikipedia();
+    //three_candidates_tied();
+    //win_on_third_round();
+    //example_from_wikipedia();
 }
 
 
