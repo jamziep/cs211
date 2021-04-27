@@ -49,6 +49,8 @@ static void test_clean_name(void)
     check_clean_name("Stroustrup, Bjarne", "STROUSTRUPBJARNE");
     check_clean_name("C4P0", "CP");
     check_clean_name("    ", "");
+    check_clean_name("Jeff Bezos", "JEFFBEZOS");
+    check_clean_name("!1423@!", "");
 }
 
 static void test_ballot_3(void)
