@@ -119,9 +119,25 @@ ballot_t read_ballot(FILE* inf)
 
 void clean_name(char* name)
 {
-    //
-    // TODO: your code here
-    //
+    size_t src = 0;
+    size_t dst = 0;
+
+    while(name[src] != 0){
+        if(isalpha(name[src])){
+            if(islower(name[src])){
+                name[dst] = toupper(name[src]);
+                ++dst;
+            
+            }else if(isupper(name[src])){
+                name[dst] = name[src];
+                ++dst;          
+            
+            }
+        }
+        ++src;
+    }
+    
+    name[dst] = 0;
 }
 
 void print_ballot(FILE* outf, ballot_t ballot)
