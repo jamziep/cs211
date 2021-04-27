@@ -26,6 +26,7 @@ static void test_clean_name(void);
 static void test_ballot_3(void);
 static void test_ballot_with_vc(void);
 
+
 ///
 /// MAIN FUNCTION
 ///

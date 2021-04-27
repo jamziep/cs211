@@ -35,12 +35,12 @@ struct ballot
     struct entry entries[MAX_CANDIDATES];
 };
 
+
 ballot_t ballot_create(void)
 {
     //
     // TODO: replace with your code:
     //
-
     return NULL;
 }
 
