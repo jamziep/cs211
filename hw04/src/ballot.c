@@ -98,6 +98,9 @@ void ballot_eliminate(ballot_t ballot, const char* name)
     //
     // TODO: your code here
     //
+
+    // algo idea so I don't forget: scan through the entire ballot, match the candidate name, when it matches, eliminate.
+    
 }
 
 void count_ballot(vote_count_t vc, ballot_t ballot)
