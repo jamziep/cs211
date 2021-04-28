@@ -61,14 +61,21 @@ void bb_insert(ballot_box_t* bbp, ballot_t ballot)
     *bbp = head;
 }
 
+//Initializes an instance of ballot_box_t, reads ballots from the infile,
+//and keeps reading files until read_ballot() returns NULL
 ballot_box_t read_ballot_box(FILE* inf)
 {
-    //
-    // TODO: replace with your code:
-    //
 
-    
-    return empty_ballot_box;
+    ballot_box_t ballot_box = NULL;
+    ballot_t ballot = read_ballot(inf);
+
+    while (ballot) {
+        bb_insert(&ballot_box, ballot);
+        ballot = read_ballot(inf);
+    }
+
+    //ballots have been read into our ballot box as linked list
+    return ballot_box;
 }
 
 vote_count_t bb_count(ballot_box_t bb)
@@ -78,15 +85,41 @@ vote_count_t bb_count(ballot_box_t bb)
     //
     // TODO: your code here
     //
+    
 
     return result;
 }
 
+//iterates through the linked list of the ballot box. from there,
+//goes into the array of entries on each ballot. if the name of an entry
+//matches the arg "candidate", "crosses off" a candidate by
+//marking that entry as inactive
 void bb_eliminate(ballot_box_t bb, const char* candidate)
 {
-    //
-    // TODO: your code here
-    //
+    //if ballot box is null, do nothing
+    if (!bb) {
+        return;
+    }
+  
+    ballot_box_t curr_bbox = bb;
+    ballot_box_t next_bbox = curr_bbox -> next;
+
+    for (;;){
+
+        //go into current ballot and if an element in its entries
+        //matches "candidate", mark it as inactive
+        ballot_t ballot = curr_bbox -> ballot;
+        ballot_eliminate(ballot, candidate);
+
+        //keep checking elements of list until next_bbox == NULL
+        if (!next_bbox) {
+            break;
+        }
+
+        //move on to the next items in the list
+        curr_bbox = next_bbox;
+        next_bbox = curr_bbox -> next;  
+    }    
 }
 
 char* get_irv_winner(ballot_box_t bb)
