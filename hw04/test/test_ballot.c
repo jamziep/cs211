@@ -37,7 +37,7 @@ static void test_ballot_create_destroy(void);
 int main(int argc, char* argv[])
 {
     test_clean_name();
-    //test_ballot_3();
+    test_ballot_3();
     //test_ballot_with_vc();
     test_ballot_create_destroy();
 }

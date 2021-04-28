@@ -70,47 +70,30 @@ void ballot_destroy(ballot_t ballot)
     free(ballot);
 }
 
+//Standardizes a name, adds it to an entry, and adds that entry to
+//the ballot. Also increments the length of the ballot by 1
 void ballot_insert(ballot_t ballot, char* name)
 {
-    //
-    // TODO: your code here
-    //
-
-    //standardize the name. clean_name() returns void so
-    //modify the name in place
-    //though idk if you can do that in the stack or if it
-    //has to be in the heap already
     clean_name(name);
-
-    //add the name to an entry and add that to the ballot
     size_t ballot_length = ballot -> length;
-
-    //access the index equal to the ballot length. for example if length
-    //is 1, the previous index is at index 0 so we'll add to index 1
-
-    //I may need to malloc the name in memory, so I'll try that
-    //ballot -> entries[ballot_length].name = name;
-    ballot -> entries[ballot_length].name = malloc(sizeof name);
-    ballot -> entries[ballot_length].name = name;
-
+    ballot -> entries[ballot_length].name = strdupb(name, "ballot_insert");
+    
     //increase the length of the ballot by 1 and set that entry to active
     ballot -> entries[ballot_length].active = true;
     ballot -> length += 1;
+
+    //free "name" from the heap
+    free(name);
 }
 
 
-//returns the name of the first still-active candidate, or NULL
-//if no active candidates remain
+//iterate through the ballot and find the first candidate whose "active"
+//flag is true--the highest-rated remaining, and returns their name
+//returns NULL if no leader found
 const char* ballot_leader(ballot_t ballot)
 {
-    //
-    // TODO: replace with your code:
- 
-    //iterate through the ballot and find the first candidate
-    //whose "active" flag is true--the highest-rated remaining
     size_t ballot_length = ballot -> length;
-
-    for (size_t ii; ii < ballot_length; ++ii) {
+    for (size_t ii = 0; ii < ballot_length; ++ii) {
 
         //check current entry and see if "active" == true. if so,
         //this is the leader; return their name
@@ -126,9 +109,6 @@ const char* ballot_leader(ballot_t ballot)
 
 void ballot_eliminate(ballot_t ballot, const char* name)
 {
-    //
-    // TODO: your code here
-    //
     //iterate through the ballot. if you find an entry that
     //matches the name given to this function, mark it as inactive
 
@@ -152,18 +132,15 @@ void count_ballot(vote_count_t vc, ballot_t ballot)
 
 ballot_t read_ballot(FILE* inf)
 {
-    //
-    // TODO: replace with your code:
-    //
-
     //read in the first thing from inf
     char* name = fread_line(inf);
 
     //null-check inf to see if it has nothing left to read
-    if (!name) {
+    //not sure how to check for EOF, but if the first thing read
+    //in is a %, initialize no ballot
+    if (!name || strcmp(name,"%") == 0) {
         return NULL;
     }
-
 
     //create a ballot to read this stuff into
     ballot_t ballot = ballot_create();
@@ -172,23 +149,17 @@ ballot_t read_ballot(FILE* inf)
     //until it sees EOF or a % sign on a single line
 
     //figure out a way to compare a string to EOF
+    //also check to see if MAX_CANDIDATES matters in our decision to
+    //add a name to the ballot
     while (/*name != EOF &&*/ strcmp(name,"%") != 0) {
 
         //insert the name into the ballot. clean_name()
         //occurs inside ballot_insert()
-
-        //does this have to take into account the size of max_candidates
-        //to see if we can add a candidate to the ballot here?
         ballot_insert(ballot, name);
         name = fread_line(inf);
     }
     
     //at this point, we're done filling in the ballot and should return it
-
-    //NOTE: this may not be the ideal way to go about this. the way this
-    //runs, the null-check only sees if inf has nothing left to read in that
-    //it returns null. however, inf can be EOF or a %, in which case
-    //we initialize an empty ballot. check on this during testing
     return ballot;
 }
 
