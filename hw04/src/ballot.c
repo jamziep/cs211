@@ -130,34 +130,51 @@ void count_ballot(vote_count_t vc, ballot_t ballot)
     //Lance
 }
 
+//Reads in candidate names from the command line, one line at a time,
+//until it sees EOF (which equals NULL) or a % sign on a single line.
+//Creates an instance of "ballot" from the names it reads in.
 ballot_t read_ballot(FILE* inf)
 {
-    //read in the first thing from inf
     char* name = fread_line(inf);
 
-    //null-check inf to see if it has nothing left to read
-    //not sure how to check for EOF, but if the first thing read
-    //in is a %, initialize no ballot
+    //if user doesn't give any names, make no ballot
     if (!name || strcmp(name,"%") == 0) {
         return NULL;
     }
 
-    //create a ballot to read this stuff into
+    //create a ballot to read this stuff into. null check to see
+    //if memory allocation fails
     ballot_t ballot = ballot_create();
+    if (!ballot) {
+        exit(12);
+    }
 
-    //reads in the input from the command line, one line at a time,
-    //until it sees EOF or a % sign on a single line
+    //check the number of candidates read in, and compare it to
+    //max_candidates
+    size_t num_candidates_inserted = 0;
+    
+    //"while "name" is not NULL (i.e. EOF) and "name is not a %":
+    while (name && strcmp(name,"%") != 0) {
 
-    //figure out a way to compare a string to EOF
-    //also check to see if MAX_CANDIDATES matters in our decision to
-    //add a name to the ballot
-    while (/*name != EOF &&*/ strcmp(name,"%") != 0) {
-
-        //insert the name into the ballot. clean_name()
-        //occurs inside ballot_insert()
+        //if we've exceeded max candidates, don't do anything with
+        //what we just read in from fread_line()
+        if (num_candidates_inserted >= MAX_CANDIDATES) {
+            exit(3);
+        }
+        
+        //insert the name into the ballot
+        clean_name(name);
         ballot_insert(ballot, name);
+        ++num_candidates_inserted;
+        
+        //free the thing returned by fread_line() then get ready to
+        //read in a new string of unknown size from file
+        free(name);
         name = fread_line(inf);
     }
+
+    //from the manual, the pointer returned by fread_line must be freed
+    free(name);
     
     //at this point, we're done filling in the ballot and should return it
     return ballot;
