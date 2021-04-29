@@ -87,6 +87,15 @@ static void example_from_wikipedia(void)
 }
 
 
+//functions that need to be tested:
+//bb_destroy()
+//bb_insert()
+//read_ballot_box()
+//bb_count()
+//bb_eliminate()
+//get_irv_winner()
+//
+//
 ///
 /// HELPER FUNCTIONS YOU SHOULD USE
 ///

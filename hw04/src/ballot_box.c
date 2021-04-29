@@ -66,7 +66,6 @@ void bb_insert(ballot_box_t* bbp, ballot_t ballot)
 //and keeps reading files until read_ballot() returns NULL
 ballot_box_t read_ballot_box(FILE* inf)
 {
-
     ballot_box_t ballot_box = NULL;
     ballot_t ballot = read_ballot(inf);
 
