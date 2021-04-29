@@ -1,3 +1,4 @@
+
 #include "ballot_box.h"
 #include "helpers.h"
 
@@ -77,14 +78,36 @@ ballot_box_t read_ballot_box(FILE* inf)
     return ballot_box;
 }
 
+// starts a vc, reads ballots from bb and updates the vc accordingly. Also adds to the count
+// keeps going until the ballot box is empty
 vote_count_t bb_count(ballot_box_t bb)
 {
+    // keep in mind that YOU the caller have to destroy this vc_count_t
     vote_count_t result = vc_create();
+    // null check for the result
+    if(!result){
+        exit(33);
+    }
 
-    //
-    // TODO: your code here
-    //
-    
+    ballot_box_t curr_bb = bb;
+    ballot_box_t next_bb = curr_bb -> next;
+
+    //iterate through ballot box
+    while(1){
+        ballot_t curr_ballot = curr_bb -> ballot;
+        // calls count_ballot, which uses vc_update
+        // to increment the count pointer of the ballot
+        count_ballot(result, curr_ballot);
+
+        if(!next_bb){
+            break;
+        }
+
+        // set next ballot as current and next as next
+        curr_bb = next_bb;
+        next_bb = curr_bb -> next;
+             
+    };
 
     return result;
 }
@@ -123,12 +146,26 @@ void bb_eliminate(ballot_box_t bb, const char* candidate)
 
 char* get_irv_winner(ballot_box_t bb)
 {
-    //
-    // TODO: replace with your code:
-    //
+    //algorithm:
+    // -start with empty vote count map, count every ballot in bb
+    // -Check to see if leading candidate has minority. If true,
+    // then we are done
+    // -If no votes were cast then there is no winner, and so the result is NULL
+    // -Otherwise, candidate in last place is eliminated.
+
+    for(;;){
+
+        
+
+
+
+        
+    }
+    
+
+    
     char* result = strdupb("FIXME", "get_irv_winner");
-    //
-    // TODO: your code here too
-    //
+
+    
     return result;
 }
