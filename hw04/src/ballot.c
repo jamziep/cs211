@@ -126,14 +126,7 @@ const char* ballot_leader(ballot_t ballot)
 
 void ballot_eliminate(ballot_t ballot, const char* name)
 {
-    //
-    // TODO: your code here
-    //
-<<<<<<< HEAD
 
-    // algo idea so I don't forget: scan through the entire ballot, match the candidate name, when it matches, eliminate.
-    
-=======
     //iterate through the ballot. if you find an entry that
     //matches the name given to this function, mark it as inactive
 
@@ -146,7 +139,6 @@ void ballot_eliminate(ballot_t ballot, const char* name)
             return;
         }
     }
->>>>>>> e576fae45110482a41a023b1727b591906d04e3e
 }
 
 void count_ballot(vote_count_t vc, ballot_t ballot)
@@ -154,6 +146,18 @@ void count_ballot(vote_count_t vc, ballot_t ballot)
     //
     // TODO: your code here
     //Lance
+    char* name = ballot -> entries[0].name;
+
+    // updates the vc with the current name
+    size_t* count_ptr = vc_update(vc, name);
+
+    // vc_update returns null, exit with error code 4
+    if(!count_ptr){
+        exit(4);
+    }
+
+    *count_ptr += 1;
+          
 }
 
 ballot_t read_ballot(FILE* inf)
