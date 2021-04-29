@@ -107,8 +107,9 @@ static void test_ballot_with_vc(void)
     //count for leader, A
     const char* leader1 = ballot_leader(ballot1);
     CHECK_STRING( leader1, "A");
-    size_t* cp = vc_update(vote_count, leader1);
-    *cp += 1;
+    //size_t* cp = vc_update(vote_count, leader1);
+    //*cp += 1;
+    count_ballot(vote_count, ballot1);
     
     //verify the counts in vc
     CHECK_SIZE( vc_lookup(vote_count,"A"), 1);
@@ -116,9 +117,10 @@ static void test_ballot_with_vc(void)
     CHECK_SIZE( vc_lookup(vote_count,"C"), 0);
 
     //count again and confirm the votes
-    leader1 = ballot_leader(ballot1);
-    cp = vc_update(vote_count, leader1);
-    *cp += 1;
+    //leader1 = ballot_leader(ballot1);
+    //size_t* cp = vc_update(vote_count, leader1);
+    //*cp += 1;
+    count_ballot(vote_count, ballot1);
 
     CHECK_SIZE( vc_lookup(vote_count,"A"), 2);
     CHECK_SIZE( vc_lookup(vote_count,"B"), 0);
@@ -129,9 +131,10 @@ static void test_ballot_with_vc(void)
     leader1 = ballot_leader(ballot1);
     CHECK_STRING( leader1, "A");
     
-    cp = vc_update(vote_count, leader1);
-    *cp += 1;
-
+    //cp = vc_update(vote_count, leader1);
+    //*cp += 1;
+    count_ballot(vote_count, ballot1);
+    
     CHECK_SIZE( vc_lookup(vote_count,"A"), 3);
     CHECK_SIZE( vc_lookup(vote_count,"B"), 0);
     CHECK_SIZE( vc_lookup(vote_count,"C"), 0);
@@ -141,8 +144,9 @@ static void test_ballot_with_vc(void)
     leader1 = ballot_leader(ballot1);
     CHECK_STRING( leader1, "C");
 
-    cp = vc_update(vote_count, leader1);
-    *cp += 1;
+    //cp = vc_update(vote_count, leader1);
+    //*cp += 1;
+    count_ballot(vote_count, ballot);
 
     CHECK_SIZE( vc_lookup(vote_count,"A"), 3);
     CHECK_SIZE( vc_lookup(vote_count,"B"), 0);
@@ -150,6 +154,9 @@ static void test_ballot_with_vc(void)
 
     //eliminate C and confirm that counting the ballot again
     //has no effect on the counts
+
+    //will do this tomorrow
+    
     ballot_eliminate( ballot1, "C");
     CHECK_POINTER( ballot_leader(ballot1), NULL);
 
