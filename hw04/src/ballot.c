@@ -132,12 +132,12 @@ void count_ballot(vote_count_t vc, ballot_t ballot)
     size_t ballot_length = ballot -> length;
     char* leader = NULL;
     for(size_t ii  = 0; ii < ballot_length; ++ii){
-        
         if(ballot -> entries[ii].active){ 
-            char* leader = ballot -> entries[ii].name;
+            leader = ballot -> entries[ii].name;
             break;   // break loop once the first active name has been found.
         }
     }
+    //  char* leader = ballot -> entries[ii].name;
 
     // updates the vc with the current name
     size_t* count_ptr = vc_update(vc, leader);
@@ -190,7 +190,7 @@ ballot_t read_ballot(FILE* inf)
         
         //free the thing returned by fread_line() then get ready to
         //read in a new string of unknown size from file
-        free(name);
+        // free(name);
         name = fread_line(inf);
     }
 

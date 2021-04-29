@@ -149,24 +149,41 @@ char* get_irv_winner(ballot_box_t bb)
 {
     //algorithm:
     // -start with empty vote count map, count every ballot in bb
-    // -Check to see if leading candidate has minority. If true,
+    // -Check to see if leading candidate has majority. If true,
     // then we are done
     // -If no votes were cast then there is no winner, and so the result is NULL
     // -Otherwise, candidate in last place is eliminated.
 
     for(;;){
+        // bb_count will initialize the vc for us
+        vote_count_t vc = bb_count(bb);
 
+        // finds the leading and losing candidates (and total votes);
+        const char* leader = vc_max(vc);
+        const char* loser = vc_min(vc);
+        size_t vtotal = vc_total(vc);
+
+        //check to see if leading cand has majority. If true, return cnadidate
+        if(vc_lookup(vc, leader) > (vtotal/2)){
+            char* result = strdupb(leader, "get_irv_winner");
+            vc_destroy(vc);
+            return result;
+
+        }else if(vtotal == 0){
+            // if there are no votes cast, then the result is NULL
+            char* result = NULL;
+            vc_destroy(vc);
+            return result;
+
+        }else{
+            // otherwise eliminate the last place candidate.
+            bb_eliminate(bb, loser);
         
-
-
-
-        
+        }
     }
     
+    //  char* result = strdupb("FIXME", "get_irv_winner");
 
     
-    char* result = strdupb("FIXME", "get_irv_winner");
-
-    
-    return result;
+        //  return result;
 }
