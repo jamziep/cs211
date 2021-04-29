@@ -109,10 +109,7 @@ const char* ballot_leader(ballot_t ballot)
 
 void ballot_eliminate(ballot_t ballot, const char* name)
 {
-<<<<<<< HEAD
 
-=======
->>>>>>> 0629e6b01de3688dd4ed03d1da5c70860380903b
     //iterate through the ballot. if you find an entry that
     //matches the name given to this function, mark it as inactive
 
@@ -129,13 +126,21 @@ void ballot_eliminate(ballot_t ballot, const char* name)
 
 void count_ballot(vote_count_t vc, ballot_t ballot)
 {
-    //
-    // TODO: your code here
-    //Lance
-    char* name = ballot -> entries[0].name;
+
+    // iterates through the names on the ballot, takes the first
+    // one that is active
+    size_t ballot_length = ballot -> length;
+    char* leader = NULL;
+    for(size_t ii  = 0; ii < ballot_length; ++ii){
+        
+        if(ballot -> entries[ii].active){ 
+            char* leader = ballot -> entries[ii].name;
+            break;   // break loop once the first active name has been found.
+        }
+    }
 
     // updates the vc with the current name
-    size_t* count_ptr = vc_update(vc, name);
+    size_t* count_ptr = vc_update(vc, leader);
 
     // vc_update returns null, exit with error code 4
     if(!count_ptr){
