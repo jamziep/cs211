@@ -74,12 +74,15 @@ ballot_box_t read_ballot_box(FILE* inf)
         ballot = read_ballot(inf);
     }
 
+    //now that the ballot is not in use, destroy it
+    ballot_destroy(ballot);
+    
     //ballots have been read into our ballot box as linked list
     return ballot_box;
 }
 
-// starts a vc, reads ballots from bb and updates the vc accordingly. Also adds to the count
-// keeps going until the ballot box is empty
+// starts a vc, reads ballots from bb and updates the vc accordingly.
+// Also adds to the count. keeps going until the ballot box is empty
 vote_count_t bb_count(ballot_box_t bb)
 {
     // keep in mind that YOU the caller have to destroy this vc_count_t
@@ -105,9 +108,8 @@ vote_count_t bb_count(ballot_box_t bb)
 
         // set next ballot as current and next as next
         curr_bb = next_bb;
-        next_bb = curr_bb -> next;
-             
-    };
+        next_bb = curr_bb -> next;             
+    }
 
     return result;
 }
@@ -150,14 +152,24 @@ char* get_irv_winner(ballot_box_t bb)
     // -start with empty vote count map, count every ballot in bb
     // -Check to see if leading candidate has majority. If true,
     // then we are done
-    // -If no votes were cast then there is no winner, and so the result is NULL
+    // -If no votes were cast then there is no winner, so the result is NULL
     // -Otherwise, candidate in last place is eliminated.
 
+    //things I've tried for testing: initialize variables with types outside
+    //loop; break and (destroy + return) stuff after the loop; use a bool
+    //called "result_found" to regulate when the loop ends. break statements
+    //might nullify changes to variables that happen in a loop (my theory)
+
+    //null check the ballot box
+    if (!bb) {
+        return NULL;
+    }
+    
     for(;;){
+        
         // bb_count will initialize the vc for us
         vote_count_t vc = bb_count(bb);
 
-        // finds the leading and losing candidates (and total votes);
         const char* leader = vc_max(vc);
         const char* loser = vc_min(vc);
         size_t vtotal = vc_total(vc);
@@ -168,6 +180,7 @@ char* get_irv_winner(ballot_box_t bb)
             vc_destroy(vc);
             return result;
 
+
         }else if(vtotal == 0){
             // if there are no votes cast, then the result is NULL
             char* result = NULL;
@@ -177,12 +190,7 @@ char* get_irv_winner(ballot_box_t bb)
         }else{
             // otherwise eliminate the last place candidate.
             bb_eliminate(bb, loser);
-        
+            vc_destroy(vc);
         }
     }
-    
-    //  char* result = strdupb("FIXME", "get_irv_winner");
-
-    
-        //  return result;
 }

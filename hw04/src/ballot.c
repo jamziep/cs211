@@ -126,19 +126,14 @@ void ballot_eliminate(ballot_t ballot, const char* name)
 
 void count_ballot(vote_count_t vc, ballot_t ballot)
 {
-
-    // iterates through the names on the ballot, takes the first
-    // one that is active
-    size_t ballot_length = ballot -> length;
-    char* leader = NULL;
-    for(size_t ii  = 0; ii < ballot_length; ++ii){
-        if(ballot -> entries[ii].active){ 
-            leader = ballot -> entries[ii].name;
-            break;   // break loop once the first active name has been found.
-        }
+    //try using the function we're supposed to use
+    const char* leader = ballot_leader(ballot);
+    
+    //if there is no leader, this function has no effect
+    if (!leader) {
+        return;
     }
-    //  char* leader = ballot -> entries[ii].name;
-
+    
     // updates the vc with the current name
     size_t* count_ptr = vc_update(vc, leader);
 
@@ -160,6 +155,7 @@ ballot_t read_ballot(FILE* inf)
 
     //if user doesn't give any names, make no ballot
     if (!name || strcmp(name,"%") == 0) {
+        free(name);
         return NULL;
     }
 
@@ -167,6 +163,7 @@ ballot_t read_ballot(FILE* inf)
     //if memory allocation fails
     ballot_t ballot = ballot_create();
     if (!ballot) {
+        free(name);
         exit(12);
     }
 
@@ -180,6 +177,7 @@ ballot_t read_ballot(FILE* inf)
         //if we've exceeded max candidates, don't do anything with
         //what we just read in from fread_line()
         if (num_candidates_inserted >= MAX_CANDIDATES) {
+            free(name);
             exit(3);
         }
         
@@ -190,11 +188,11 @@ ballot_t read_ballot(FILE* inf)
         
         //free the thing returned by fread_line() then get ready to
         //read in a new string of unknown size from file
-        // free(name);
+        //free(name);
         name = fread_line(inf);
     }
 
-    //from the manual, the pointer returned by fread_line must be freed
+    //not sure this is the right place to free name, but it works
     free(name);
     
     //at this point, we're done filling in the ballot and should return it

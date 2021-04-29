@@ -29,6 +29,7 @@ static void test_ballot_with_vc(void);
 //our functions
 static void test_ballot_create_destroy(void);
 
+void test_two_ballots(void);
 
 ///
 /// MAIN FUNCTION
@@ -39,7 +40,10 @@ int main(int argc, char* argv[])
     test_clean_name();
     test_ballot_3();
     test_ballot_with_vc();
+
+    //our functions
     test_ballot_create_destroy();
+    test_two_ballots();
 }
 
 
@@ -107,8 +111,6 @@ static void test_ballot_with_vc(void)
     //count for leader, A
     const char* leader1 = ballot_leader(ballot1);
     CHECK_STRING( leader1, "A");
-    //size_t* cp = vc_update(vote_count, leader1);
-    //*cp += 1;
     count_ballot(vote_count, ballot1);
     
     //verify the counts in vc
@@ -117,9 +119,6 @@ static void test_ballot_with_vc(void)
     CHECK_SIZE( vc_lookup(vote_count,"C"), 0);
 
     //count again and confirm the votes
-    //leader1 = ballot_leader(ballot1);
-    //size_t* cp = vc_update(vote_count, leader1);
-    //*cp += 1;
     count_ballot(vote_count, ballot1);
 
     CHECK_SIZE( vc_lookup(vote_count,"A"), 2);
@@ -130,11 +129,8 @@ static void test_ballot_with_vc(void)
     ballot_eliminate( ballot1, "B" );
     leader1 = ballot_leader(ballot1);
     CHECK_STRING( leader1, "A");
-    
-    //cp = vc_update(vote_count, leader1);
-    //*cp += 1;
+
     count_ballot(vote_count, ballot1);
-    
     CHECK_SIZE( vc_lookup(vote_count,"A"), 3);
     CHECK_SIZE( vc_lookup(vote_count,"B"), 0);
     CHECK_SIZE( vc_lookup(vote_count,"C"), 0);
@@ -144,24 +140,21 @@ static void test_ballot_with_vc(void)
     leader1 = ballot_leader(ballot1);
     CHECK_STRING( leader1, "C");
 
-    //cp = vc_update(vote_count, leader1);
-    //*cp += 1;
-    count_ballot(vote_count, ballot);
-
+    count_ballot(vote_count, ballot1);
     CHECK_SIZE( vc_lookup(vote_count,"A"), 3);
     CHECK_SIZE( vc_lookup(vote_count,"B"), 0);
     CHECK_SIZE( vc_lookup(vote_count,"C"), 1);
 
     //eliminate C and confirm that counting the ballot again
-    //has no effect on the counts
-
-    //will do this tomorrow
-    
+    //has no effect on the counts    
     ballot_eliminate( ballot1, "C");
     CHECK_POINTER( ballot_leader(ballot1), NULL);
 
+    count_ballot( vote_count, ballot1 );
+    CHECK_SIZE( vc_lookup(vote_count,"A"), 3);
+    CHECK_SIZE( vc_lookup(vote_count,"B"), 0);
+    CHECK_SIZE( vc_lookup(vote_count,"C"), 1);
 
-    
     ballot_destroy(ballot1);
     vc_destroy(vote_count);
 }
@@ -188,6 +181,30 @@ static void test_ballot_create_destroy(void) {
     ballot_destroy(ballot);
 
 }
+
+//read in a filename as a const char*, open the file using
+//the read_ballot function, and returns the object that was read
+
+/*
+ballot_t read_ballot_from_file(const char* file_path) {
+
+    FILE* ballot_file = fopen(file_path);
+    //if fopen fails, do nothing
+    if (!ballot_file) {
+        return NULL;
+    }
+    
+    ballot_t ballot = read_ballot(ballot_file);
+    return ballot;
+}
+*/
+
+//test reading in a basic case of 2 identical ballots
+void test_two_ballots(void) {
+
+    
+}
+
 
 //functions to test:
 //ballot_insert()
