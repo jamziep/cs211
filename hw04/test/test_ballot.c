@@ -38,7 +38,7 @@ int main(int argc, char* argv[])
 {
     test_clean_name();
     test_ballot_3();
-    //test_ballot_with_vc();
+    test_ballot_with_vc();
     test_ballot_create_destroy();
 }
 
@@ -94,9 +94,69 @@ static void test_ballot_3(void)
 
 static void test_ballot_with_vc(void)
 {
-    //
-    // TODO: your code here
-    //
+    //initialize a vote_count_t
+    vote_count_t vote_count = vc_create();
+
+    //create a ballot that ranks three candidates, A B + C
+    ballot_t ballot1 = ballot_create();
+    ballot_insert(ballot1, strdupb("A", "test_with_vc"));
+    ballot_insert(ballot1, strdupb("B", "test_with_vc"));
+    ballot_insert(ballot1, strdupb("C", "test_with_vc"));
+
+    //check the current leader of the ballot and add 1 to the
+    //count for leader, A
+    const char* leader1 = ballot_leader(ballot1);
+    CHECK_STRING( leader1, "A");
+    size_t* cp = vc_update(vote_count, leader1);
+    *cp += 1;
+    
+    //verify the counts in vc
+    CHECK_SIZE( vc_lookup(vote_count,"A"), 1);
+    CHECK_SIZE( vc_lookup(vote_count,"B"), 0);
+    CHECK_SIZE( vc_lookup(vote_count,"C"), 0);
+
+    //count again and confirm the votes
+    leader1 = ballot_leader(ballot1);
+    cp = vc_update(vote_count, leader1);
+    *cp += 1;
+
+    CHECK_SIZE( vc_lookup(vote_count,"A"), 2);
+    CHECK_SIZE( vc_lookup(vote_count,"B"), 0);
+    CHECK_SIZE( vc_lookup(vote_count,"C"), 0);
+
+    //eliminate candidate B, count again, and confirm the votes
+    ballot_eliminate( ballot1, "B" );
+    leader1 = ballot_leader(ballot1);
+    CHECK_STRING( leader1, "A");
+    
+    cp = vc_update(vote_count, leader1);
+    *cp += 1;
+
+    CHECK_SIZE( vc_lookup(vote_count,"A"), 3);
+    CHECK_SIZE( vc_lookup(vote_count,"B"), 0);
+    CHECK_SIZE( vc_lookup(vote_count,"C"), 0);
+
+    //eliminate A, and confirm that a vote goes toward C
+    ballot_eliminate( ballot1, "A" );
+    leader1 = ballot_leader(ballot1);
+    CHECK_STRING( leader1, "C");
+
+    cp = vc_update(vote_count, leader1);
+    *cp += 1;
+
+    CHECK_SIZE( vc_lookup(vote_count,"A"), 3);
+    CHECK_SIZE( vc_lookup(vote_count,"B"), 0);
+    CHECK_SIZE( vc_lookup(vote_count,"C"), 1);
+
+    //eliminate C and confirm that counting the ballot again
+    //has no effect on the counts
+    ballot_eliminate( ballot1, "C");
+    CHECK_POINTER( ballot_leader(ballot1), NULL);
+
+
+    
+    ballot_destroy(ballot1);
+    vc_destroy(vote_count);
 }
 
 
@@ -121,3 +181,21 @@ static void test_ballot_create_destroy(void) {
     ballot_destroy(ballot);
 
 }
+
+//functions to test:
+//ballot_insert()
+//ballot_leader()
+//ballot_eliminate()
+//count_ballot()
+//read_ballot()
+//clean_name()
+//
+
+//testing functions to use:
+//CHECK_POINTER() for pointers
+//CHECK_STRING() for strings
+//CHECK_SIZE() for numerical values
+//CHECK( ) for logical true/false
+//
+//
+
