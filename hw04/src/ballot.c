@@ -87,6 +87,10 @@ void ballot_insert(ballot_t ballot, char* name)
     ballot -> entries[ballot_length].name = strdupb(name, "ballot_insert");
     
     //increase the length of the ballot by 1 and set that entry to active
+    //printf("Ballot length: %zu\n", ballot_length);
+    //print_ballot(stdout, ballot);
+    //printf("\n\n");
+    
     ballot -> entries[ballot_length].active = true;
     ballot -> length += 1;
 
