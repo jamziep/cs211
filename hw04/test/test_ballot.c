@@ -259,7 +259,7 @@ static void test_ballot_max(void) {
     vote_count_t vc = vc_create();
 
     //add another candidate
-    ballot_insert(ballot, strdupb("p", "test_ballot_max"));
+    //   ballot_insert(ballot, strdupb("p", "test_ballot_max"));
     
 
     vc_destroy(vc);
