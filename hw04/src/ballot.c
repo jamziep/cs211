@@ -76,6 +76,14 @@ void ballot_insert(ballot_t ballot, char* name)
 {
     clean_name(name);
     size_t ballot_length = ballot -> length;
+
+    //if ballot is full, such that adding more names exceeds
+    //max candidates, exit with error code 3
+    if (ballot_length >= MAX_CANDIDATES) {
+        free(name);
+        exit(3);
+    }
+        
     ballot -> entries[ballot_length].name = strdupb(name, "ballot_insert");
     
     //increase the length of the ballot by 1 and set that entry to active
@@ -109,7 +117,6 @@ const char* ballot_leader(ballot_t ballot)
 
 void ballot_eliminate(ballot_t ballot, const char* name)
 {
-
     //iterate through the ballot. if you find an entry that
     //matches the name given to this function, mark it as inactive
 
@@ -169,14 +176,14 @@ ballot_t read_ballot(FILE* inf)
 
     //check the number of candidates read in, and compare it to
     //max_candidates
-    size_t num_candidates_inserted = 0;
+    size_t ballot_length = ballot -> length;
     
     //"while "name" is not NULL (i.e. EOF) and "name is not a %":
     while (name && strcmp(name,"%") != 0) {
 
         //if we've exceeded max candidates, don't do anything with
         //what we just read in from fread_line()
-        if (num_candidates_inserted >= MAX_CANDIDATES) {
+        if (ballot_length >= MAX_CANDIDATES) {
             free(name);
             exit(3);
         }
@@ -184,7 +191,7 @@ ballot_t read_ballot(FILE* inf)
         //insert the name into the ballot
         clean_name(name);
         ballot_insert(ballot, name);
-        ++num_candidates_inserted;
+        ballot_length = ballot -> length;
         
         //free the thing returned by fread_line() then get ready to
         //read in a new string of unknown size from file

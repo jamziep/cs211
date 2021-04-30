@@ -258,6 +258,9 @@ static void test_ballot_max(void) {
     ballot_t ballot = read_ballot_from_file("rsrc/ballot_16.in");
     vote_count_t vc = vc_create();
 
+    //add another candidate
+    ballot_insert(ballot, strdupb("p", "test_ballot_max"));
+    
 
     vc_destroy(vc);
     ballot_destroy(ballot);
