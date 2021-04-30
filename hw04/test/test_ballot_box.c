@@ -26,6 +26,10 @@ static void three_candidates_tied(void),
             win_on_third_round(void),
             example_from_wikipedia(void);
 
+// Lance's tests
+static void no_candidates(void);
+    
+
 
 ///
 /// MAIN FUNCTION
@@ -33,9 +37,11 @@ static void three_candidates_tied(void),
 
 int main(void)
 {
-    //three_candidates_tied();
-    //win_on_third_round();
-    //example_from_wikipedia();
+   three_candidates_tied();
+   win_on_third_round();
+   example_from_wikipedia();
+   no_candidates();
+    
 }
 
 
@@ -84,6 +90,15 @@ static void example_from_wikipedia(void)
             "bob", "bill", "sue", "%",
             "sue", "bob", "bill", "%",
             NULL);
+}
+
+static void no_candidates(void)
+{
+    if (MAX_CANDIDATES < 3){
+        return;
+    }
+
+    check_election("%", NULL);
 }
 
 
