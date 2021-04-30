@@ -26,8 +26,14 @@ static void three_candidates_tied(void),
             win_on_third_round(void),
             example_from_wikipedia(void);
 
-// Lance's tests
+// Lance's functions
 static void no_candidates(void);
+static void single_cand_ballots(void);
+ballot_t read_ballot_from_file(const char* file_path);
+static void uneven_ballot(void);
+static void bogus_ballot1(void);
+static void bogus_ballot2(void);
+
     
 
 
@@ -40,14 +46,57 @@ int main(void)
    three_candidates_tied();
    win_on_third_round();
    example_from_wikipedia();
+   single_cand_ballots();
    no_candidates();
-    
+   uneven_ballot();
+   bogus_ballot1();
+   bogus_ballot2();
+       
 }
-
 
 ///
 /// TEST CASE FUNCTIONS
 ///
+
+static void no_candidates(void)
+{
+    if (MAX_CANDIDATES < 3){
+        return;
+    }
+
+    check_election(NULL, "%", NULL);
+}
+
+static void single_cand_ballots(void)
+{
+    if (MAX_CANDIDATES < 3){
+        return;
+    }
+
+    check_election("B",
+                   "A","%",
+                   "B","%",
+                   "C","%",
+                   "B","%",
+                   NULL);
+    
+}
+
+static void uneven_ballot(void)
+{
+    if (MAX_CANDIDATES < 3) {
+        return;
+    }
+
+    check_election("A",
+                   "a", "b", "c", "d", "%"
+                   "a", "c", "b", "%",
+                   "c", "a", "b", "%",
+                   "a", "b", "c", "%",
+                   NULL);
+        
+
+}
 
 static void three_candidates_tied(void)
 {
@@ -92,14 +141,35 @@ static void example_from_wikipedia(void)
             NULL);
 }
 
-static void no_candidates(void)
+static void bogus_ballot1(void)
 {
     if (MAX_CANDIDATES < 3){
         return;
     }
 
-    check_election("%", NULL);
+    check_election("JOE",
+                   "kanye", "kanye", "kanye", "kanye", "kanye", "%",
+                   "Joe", "%",
+                   "Joe", "%",
+                   "Joe", "%",
+                   NULL);
 }
+
+static void bogus_ballot2(void)
+{
+    if (MAX_CANDIDATES < 3){
+        return;
+    }
+
+    check_election("",
+                   "!@&?", "....@#!" ,"&^%)" ,"%"
+                   "     " , "\n)(", "%",
+                   NULL);
+}
+
+
+
+
 
 
 //functions that need to be tested:
@@ -183,4 +253,19 @@ check_irv_winner(const char* expected, ballot_box_t bb)
     }
 
     free(actual);
+}
+
+// reading ballots from files (same as test/test_ballot.c)
+ballot_t read_ballot_from_file(const char* file_path)
+{
+    FILE* ballot_file = fopen(file_path, "r");
+    if (!ballot_file){
+        fclose(ballot_file);
+        return NULL;
+    }
+
+    ballot_t ballot = read_ballot(ballot_file);
+
+    fclose(ballot_file);
+    return ballot;
 }
