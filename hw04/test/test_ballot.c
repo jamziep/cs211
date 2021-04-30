@@ -46,7 +46,7 @@ int main(int argc, char* argv[])
     //our functions
     test_ballot_create_destroy();
     test_ballot_5();
-    test_ballot_max();
+    //test_ballot_max();
 }
 
 
