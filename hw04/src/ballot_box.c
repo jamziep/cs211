@@ -174,12 +174,11 @@ char* get_irv_winner(ballot_box_t bb)
         const char* loser = vc_min(vc);
         size_t vtotal = vc_total(vc);
 
-        //check to see if leading cand has majority. If true, return cnadidate
+        //check to see if leading cand has majority. If true, return candidate
         if(vc_lookup(vc, leader) > (vtotal/2)){
             char* result = strdupb(leader, "get_irv_winner");
             vc_destroy(vc);
             return result;
-
 
         }else if(vtotal == 0){
             // if there are no votes cast, then the result is NULL

@@ -28,8 +28,10 @@ static void test_ballot_with_vc(void);
 
 //our functions
 static void test_ballot_create_destroy(void);
+ballot_t read_ballot_from_file(const char* file_path);
 
-void test_two_ballots(void);
+static void test_ballot_5(void);
+static void test_ballot_max(void);
 
 ///
 /// MAIN FUNCTION
@@ -43,7 +45,8 @@ int main(int argc, char* argv[])
 
     //our functions
     test_ballot_create_destroy();
-    test_two_ballots();
+    test_ballot_5();
+    test_ballot_max();
 }
 
 
@@ -98,6 +101,11 @@ static void test_ballot_3(void)
 
 static void test_ballot_with_vc(void)
 {
+    //skip this test if max_candidates is too small
+    if (MAX_CANDIDATES < 3) {
+        return;
+    }
+    
     //initialize a vote_count_t
     vote_count_t vote_count = vc_create();
 
@@ -160,6 +168,105 @@ static void test_ballot_with_vc(void)
 }
 
 
+//functions to test:
+//ballot_insert()
+//ballot_leader()
+//ballot_eliminate()
+//count_ballot()
+//read_ballot()
+//clean_name()
+//
+
+//testing functions to use:
+//CHECK_POINTER() for pointers
+//CHECK_STRING() for strings
+//CHECK_SIZE() for numerical values
+//CHECK( ) for logical true/false
+//
+//
+
+//test reading in a basic case of 5 candidates
+//ranked on a ballot
+static void test_ballot_5(void) {
+
+    //if max_candidates is small, skip this function
+    if (MAX_CANDIDATES < 6) {
+        return;
+    }
+    
+    //bring in the 5 candidates from file
+    ballot_t ballot = read_ballot_from_file("rsrc/ballot_5.in");
+    vote_count_t vc = vc_create();
+    
+    //check that candidate number 1 is leader
+    CHECK_STRING( ballot_leader(ballot), "WASHINGTON");
+    count_ballot(vc, ballot);
+
+    //check counts
+    CHECK_SIZE( vc_lookup(vc,"WASHINGTON"), 1);
+    CHECK_SIZE( vc_lookup(vc,"ADAMS"), 0);
+    CHECK_SIZE( vc_lookup(vc,"JEFFERSON"), 0);
+    CHECK_SIZE( vc_lookup(vc,"MADISON"), 0);
+    CHECK_SIZE( vc_lookup(vc,"MONROE"), 0);
+    
+    //eliminate leader and count ballot again. check counts
+    ballot_eliminate(ballot, "WASHINGTON");
+    count_ballot(vc, ballot);
+
+    CHECK_SIZE( vc_lookup(vc, "WASHINGTON"), 1);
+    CHECK_SIZE( vc_lookup(vc, "ADAMS"), 1);
+    CHECK_STRING( vc_max(vc), "WASHINGTON");
+    CHECK_STRING( vc_min(vc), "ADAMS");
+
+    //eliminate a non-leader and ensure that the leader stays the same
+    ballot_eliminate(ballot, "MONROE");
+    count_ballot(vc, ballot);
+    
+    CHECK_SIZE( vc_lookup(vc, "ADAMS"), 2);
+    CHECK_SIZE( vc_lookup(vc, "MONROE"), 0);
+
+    //add another candidate to ballot
+    //also test that ballot_eliminate does nothing with
+    //candidates that aren't yet on ballot
+    ballot_eliminate(ballot, "QADAMS");
+    ballot_insert(ballot, strdupb("QADAMS","test_ballot_5"));
+    ballot_eliminate(ballot, "ADAMS");
+    ballot_eliminate(ballot, "MADISON");
+    ballot_eliminate(ballot, "JEFFERSON");
+    
+    count_ballot(vc, ballot);
+    CHECK_SIZE( vc_lookup(vc, "ADAMS"), 2);
+    CHECK_SIZE( vc_lookup(vc, "QADAMS"), 1);
+    
+    vc_destroy(vc);
+    ballot_destroy(ballot);
+}
+
+
+//test that ballot_insert() exits with exit code 3 if
+//ballot is full; can't add more candidates
+static void test_ballot_max(void) {
+
+    //if max candidates is less than 16, skip this function
+    if (MAX_CANDIDATES < 16) {
+        return;
+    }
+    
+    //bring in the 15 candidates from file. I had to not make it
+    //16 immediately b/c I was getting heap buffer overflow from the'
+    //last (empty) line in file
+    ballot_t ballot = read_ballot_from_file("rsrc/ballot_16.in");
+    vote_count_t vc = vc_create();
+
+    //add another candidate
+    ballot_insert(ballot, strdupb("p", "test_ballot_max"));
+    
+
+    vc_destroy(vc);
+    ballot_destroy(ballot);
+}
+
+
 ///
 /// HELPER FUNCTIONS
 ///
@@ -184,42 +291,22 @@ static void test_ballot_create_destroy(void) {
 
 //read in a filename as a const char*, open the file using
 //the read_ballot function, and returns the object that was read
-
-/*
+//file_path is relative to the location of the Makefile
 ballot_t read_ballot_from_file(const char* file_path) {
 
-    FILE* ballot_file = fopen(file_path);
+    FILE* ballot_file = fopen(file_path, "r");
     //if fopen fails, do nothing
     if (!ballot_file) {
+        fclose(ballot_file);
         return NULL;
     }
     
     ballot_t ballot = read_ballot(ballot_file);
+
+    //close the FILE* stream of the file we were reading
+    fclose(ballot_file);
     return ballot;
 }
-*/
-
-//test reading in a basic case of 2 identical ballots
-void test_two_ballots(void) {
-
-    
-}
 
 
-//functions to test:
-//ballot_insert()
-//ballot_leader()
-//ballot_eliminate()
-//count_ballot()
-//read_ballot()
-//clean_name()
-//
-
-//testing functions to use:
-//CHECK_POINTER() for pointers
-//CHECK_STRING() for strings
-//CHECK_SIZE() for numerical values
-//CHECK( ) for logical true/false
-//
-//
 
