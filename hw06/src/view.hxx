@@ -29,6 +29,11 @@ public:
 
     std::string initial_window_title() const;
 
+    ge211::Circle_sprite const black_tile;
+    ge211::Circle_sprite const white_tile;
+    //ge211::Rectangle_sprite const empty_square;
+    ge211::Rectangle_sprite const board; // need this one?
+
     // TODO: Add any public member functions you need.
 
 private:
