@@ -31,3 +31,10 @@ View::initial_window_title() const
     return "Reversi";
 }
 
+//things to do in view:
+
+//make a way to draw all the sprites in the sprite set. in this
+//case, all the sprites are gonna be the tokens on the board
+
+//make a way to initialize the board as a green background with gridlines
+//at every row and column
