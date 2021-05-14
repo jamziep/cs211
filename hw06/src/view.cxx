@@ -8,7 +8,12 @@ using Sprite_set = ge211::Sprite_set;
 static int const grid_size = 36;
 
 View::View(Model const& model)
-        : model_(model)
+        : model_(model),
+          black_tile(20, Color(0, 0, 0)),
+          white_tile(20, Color(255, 255, 255)),
+          //empty_square({20, 20}, Color(61,165,198))
+          board({20,20}, Color(61,165,198))
+
         // You may want to add sprite initialization here
 { }
 
@@ -22,6 +27,7 @@ View::initial_window_dimensions() const
 {
     // You can change this if you want:
     return grid_size * model_.board().dimensions();
+    //return Dimensions(1024, 768);
 }
 
 std::string

@@ -1,4 +1,4 @@
-#include "model.hxx"
+ #include "model.hxx"
 
 using namespace ge211;
 
@@ -52,7 +52,15 @@ void Model::play_move(Position pos)
 Position_set Model::find_flips_(Position current, Dimensions dir) const
 {
     // TODO OR NOT TODO: OPTIONAL HELPER
-    return {};
+    Position_set flips {};
+    // find position, draw line all directions until you hit the same color
+    // all positions that are in between that position and your current are flips
+    // Use board::all_directions?
+    for (auto dim : Board::all_directions()){
+
+    };
+
+    return flips;
     // ^^^ this is wrong
 }
 

@@ -2,7 +2,6 @@
 /*** DO NOT CHANGE ANYTHING IN THIS FILE ***/
 /*******************************************/
 
-// test test test
 
 #include "board.hxx"
 #include <algorithm>
