@@ -42,7 +42,19 @@ void Model::play_move(Position pos)
         throw Client_logic_error("Model::play_move: no such move");
 
     // TODO: actually execute the move, advance the turn, refill
-    // `next_moves_`, etc.
+    // next_moves_, etc.
+
+    //FOR NOW: just so we can visualize what's being created in the board,
+    //this function will assume all moves are valid. Change this assumption
+    //later.
+
+    //find the position set of all things we've changed via find_move()
+    Position_set pset = movep -> second;
+    Player turn = Model::turn();
+
+    //add the position set of all the things we've changed via find_move()
+    //to the data of which tiles are where in board
+    Model::board_.set_all(pset, turn);
 }
 
 //

@@ -29,6 +29,8 @@ protected:
     // Controller operations called by GE211
     //
 
+    void on_mouse_down(ge211::Mouse_button, ge211::Posn<int>);
+
     // TODO: Add any input handlers you need, e.g.:
     //  - on_mouse_up for mouse clicks,
     //  - on_mouse_move for mouse tracking, or
