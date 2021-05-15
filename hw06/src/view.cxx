@@ -34,16 +34,25 @@ void View::draw(Sprite_set& set)
     //iterate through the list of black and white tiles, and display
     //goes into the "model" attribute of "View" and returns
     //model_.all_positions(). See model.hxx and board.hxx
+
     for (Position posn : View::model_.board()) {
+
+        if (View::model_[posn] == Player::neither) {
+            continue;
+        }
 
         //finds the player at given position. see operator[] in model.hxx
         Player curr_player = View::model_[posn];
 
+        //model only stores info about the position in terms of the board,
+        //not the screen. ex: {1,2}, {4,3}. make new posns for screen
+        Position screen_posn = {posn.x * grid_size, posn.y * grid_size};
+
         //draw a tile of that color and at that position
         if (curr_player == Player::dark) {
-            set.add_sprite(View::black_tile, posn);
+            set.add_sprite(View::black_tile, screen_posn);
         } else if (curr_player == Player::light) {
-            set.add_sprite(View::white_tile, posn);
+            set.add_sprite(View::white_tile, screen_posn);
         }
     }
 }

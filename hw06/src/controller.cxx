@@ -46,8 +46,8 @@ void Controller::on_mouse_down(ge211::Mouse_button btn,
     //for all the positions currently occupied
     // in board, see all_positions() in model.hxx
 
-    for (int row_ind = 0; row_ind < 8; ++row_ind) {
-        for (int col_ind = 0; col_ind < 8; ++col_ind) {
+    for (int col_ind = 0; col_ind < 8; ++col_ind) {
+        for (int row_ind = 0; row_ind < 8; ++row_ind) {
 
             //current position we're checking is at (row, col)
             //a mouse click is inside the square given by this position

@@ -1,5 +1,6 @@
  #include "model.hxx"
 
+
 using namespace ge211;
 
 Model::Model(int size)
@@ -10,6 +11,59 @@ Model::Model(int width, int height)
         : board_({width, height})
 {
     // TODO: initialize `next_moves_` to `turn_`'s available moves
+
+    //start off with the first four center positions filled in
+    //contains members {posn, {width,height}}
+    Rectangle center_4 = Model::board_.center_positions();
+
+    //start at the position given by the rectangle, then find the coords
+    //in terms of board position {2,3}, {4,1} etc. of corner squares
+    Position posn_tl{center_4.x, center_4.y};
+    Position posn_tr{center_4.x +1, center_4.y};
+    Position posn_bl{center_4.x, center_4.y + 1};
+    Position posn_br{center_4.x + 1, center_4.y + 1};
+    // Position posn_tl{1,1};
+    // Position posn_tr{1,6};
+    // Position posn_bl{5,2};
+    // Position posn_br{4,5};
+
+    //fill in the center 4 tiles with alternating colors. advance the
+    //turn as you go
+
+    //expected behavior: two black tiles at top left and bottom right,
+    //two white tiles at top right and bottom left
+
+    //actual behavior:
+    // - no tile exists in bottom left  position
+    // - changing the x position of posn_bl moves the white tile first
+    //   in the x direction, but it also affects what other tiles show up
+    //      - ex. changing posn_bl.x affects the top right tile too
+
+    Position_set black_moves{posn_tl,posn_br};
+    Position_set white_moves{posn_tr,posn_bl};
+
+
+    //Model::board_.set_all(Position_set{posn_tl, posn_br}, Model::turn_);
+    Model::board_.set_all(black_moves, Model::turn_);
+    Model::turn_ = other_player(Model::turn_);
+
+    //Model::board_.set_all(Position_set{posn_bl, posn_tr}, Model::turn_);
+    Model::board_.set_all(white_moves, Model::turn_);
+    Model::turn_ = other_player(Model::turn_);
+
+    // //let's try doing this one at a time
+    // Model::board_.set_all(Position_set{posn_tl},Model::turn_);
+    // Model::turn_ = other_player(Model::turn_);
+    //
+    // Model::board_.set_all(Position_set{posn_tr},Model::turn_);
+    // Model::turn_ = other_player(Model::turn_);
+    //
+    // Model::board_.set_all(Position_set{posn_bl},Model::turn_);
+    // Model::turn_ = other_player(Model::turn_);
+    //
+    // Model::board_.set_all(Position_set{posn_br},Model::turn_);
+    // Model::turn_ = other_player(Model::turn_);
+
 }
 
 Model::Rectangle Model::board() const
@@ -55,6 +109,14 @@ void Model::play_move(Position pos)
     //add the position set of all the things we've changed via find_move()
     //to the data of which tiles are where in board
     Model::board_.set_all(pset, turn);
+
+    //advance the turn
+    if (Model::turn() == Player::dark) {
+        Model::turn_ = Player::light;
+    } else if (Model::turn() == Player::light) {
+        Model::turn_ = Player::dark;
+    }
+
 }
 
 //
