@@ -1,0 +1,12 @@
+COLLABORATION - hw06
+
+Ben Fisk office hours, 5/17/21: got help with 3 things
+ - Tiles weren't showing up properly, so Ben advised me to set things
+   at z = 3 within view.cxx in order to bring them to top of screen
+ - Was getting a "no such move" error on mouse click. Found out it
+   was because program was comparing the screen position  (ex. (200, 100)
+   pixels) to the board position, which must be between 0 and 7 in either
+   direction
+ - Asked for advice on how to make grid_size visible to both view.cxx and
+   controller.cxx. Ben advised me to make a function in view.cxx that
+   returns the grid size, then call that in controller.cxx

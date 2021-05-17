@@ -50,9 +50,9 @@ void View::draw(Sprite_set& set)
 
         //draw a tile of that color and at that position
         if (curr_player == Player::dark) {
-            set.add_sprite(View::black_tile, screen_posn);
+            set.add_sprite(View::black_tile, screen_posn, 3);
         } else if (curr_player == Player::light) {
-            set.add_sprite(View::white_tile, screen_posn);
+            set.add_sprite(View::white_tile, screen_posn, 3);
         }
     }
 }

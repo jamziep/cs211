@@ -8,7 +8,8 @@ Model::Model(int size)
 { }
 
 Model::Model(int width, int height)
-        : board_({width, height})
+        : board_({width, height}),
+        next_moves_()
 {
     // TODO: initialize `next_moves_` to `turn_`'s available moves
 
@@ -22,26 +23,11 @@ Model::Model(int width, int height)
     Position posn_tr{center_4.x +1, center_4.y};
     Position posn_bl{center_4.x, center_4.y + 1};
     Position posn_br{center_4.x + 1, center_4.y + 1};
-    // Position posn_tl{1,1};
-    // Position posn_tr{1,6};
-    // Position posn_bl{5,2};
-    // Position posn_br{4,5};
 
     //fill in the center 4 tiles with alternating colors. advance the
     //turn as you go
-
-    //expected behavior: two black tiles at top left and bottom right,
-    //two white tiles at top right and bottom left
-
-    //actual behavior:
-    // - no tile exists in bottom left  position
-    // - changing the x position of posn_bl moves the white tile first
-    //   in the x direction, but it also affects what other tiles show up
-    //      - ex. changing posn_bl.x affects the top right tile too
-
     Position_set black_moves{posn_tl,posn_br};
     Position_set white_moves{posn_tr,posn_bl};
-
 
     //Model::board_.set_all(Position_set{posn_tl, posn_br}, Model::turn_);
     Model::board_.set_all(black_moves, Model::turn_);
@@ -51,18 +37,19 @@ Model::Model(int width, int height)
     Model::board_.set_all(white_moves, Model::turn_);
     Model::turn_ = other_player(Model::turn_);
 
-    // //let's try doing this one at a time
-    // Model::board_.set_all(Position_set{posn_tl},Model::turn_);
-    // Model::turn_ = other_player(Model::turn_);
-    //
-    // Model::board_.set_all(Position_set{posn_tr},Model::turn_);
-    // Model::turn_ = other_player(Model::turn_);
-    //
-    // Model::board_.set_all(Position_set{posn_bl},Model::turn_);
-    // Model::turn_ = other_player(Model::turn_);
-    //
-    // Model::board_.set_all(Position_set{posn_br},Model::turn_);
-    // Model::turn_ = other_player(Model::turn_);
+
+    //make a Move_map called next_moves_ that contains all the possible
+    //next moves for the board. For now, let's make all moves possible
+    //so we can click anywhere on the board
+    //first: posn<int>, the tile you place
+    //second: Position_set, the sum of all tiles you gain by playing "first"
+
+    //Move_map Model::next_moves_ = {};
+
+    //iterate through all of the positions in board
+    for (Position posn : Model::board()) {
+        Model::next_moves_[posn] = {posn};
+    }
 
 }
 

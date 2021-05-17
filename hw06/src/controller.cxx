@@ -1,5 +1,8 @@
 #include "controller.hxx"
 
+//for visual debug
+#include <iostream>
+
 //copied this value from view.cxx for finding size of board
 //ideally I'd like to include the entire view.cxx file, since
 //these controls depend on the visual board dims
@@ -53,10 +56,23 @@ void Controller::on_mouse_down(ge211::Mouse_button btn,
             //a mouse click is inside the square given by this position
             //if its position is inside its bounding box
 
-            int square_left = row_ind * grid_size;
-            int square_right = (row_ind + 1) * grid_size;
-            int square_top = col_ind * grid_size;
-            int square_bottom = (col_ind + 1) * grid_size;
+            // int square_left = col_ind * grid_size;
+            // int square_right = (col_ind + 1) * grid_size;
+            // int square_top = row_ind * grid_size;
+            // int square_bottom = (row_ind + 1) * grid_size;
+            //
+            // //for converting between screen position and board index
+            // float mouse_x_board = mouse_posn.x; // / grid_size;
+            // float mouse_y_board = mouse_posn.y; // / grid_size;
+
+            int square_left = col_ind;
+            int square_right = col_ind + 1;
+            int square_top = row_ind;
+            int square_bottom = row_ind + 1;
+
+            //for converting between screen position and board index
+            double mouse_x_board = mouse_posn.x / double(grid_size);
+            double mouse_y_board = mouse_posn.y / double(grid_size);
 
             //ways the mouse click posn could be outside the bounding
             //box of this square: left of square_left, right of square_right,
@@ -64,23 +80,26 @@ void Controller::on_mouse_down(ge211::Mouse_button btn,
             //mouse click is inside this current box
 
             //simplify this into one expression once you verify it works
-            if (mouse_posn.x < square_left) {
+            if (mouse_x_board < square_left) {
                 continue;
-            } else if (mouse_posn.x > square_right) {
+            } else if (mouse_x_board > square_right) {
                 continue;
-            } else if (mouse_posn.y < square_top) {
+            } else if (mouse_y_board < square_top) {
                 continue;
-            } else if (mouse_posn.y > square_bottom) {
+            } else if (mouse_y_board > square_bottom) {
                 continue;
             } else {
 
                 //eventually this will need to incorporate checks as to
                 //whether or not a move is valid
                 Player turn = Controller::model_.turn();
-                ge211::Posn<int> square_coords{row_ind, col_ind};
+                ge211::Posn<int> square_coords{col_ind, row_ind};
 
                 //add a tile of the current player's color to the board,
                 //by updating the state of the model
+
+                //this line is causing exit code 1:
+                // Model::play_move: no such move
                 Controller::model_.play_move(square_coords);
 
                 //this is currently buggy b/c we haven't initialized the
