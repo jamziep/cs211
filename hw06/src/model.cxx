@@ -47,6 +47,8 @@ Model::Model(int width, int height)
     //Move_map Model::next_moves_ = {};
 
     //iterate through all of the positions in board
+
+
     for (Position posn : Model::board()) {
         Model::next_moves_[posn] = {posn};
     }
@@ -112,29 +114,49 @@ void Model::play_move(Position pos)
 
 Position_set Model::find_flips_(Position current, Dimensions dir) const
 {
-    // TODO OR NOT TODO: OPTIONAL HELPER
     Position_set flips {};
-    // find position, draw line all directions until you hit the same color
-    // all positions that are in between that position and your current are flips
-    // Use board::all_directions?
-    for (auto dim : Board::all_directions()){
-
+    // yeah I know i did this with a while when i probably could have done a
+    // for, but i can worry about that later
+    std::size_t n = 1;
+    while (board_[current + n * dir] == other_player(turn_)){
+        n++; // increments n when we detect the tile is occupied by a
     };
 
+    if (board_[current + n * dir] == turn_)
+    {
+        // if the final tile is the current player, then we add the
+        // positions up to that one to the position set.
+        for(std::size_t ii = 1; ii < n; ii++){
+            flips[{current + ii * dir}] = true;
+        }
+    }
     return flips;
-    // ^^^ this is wrong
 }
 
 Position_set Model::evaluate_position_(Position pos) const
 {
-    // TODO OR NOT TODO: OPTIONAL HELPER
-    return {};
-    // ^^^ this is wrong
+    Position_set curr_pos {};
+    // iterate through all possible directions and call find_flips
+    for (auto dim : Board::all_directions())
+    {
+        Position_set new_tiles = find_flips_(pos, dim);
+        curr_pos.operator|=(new_tiles); // update the curr_pos with flips
+    };
+    return curr_pos;
 }
 
 void Model::compute_next_moves_()
 {
     // TODO OR NOT TODO: OPTIONAL HELPER
+    // iterate through entire board all call eval_position on every spot.
+    // Only add non empty position sets  to next_moves_.
+    next_moves_.clear(); // first clear out next moves
+    for (auto pos : Model::board()){
+        auto valids = evaluate_position_(pos);
+        if (!valids.empty()){
+            next_moves_[pos] = valids;
+        }
+    }
 }
 
 bool Model::advance_turn_()
