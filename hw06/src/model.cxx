@@ -1,5 +1,8 @@
  #include "model.hxx"
 
+//for debug
+#include <iostream>
+
 using namespace ge211;
 
 Model::Model(int size)
@@ -28,25 +31,11 @@ Model::Model(int width, int height)
     Position_set black_moves{posn_tl,posn_br};
     Position_set white_moves{posn_tr,posn_bl};
 
-    //Model::board_.set_all(Position_set{posn_tl, posn_br}, Model::turn_);
     Model::board_.set_all(black_moves, Model::turn_);
     Model::turn_ = other_player(Model::turn_);
 
-    //Model::board_.set_all(Position_set{posn_bl, posn_tr}, Model::turn_);
     Model::board_.set_all(white_moves, Model::turn_);
     Model::turn_ = other_player(Model::turn_);
-
-
-    //make a Move_map called next_moves_ that contains all the possible
-    //next moves for the board. For now, let's make all moves possible
-    //so we can click anywhere on the board
-    //first: posn<int>, the tile you place
-    //second: Position_set, the sum of all tiles you gain by playing "first"
-
-    //iterate through all of the positions in board
-    // for (Position posn : Model::board()) {
-    //     Model::next_moves_[posn] = {posn};
-    // }
 
     //initialize next_moves_ to turn_'s possible next moves,
     //using the compute_next_moves helper
@@ -80,8 +69,12 @@ void Model::play_move(Position pos)
         throw Client_logic_error("Model::play_move: game over");
 
     Move const* movep = find_move(pos);
-    if (!movep)
+    if (!movep) {
+        //so that our program doesn't end when someone plays a bad move
         throw Client_logic_error("Model::play_move: no such move");
+        // std::cout << "\nModel::play_move: no such move" << std::endl;
+        // return;
+    }
 
     //find the position set of all things we've changed via find_move()
     Position_set pset = movep -> second;
@@ -125,6 +118,10 @@ Position_set Model::find_flips_(Position current, Dimensions dir) const
         posn = current + n * dir;
         if (posn.x < 0 || posn.x >= Model::board_.dimensions().width
             || posn.y < 0 || posn.y >= Model::board_.dimensions().height) {
+
+            //decrement n so that model only looks at the max valid index
+            // in next part of code
+            n--;
             break;
         }
     };
@@ -156,7 +153,6 @@ Position_set Model::evaluate_position_(Position pos) const
         //means a value less than 0 or greater than width of board
         if (next_pos.x < 0 || next_pos.x >= Model::board_.dimensions().width
         || next_pos.y < 0 || next_pos.y >= Model::board_.dimensions().height){
-
             continue;
         }
 
@@ -177,11 +173,17 @@ Position_set Model::evaluate_position_(Position pos) const
 
 void Model::compute_next_moves_()
 {
-    // TODO OR NOT TODO: OPTIONAL HELPER
     // iterate through entire board all call eval_position on every spot.
     // Only add non empty position sets  to next_moves_.
     next_moves_.clear(); // first clear out next moves
     for (auto pos : Model::board()){
+
+        //check to make sure that this position is not occupied. if so,
+        //skip this position
+        if (Model::board_[pos] != Player::neither) {
+            continue;
+        }
+
         Position_set valids = evaluate_position_(pos);
         if (!valids.empty()){
             next_moves_[pos] = valids;
