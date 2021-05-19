@@ -1,6 +1,5 @@
  #include "model.hxx"
 
-
 using namespace ge211;
 
 Model::Model(int size)
@@ -44,14 +43,14 @@ Model::Model(int width, int height)
     //first: posn<int>, the tile you place
     //second: Position_set, the sum of all tiles you gain by playing "first"
 
-    //Move_map Model::next_moves_ = {};
-
     //iterate through all of the positions in board
+    // for (Position posn : Model::board()) {
+    //     Model::next_moves_[posn] = {posn};
+    // }
 
-
-    for (Position posn : Model::board()) {
-        Model::next_moves_[posn] = {posn};
-    }
+    //initialize next_moves_ to turn_'s possible next moves,
+    //using the compute_next_moves helper
+    Model::compute_next_moves_();
 
 }
 
@@ -84,13 +83,6 @@ void Model::play_move(Position pos)
     if (!movep)
         throw Client_logic_error("Model::play_move: no such move");
 
-    // TODO: actually execute the move, advance the turn, refill
-    // next_moves_, etc.
-
-    //FOR NOW: just so we can visualize what's being created in the board,
-    //this function will assume all moves are valid. Change this assumption
-    //later.
-
     //find the position set of all things we've changed via find_move()
     Position_set pset = movep -> second;
     Player turn = Model::turn();
@@ -99,13 +91,11 @@ void Model::play_move(Position pos)
     //to the data of which tiles are where in board
     Model::board_.set_all(pset, turn);
 
-    //advance the turn
-    if (Model::turn() == Player::dark) {
-        Model::turn_ = Player::light;
-    } else if (Model::turn() == Player::light) {
-        Model::turn_ = Player::dark;
-    }
+    //advance the turn. using function from player.cxx
+    Model::turn_ = other_player(Model::turn_);
 
+    //refill next_moves_ for the current player
+    Model::compute_next_moves_();
 }
 
 //
@@ -115,17 +105,34 @@ void Model::play_move(Position pos)
 Position_set Model::find_flips_(Position current, Dimensions dir) const
 {
     Position_set flips {};
-    // yeah I know i did this with a while when i probably could have done a
-    // for, but i can worry about that later
     std::size_t n = 1;
-    while (board_[current + n * dir] == other_player(turn_)){
-        n++; // increments n when we detect the tile is occupied by a
+
+    //perform bounds_checking on the next square in the board in the given
+    //direction. if first adjacent square would be out of bounds, do nothing
+    Position posn = current + n * dir;
+    if (posn.x < 0 || posn.x >= Model::board_.dimensions().width
+    || posn.y < 0 || posn.y >= Model::board_.dimensions().height) {
+        return flips;
+    }
+
+    // increments n when we detect the space is occupied by a tile of the
+    // other player
+    while (board_[posn] == other_player(turn_)){
+        n++;
+
+        //perform bounds checking. once we reach an out-of-bounds posn,
+        //stop adding to flips
+        posn = current + n * dir;
+        if (posn.x < 0 || posn.x >= Model::board_.dimensions().width
+            || posn.y < 0 || posn.y >= Model::board_.dimensions().height) {
+            break;
+        }
     };
 
     if (board_[current + n * dir] == turn_)
     {
         // if the final tile is the current player, then we add the
-        // positions up to that one to the position set.
+        // positions up to that one to the set of flips.
         for(std::size_t ii = 1; ii < n; ii++){
             flips[{current + ii * dir}] = true;
         }
@@ -135,13 +142,36 @@ Position_set Model::find_flips_(Position current, Dimensions dir) const
 
 Position_set Model::evaluate_position_(Position pos) const
 {
+    //try initializing the position set with the posn we're looking at,
+    //as well, so it gets flipped too
     Position_set curr_pos {};
+
     // iterate through all possible directions and call find_flips
-    for (auto dim : Board::all_directions())
+    for (auto dir : Board::all_directions())
     {
-        Position_set new_tiles = find_flips_(pos, dim);
+        //find the next square in each direction.
+        Position next_pos = pos + dir;
+
+        //filter out the directions that are out of bounds. Out of bounds
+        //means a value less than 0 or greater than width of board
+        if (next_pos.x < 0 || next_pos.x >= Model::board_.dimensions().width
+        || next_pos.y < 0 || next_pos.y >= Model::board_.dimensions().height){
+
+            continue;
+        }
+
+        Position_set new_tiles = find_flips_(pos, dir);
         curr_pos.operator|=(new_tiles); // update the curr_pos with flips
     };
+
+    //if our curr_pos is not empty, meaning this is a valid move that will cause
+    //flips, add curr_pos to the Position_set that will become "second" in
+    // next_moves
+    if (curr_pos.size()) {
+        Position_set start_posn{pos};
+        curr_pos |= start_posn;
+    }
+
     return curr_pos;
 }
 
@@ -152,7 +182,7 @@ void Model::compute_next_moves_()
     // Only add non empty position sets  to next_moves_.
     next_moves_.clear(); // first clear out next moves
     for (auto pos : Model::board()){
-        auto valids = evaluate_position_(pos);
+        Position_set valids = evaluate_position_(pos);
         if (!valids.empty()){
             next_moves_[pos] = valids;
         }

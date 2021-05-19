@@ -36,17 +36,13 @@ Controller::initial_window_title() const
     return view_.initial_window_title();
 }
 
-//functions to add to controller:
-
 //on mouse down, try to place a token at the position in board
-//that's closest to that mouse click
+//that's closest to that mouse click. iterate through all the squares
+// of the board and see what the closest square is.
 void Controller::on_mouse_down(ge211::Mouse_button btn,
                                ge211::Posn<int> mouse_posn)
 {
-    //iterate through all the squares of the board and see what
-    //the closest square is.
-
-    //for all the positions currently occupied
+     //for all the positions currently occupied
     // in board, see all_positions() in model.hxx
 
     for (int col_ind = 0; col_ind < 8; ++col_ind) {
@@ -55,16 +51,6 @@ void Controller::on_mouse_down(ge211::Mouse_button btn,
             //current position we're checking is at (row, col)
             //a mouse click is inside the square given by this position
             //if its position is inside its bounding box
-
-            // int square_left = col_ind * grid_size;
-            // int square_right = (col_ind + 1) * grid_size;
-            // int square_top = row_ind * grid_size;
-            // int square_bottom = (row_ind + 1) * grid_size;
-            //
-            // //for converting between screen position and board index
-            // float mouse_x_board = mouse_posn.x; // / grid_size;
-            // float mouse_y_board = mouse_posn.y; // / grid_size;
-
             int square_left = col_ind;
             int square_right = col_ind + 1;
             int square_top = row_ind;
@@ -79,16 +65,8 @@ void Controller::on_mouse_down(ge211::Mouse_button btn,
             //above square_top, below square_bottom. if none of these are true,
             //mouse click is inside this current box
 
-            //simplify this into one expression once you verify it works
-            if (mouse_x_board < square_left) {
-                continue;
-            } else if (mouse_x_board > square_right) {
-                continue;
-            } else if (mouse_y_board < square_top) {
-                continue;
-            } else if (mouse_y_board > square_bottom) {
-                continue;
-            } else {
+            if (!(mouse_x_board < square_left || mouse_x_board > square_right
+            || mouse_y_board < square_top || mouse_y_board > square_bottom)) {
 
                 //eventually this will need to incorporate checks as to
                 //whether or not a move is valid
@@ -97,14 +75,7 @@ void Controller::on_mouse_down(ge211::Mouse_button btn,
 
                 //add a tile of the current player's color to the board,
                 //by updating the state of the model
-
-                //this line is causing exit code 1:
-                // Model::play_move: no such move
                 Controller::model_.play_move(square_coords);
-
-                //this is currently buggy b/c we haven't initialized the
-                //first 4 squares in the board, so next_moves_ doesn't exist
-                //and we have nothing to compare to
 
                 //now that we've found the closest square, break out
                 return;
