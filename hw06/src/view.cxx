@@ -17,6 +17,7 @@ View::View(Model const& model)
           black_tile(ball_radius, Color(0, 0, 0)),
           white_tile(ball_radius, Color(255, 255, 255)),
           gray_tile(ball_radius, Color(100, 100, 100)),
+          plays(ball_radius, Color(0, 0, 255)),
           //board_sprite({8*2*ball_radius, 8*2*ball_radius}, board_color)
           board_sprite({grid_size*8,grid_size*8}, board_color),
           text_sprite() //initialize empty, then add text later
@@ -35,9 +36,6 @@ void View::draw(Sprite_set& set)
     //goes into the "model" attribute of "View" and returns
     //model_.all_positions(). See model.hxx and board.hxx
     for (Position posn : View::model_.board()) {
-       // if (View::model_[posn] == Player::neither) {
-       //     continue;
-       // }
 
         //finds the player at given position. see operator[] in model.hxx
         Player curr_player = View::model_[posn];
