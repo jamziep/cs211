@@ -36,6 +36,13 @@ Controller::initial_window_title() const
     return view_.initial_window_title();
 }
 
+//if key pressed is q, quit game
+void Controller::on_key(ge211::Key key) {
+    if (key == ge211::Key::code('q')) {
+        quit();
+    }
+}
+
 //on mouse down, try to place a token at the position in board
 //that's closest to that mouse click. iterate through all the squares
 // of the board and see what the closest square is.
@@ -73,9 +80,32 @@ void Controller::on_mouse_down(ge211::Mouse_button btn,
                 Player turn = Controller::model_.turn();
                 ge211::Posn<int> square_coords{col_ind, row_ind};
 
+
                 //add a tile of the current player's color to the board,
                 //by updating the state of the model
-                Controller::model_.play_move(square_coords);
+                try {
+                    Controller::model_.play_move(square_coords);
+
+                    //remove any existing text
+                    ge211::Font sans30{"sans.ttf", 30};
+                    ge211::Text_sprite::Builder text_builder(sans30);
+                    ge211::Color TEXT_COLOR(255,0,0);
+                    text_builder.message("");
+                    view_.text_sprite.reconfigure(text_builder);
+
+                } catch(ge211::Client_logic_error) {
+                    //catch an invalid move error by printing "invalid move"
+                    // to the screen
+
+                    //for now I'm remaking the whole builder in order to recon-
+                    //figure the text sprite. could make this a member of
+                    // something later
+                    ge211::Font sans30{"sans.ttf", 30};
+                    ge211::Text_sprite::Builder text_builder(sans30);
+                    ge211::Color TEXT_COLOR(255,0,0);
+                    text_builder.message("Invalid move");
+                    view_.text_sprite.reconfigure(text_builder);
+                }
 
                 //now that we've found the closest square, break out
                 return;

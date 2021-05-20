@@ -30,6 +30,7 @@ protected:
     //
 
     void on_mouse_down(ge211::Mouse_button, ge211::Posn<int>);
+    void on_key(ge211::Key);
 
     // TODO: Add any input handlers you need, e.g.:
     //  - on_mouse_up for mouse clicks,

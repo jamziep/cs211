@@ -17,7 +17,8 @@ View::View(Model const& model)
           black_tile(ball_radius, Color(0, 0, 0)),
           white_tile(ball_radius, Color(255, 255, 255)),
           //board_sprite({8*2*ball_radius, 8*2*ball_radius}, board_color)
-          board_sprite({grid_size*8,grid_size*8}, board_color)
+          board_sprite({grid_size*8,grid_size*8}, board_color),
+          text_sprite() //initialize empty, then add text later
 {
     // //using the syntax from the window creation function:
     // const ge211::Rectangle_sprite board_sprite = ge211::Rectangle_sprite
@@ -26,15 +27,12 @@ View::View(Model const& model)
 
 void View::draw(Sprite_set& set)
 {
-    // TODO, PROBABLY
-
     //draw the board sprite, a rectangle located at 0,0
     set.add_sprite(View::board_sprite, ge211::Posn<int>{0,0} );
 
-    //iterate through the list of black and white tiles, and display
+    //iterate through the list of black and white tiles, and display.
     //goes into the "model" attribute of "View" and returns
     //model_.all_positions(). See model.hxx and board.hxx
-
     for (Position posn : View::model_.board()) {
 
         if (View::model_[posn] == Player::neither) {
@@ -54,6 +52,12 @@ void View::draw(Sprite_set& set)
         } else if (curr_player == Player::light) {
             set.add_sprite(View::white_tile, screen_posn, 3);
         }
+    }
+
+    //if the contents of the sprite are not empty, add it to screen
+    //uses the bool operator
+    if (text_sprite) {
+        set.add_sprite(View::text_sprite, {0, 0},4);
     }
 }
 
