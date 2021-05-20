@@ -29,19 +29,23 @@ public:
 
     std::string initial_window_title() const;
 
-    ge211::Circle_sprite const black_tile;
-    ge211::Circle_sprite const white_tile;
-    ge211::Circle_sprite const gray_tile;
-    ge211::Circle_sprite const plays;
-    //ge211::Rectangle_sprite const empty_square;
-    ge211::Rectangle_sprite const board_sprite; // need this one?
-    ge211::Text_sprite text_sprite; //not const as it changes
-
     // TODO: Add any public member functions you need.
+
+    //Lets controller update what exists in the text box based on the
+    //state of the board.
+    void update_text_box(std::string);
 
 private:
     Model const& model_;
 
     // TODO: Add any additional private members you need, such as helper
     // functions or sprites.
+
+public:
+    ge211::Circle_sprite const black_tile;
+    ge211::Circle_sprite const white_tile;
+    ge211::Circle_sprite const gray_tile;
+    ge211::Circle_sprite const plays;
+    ge211::Rectangle_sprite const board_sprite;
+    ge211::Text_sprite text_sprite; //not const as it changes
 };

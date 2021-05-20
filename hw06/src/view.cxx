@@ -94,6 +94,22 @@ View::initial_window_title() const
     return "Reversi";
 }
 
+//helper function: modify the text stored within the text sprite
+void View::update_text_box(std::string text)
+{
+    //make a new builder for text
+    ge211::Font sans30{"sans.ttf", 30};
+    ge211::Text_sprite::Builder text_builder(sans30);
+    text_builder.color(ge211::Color(57,255,255));
+
+    //add the text to our builder and reconfigure
+    text_builder.message(text);
+    View::text_sprite.reconfigure(text_builder);
+
+}
+
+
+
 //things to do in view:
 
 //make a way to draw all the sprites in the sprite set. in this

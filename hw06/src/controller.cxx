@@ -7,7 +7,6 @@
 //ideally I'd like to include the entire view.cxx file, since
 //these controls depend on the visual board dims
 static int const grid_size = 36;
-static int const ball_radius = grid_size/2;
 
 Controller::Controller(int size)
         : Controller(size, size)
@@ -77,34 +76,21 @@ void Controller::on_mouse_down(ge211::Mouse_button btn,
 
                 //eventually this will need to incorporate checks as to
                 //whether or not a move is valid
-                Player turn = Controller::model_.turn();
                 ge211::Posn<int> square_coords{col_ind, row_ind};
 
 
                 //add a tile of the current player's color to the board,
                 //by updating the state of the model
+
                 try {
                     Controller::model_.play_move(square_coords);
-
-                    //remove any existing text
-                    ge211::Font sans30{"sans.ttf", 30};
-                    ge211::Text_sprite::Builder text_builder(sans30);
-                    ge211::Color TEXT_COLOR(255,0,0);
-                    text_builder.message("");
-                    view_.text_sprite.reconfigure(text_builder);
+                    //remove any existing text from screen
+                    view_.update_text_box("");
 
                 } catch(ge211::Client_logic_error) {
                     //catch an invalid move error by printing "invalid move"
                     // to screen
-
-                    //for now I'm remaking the whole builder in order to recon-
-                    //figure the text sprite. could make this a member of
-                    // something later
-                    ge211::Font sans30{"sans.ttf", 30};
-                    ge211::Text_sprite::Builder text_builder(sans30);
-                    ge211::Color TEXT_COLOR(255,0,0);
-                    text_builder.message("Invalid move");
-                    view_.text_sprite.reconfigure(text_builder);
+                    view_.update_text_box("Invalid move");
                 }
 
                 //now that we've found the closest square, break out
