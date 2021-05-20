@@ -35,6 +35,7 @@ public:
     ge211::Circle_sprite const plays;
     //ge211::Rectangle_sprite const empty_square;
     ge211::Rectangle_sprite const board_sprite; // need this one?
+    ge211::Text_sprite text_sprite; //not const as it changes
 
     // TODO: Add any public member functions you need.
 

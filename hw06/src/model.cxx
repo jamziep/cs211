@@ -73,7 +73,7 @@ void Model::play_move(Position pos)
     Move const* movep = find_move(pos);
     if (!movep) {
         //so that our program doesn't end when someone plays a bad move
-        // throw Client_logic_error("Model::play_move: no such move");
+        throw Client_logic_error("Model::play_move: no such move");
         // std::cout << "\nModel::play_move: no such move" << std::endl;
         // return;
     } else {
