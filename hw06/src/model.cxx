@@ -91,6 +91,8 @@ void Model::play_move(Position pos)
         Model::compute_next_moves_();
         if (next_moves_.empty()){
             Model::turn_ = other_player(Model::turn_);
+
+            //if neither player has any moves left, set game over
             Model::compute_next_moves_();
             if(next_moves_.empty()){
                 set_game_over_();
@@ -224,13 +226,13 @@ void Model::set_game_over_()
     // compare tile counts and determine winner.
     if (black_count == white_count){
         Model::winner_ = Player::neither;
-        std::cout << "tie game";
+        //std::cout << "tie game";
     } else if (black_count > white_count){
         Model::winner_ = Player::dark;
-        std::cout << "black win";
+        //std::cout << "black win";
     } else {
         Model::winner_ = Player::light;
-        std::cout << "white win";
+        //std::cout << "white win";
     }
 }
 

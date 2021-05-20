@@ -78,7 +78,6 @@ void Controller::on_mouse_down(ge211::Mouse_button btn,
                 //whether or not a move is valid
                 ge211::Posn<int> square_coords{col_ind, row_ind};
 
-
                 //add a tile of the current player's color to the board,
                 //by updating the state of the model
 
@@ -104,9 +103,7 @@ void Controller::on_mouse_down(ge211::Mouse_button btn,
 }
 
 
-//if key pressed is q, exit out
-
-//bonus functionality:
+//more functionality we need:
 
 //this can be implemented in view as well. show all possible moves
 //for the player by showing the outline of a token of that color

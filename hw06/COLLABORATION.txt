@@ -10,3 +10,12 @@ Ben Fisk office hours, 5/17/21: got help with 3 things
  - Asked for advice on how to make grid_size visible to both view.cxx and
    controller.cxx. Ben advised me to make a function in view.cxx that
    returns the grid size, then call that in controller.cxx
+
+Mae Mastin office hours, 5/20/21:
+ - Advised us not to catch the invalid_move error in view.cxx
+ - Gave us the advice to look through the connect 4 code to see how
+   to display possible next moves
+ - Told us we could maybe edit view.cxx from model, even if it's a little
+   hacky, because of the restriction that view can't see the private
+   members of model, and because we're not allowed to add public members
+   to model, per the requirements of the code
