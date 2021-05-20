@@ -71,24 +71,32 @@ void Model::play_move(Position pos)
     Move const* movep = find_move(pos);
     if (!movep) {
         //so that our program doesn't end when someone plays a bad move
-        throw Client_logic_error("Model::play_move: no such move");
+        // throw Client_logic_error("Model::play_move: no such move");
         // std::cout << "\nModel::play_move: no such move" << std::endl;
         // return;
+    } else {
+
+        //find the position set of all things we've changed via find_move()
+        Position_set pset = movep->second;
+        Player turn = Model::turn();
+
+        //add the position set of all the things we've changed via find_move()
+        //to the data of which tiles are where in board
+        Model::board_.set_all(pset, turn);
+
+        //advance the turn. using function from player.cxx
+        Model::turn_ = other_player(Model::turn_);
+
+        //refill next_moves_ for the current player
+        Model::compute_next_moves_();
+        if (next_moves_.empty()){
+            Model::turn_ = other_player(Model::turn_);
+            Model::compute_next_moves_();
+            if(next_moves_.empty()){
+                set_game_over_();
+            }
+        }
     }
-
-    //find the position set of all things we've changed via find_move()
-    Position_set pset = movep -> second;
-    Player turn = Model::turn();
-
-    //add the position set of all the things we've changed via find_move()
-    //to the data of which tiles are where in board
-    Model::board_.set_all(pset, turn);
-
-    //advance the turn. using function from player.cxx
-    Model::turn_ = other_player(Model::turn_);
-
-    //refill next_moves_ for the current player
-    Model::compute_next_moves_();
 }
 
 //
@@ -177,7 +185,6 @@ void Model::compute_next_moves_()
     // Only add non empty position sets  to next_moves_.
     next_moves_.clear(); // first clear out next moves
     for (auto pos : Model::board()){
-
         //check to make sure that this position is not occupied. if so,
         //skip this position
         if (Model::board_[pos] != Player::neither) {
@@ -200,7 +207,31 @@ bool Model::advance_turn_()
 
 void Model::set_game_over_()
 {
-    // TODO OR NOT TODO: OPTIONAL HELPER
+    Model::turn_ = Player::neither;
+    int black_count = 0;
+    int white_count = 0;
+    int empty = 0;
+    // iterate over entire board and tally how many tiles belong to each team.
+    for (auto pos : Model::board()){
+        if (Model::board_[pos] == Player::dark){
+            ++black_count;
+        } else if (Model::board_[pos] == Player::light){
+            ++white_count;
+        } else {
+            ++empty;
+        }
+    }
+    // compare tile counts and determine winner.
+    if (black_count == white_count){
+        Model::winner_ = Player::neither;
+        std::cout << "tie game";
+    } else if (black_count > white_count){
+        Model::winner_ = Player::dark;
+        std::cout << "black win";
+    } else {
+        Model::winner_ = Player::light;
+        std::cout << "white win";
+    }
 }
 
 void Model::really_play_move_(Move move)
