@@ -65,8 +65,10 @@ Move const* Model::find_move(Position pos) const
 
 void Model::play_move(Position pos)
 {
-    if (is_game_over())
-        throw Client_logic_error("Model::play_move: game over");
+     if (is_game_over())
+         // commenting this out for now so we can run our own game over function
+        //throw Client_logic_error("Model::play_move: game over");
+         set_game_over_();
 
     Move const* movep = find_move(pos);
     if (!movep) {
