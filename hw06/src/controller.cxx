@@ -95,7 +95,7 @@ void Controller::on_mouse_down(ge211::Mouse_button btn,
 
                 } catch(ge211::Client_logic_error) {
                     //catch an invalid move error by printing "invalid move"
-                    // to the screen
+                    // to screen
 
                     //for now I'm remaking the whole builder in order to recon-
                     //figure the text sprite. could make this a member of

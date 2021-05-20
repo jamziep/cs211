@@ -74,7 +74,7 @@ void View::draw(Sprite_set& set)
         }
     }
 
-    //if the contents of the sprite are not empty, add it to screen
+    //if the contents of sprite are not empty, add it to screen
     //uses the bool operator
     if (text_sprite) {
         set.add_sprite(View::text_sprite, {0, 0},4);

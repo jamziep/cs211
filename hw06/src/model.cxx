@@ -13,8 +13,6 @@ Model::Model(int width, int height)
         : board_({width, height}),
         next_moves_()
 {
-    // TODO: initialize `next_moves_` to `turn_`'s available moves
-
     //start off with the first four center positions filled in
     //contains members {posn, {width,height}}
     Rectangle center_4 = Model::board_.center_positions();
@@ -72,7 +70,7 @@ void Model::play_move(Position pos)
     if (!movep) {
         //so that our program doesn't end when someone plays a bad move
         throw Client_logic_error("Model::play_move: no such move");
-        // std::cout << "\nModel::play_move: no such move" << std::endl;
+        // std::cout << "\nModel::play_move: no such move" << "\n";
         // return;
     } else {
 
@@ -132,7 +130,7 @@ Position_set Model::find_flips_(Position current, Dimensions dir) const
             n--;
             break;
         }
-    };
+    }
 
     if (board_[current + n * dir] == turn_)
     {
@@ -166,9 +164,9 @@ Position_set Model::evaluate_position_(Position pos) const
 
         Position_set new_tiles = find_flips_(pos, dir);
         curr_pos.operator|=(new_tiles); // update the curr_pos with flips
-    };
+    }
 
-    //if our curr_pos is not empty, meaning this is a valid move that will cause
+    //if the curr_pos is not empty, meaning this is a valid move that will cause
     //flips, add curr_pos to the Position_set that will become "second" in
     // next_moves
     if (curr_pos.size()) {
@@ -200,7 +198,7 @@ void Model::compute_next_moves_()
 
 bool Model::advance_turn_()
 {
-    // TODO OR NOT TODO: OPTIONAL HELPER
+    //OPTIONAL HELPER
     return false;
     // ^^^ this is wrong
 }
@@ -236,5 +234,5 @@ void Model::set_game_over_()
 
 void Model::really_play_move_(Move move)
 {
-    // TODO OR NOT TODO: OPTIONAL HELPER
+    //OPTIONAL HELPER
 }
