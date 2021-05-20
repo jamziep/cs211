@@ -31,6 +31,7 @@ public:
 
     ge211::Circle_sprite const black_tile;
     ge211::Circle_sprite const white_tile;
+    ge211::Circle_sprite const gray_tile;
     //ge211::Rectangle_sprite const empty_square;
     ge211::Rectangle_sprite const board_sprite; // need this one?
 
