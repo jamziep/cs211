@@ -139,15 +139,18 @@ void Controller::on_mouse_move(ge211::Posn<int> mouse_posn) {
                 //check to see if this move is one of the next moves possible
                 Move const* movep = model_.find_move(square_coords);
                 if (movep) {
-                    //update the move_preview aspect of view class
-                    Move move = *movep;
-                    // view_.move_preview = move;
+                    //if so, send this position set to view and tell them
+                    //to add sprites to the board for these flips
+                    Position_set pset = movep -> second;
+                    view_.set_move_preview2(movep -> second);
+                } else {
+                    //give an empty posn set so as to clear out the sprites,
+                    // maybe
+                    view_.set_move_preview2({{}});
                 }
-
 
             }
         }
-
     }
 }
 

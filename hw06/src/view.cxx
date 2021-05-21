@@ -25,7 +25,7 @@ View::View(Model const& model)
           text_sprite(), //initialize empty, then add text later
 
           //for previewing positions
-          move_preview({NULL,NULL},{{NULL,NULL}})
+          move_preview({{}})
 {
     // //using the syntax from the window creation function:
     // const ge211::Rectangle_sprite board_sprite = ge211::Rectangle_sprite
@@ -97,6 +97,12 @@ void View::draw(Sprite_set& set)
     //         set.add_sprite(gray_tile,screen_posn,4)
     //     }
     // }
+    if (!move_preview.empty()){
+        for (Position posn : move_preview) {
+            Position screen_posn{posn.x * grid_size, posn.y*grid_size};
+            set.add_sprite(gray_tile,screen_posn,4);
+        }
+    }
 
 }
 
@@ -130,15 +136,24 @@ void View::update_text_box(std::string text)
 }
 
 //helper function to draw that takes in a move, and modifies the sprite set
-// void set_move_preview(Move const* movep, ge211::Sprite_set& set) {
-//
-//     //if the move pointer is not null, add these sprites to set
-//     if (movep) {
-//         for (ge211::Posn<int> posn : movep -> second) {
-//             set.add_sprite(View::gray_tile, posn);
-//         }
-//     }
-// }
+void View::set_move_preview(Move const* movep, ge211::Sprite_set& set) {
+
+    //if the move pointer is not null, add these sprites to set
+    if (movep) {
+        for (ge211::Posn<int> posn : movep -> second) {
+            set.add_sprite(gray_tile, posn);
+        }
+    }
+}
+
+//trying this again by just editing the member data. now with just
+//a position set, since that seems simpler
+void View::set_move_preview2(Position_set pset)
+{
+    View::move_preview = pset;
+}
+
+
 
 
 //things to do in view:

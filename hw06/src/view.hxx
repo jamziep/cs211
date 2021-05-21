@@ -34,7 +34,10 @@ public:
     //Lets controller update what exists in the text box based on the
     //state of the board.
     void update_text_box(std::string);
-    // void set_move_preview(Move const*, ge211::Sprite_set&);
+    void set_move_preview(Move const*, ge211::Sprite_set&);
+
+    //another version of editing move preview
+    void set_move_preview2(Position_set);
 
     //Lets "view" preview the possible flips caused by a move that the
     //player scrolls over. Takes in a Move map and a reference to a
@@ -56,6 +59,6 @@ public:
     ge211::Text_sprite text_sprite; //not const as it changes
 
     //for if the player mouses over a square to preview a move
-    Move move_preview;
+    Position_set move_preview;
 
 };
