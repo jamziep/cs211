@@ -78,12 +78,55 @@ struct Test_access
         model.set_game_over_();
         return model.winner_;
     }
+    Player get_winner()
+    {
+        return model.winner_;
+    }
 };
 
-// test cases for play game
+// test cases for playing moves and valid moves.
 TEST_CASE("Play the game")
 {
-    Model model;
+    Model model(4);
+    Test_access t{model};
+
+    // test add pieces to the center.
+    model.play_move({1,1});
+    model.play_move({1,2});
+    model.play_move({2,2});
+    model.play_move({2,1});
+    // find valid moves based on this.
+    CHECK(model.find_move({0,2}));
+    CHECK(model.find_move({1,3}));
+}
+
+// find the winner using play move
+TEST_CASE("black loses")
+{
+    Model model(2);
+    // play all possible moves:
+    model.play_move({0,0});
+    model.play_move({0,1});
+    model.play_move({1,0});
+    model.play_move({1,1});
+    // find the winner.
+
+    CHECK(model.winner() == Player::neither);
+}
+
+// checks for invalid move using play move
+TEST_CASE("bad moves")
+{
+    Model model(4);
+    CHECK_THROWS_AS(model.play_move({0,0}),Client_logic_error);
+}
+
+// using play move check that players properly switch
+TEST_CASE("check for changing players")
+{
+    Model model(4);
+    model.play_move({1, 1});
+    CHECK(model.turn() == Player::light);
 }
 
 // tests find_flips_ in model.cxx
@@ -167,7 +210,22 @@ TEST_CASE("Possible moves on the board")
     // start with the center 4
     f = t.compute_next();
     CHECK(f == Position_set{{1,1}, {1,2}, {2,1}, {2,2}});
-
+    // fill center:
+    t.board()[{1,1}] = Player::dark;
+    t.board()[{1,2}] = Player::light;
+    t.board()[{2,2}] = Player::dark;
+    t.board()[{2,1}] = Player::light;
+    f.clear();
+    f = t.compute_next();
+    CHECK(f == Position_set{{0,2}, {1,3}, {2,0}, {3,1}});
+    // white only:
+    t.board()[{1,1}] = Player::light;
+    t.board()[{1,2}] = Player::light;
+    t.board()[{2,2}] = Player::light;
+    t.board()[{2,1}] = Player::light;
+    f.clear();
+    f = t.compute_next();
+    CHECK(f.empty());
 }
 
 //tests the set_game_over function
