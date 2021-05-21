@@ -15,25 +15,25 @@ Model::Model(int width, int height)
 {
     //start off with the first four center positions filled in
     //contains members {posn, {width,height}}
-    Rectangle center_4 = Model::board_.center_positions();
+    //Rectangle center_4 = Model::board_.center_positions();
 
     //start at the position given by the rectangle, then find the coords
     //in terms of board position {2,3}, {4,1} etc. of corner squares
-    Position posn_tl{center_4.x, center_4.y};
-    Position posn_tr{center_4.x +1, center_4.y};
-    Position posn_bl{center_4.x, center_4.y + 1};
-    Position posn_br{center_4.x + 1, center_4.y + 1};
+    //Position posn_tl{center_4.x, center_4.y};
+    //Position posn_tr{center_4.x +1, center_4.y};
+    //Position posn_bl{center_4.x, center_4.y + 1};
+    //Position posn_br{center_4.x + 1, center_4.y + 1};
 
     //fill in the center 4 tiles with alternating colors. advance the
     //turn as you go
-    Position_set black_moves{posn_tl,posn_br};
-    Position_set white_moves{posn_tr,posn_bl};
+    //Position_set black_moves{posn_tl,posn_br};
+    //Position_set white_moves{posn_tr,posn_bl};
 
-    Model::board_.set_all(black_moves, Model::turn_);
-    Model::turn_ = other_player(Model::turn_);
+    //Model::board_.set_all(black_moves, Model::turn_);
+    //Model::turn_ = other_player(Model::turn_);
 
-    Model::board_.set_all(white_moves, Model::turn_);
-    Model::turn_ = other_player(Model::turn_);
+    //Model::board_.set_all(white_moves, Model::turn_);
+    //Model::turn_ = other_player(Model::turn_);
 
     //initialize next_moves_ to turn_'s possible next moves,
     //using the compute_next_moves helper
@@ -74,7 +74,6 @@ void Model::play_move(Position pos)
         //do want this error to throw if we get here, b/c it means we did some-
         //thing wrong
         throw Client_logic_error("Model::play_move: no such move");
-
     } else {
 
         //find the position set of all things we've changed via find_move()
@@ -187,16 +186,35 @@ void Model::compute_next_moves_()
     // iterate through entire board all call eval_position on every spot.
     // Only add non empty position sets  to next_moves_.
     next_moves_.clear(); // first clear out next moves
-    for (auto pos : Model::board()){
-        //check to make sure that this position is not occupied. if so,
-        //skip this position
-        if (Model::board_[pos] != Player::neither) {
-            continue;
+    int total_plays = board_.count_player(Player::light) + board_
+            .count_player(Player::dark);
+    // check to see if the 4 center moves have been played
+    if (total_plays < 4){
+        Rectangle center_4 = Model::board_.center_positions();
+        // set the center as the center
+        Position_set centers {{center_4.x, center_4.y},
+                              {center_4.x +1, center_4.y},
+                              {center_4.x, center_4.y + 1},
+                              {center_4.x + 1, center_4.y + 1}};
+        // check to see which parts are unoccupied, and pos to next moves if not
+        Position_set valid_centers {};
+        for (ge211::Posn<int> pos : centers) {
+            if (Model::board_[pos] == Player::neither) {
+                valid_centers[{pos}] = true;
+                next_moves_[pos] = valid_centers;
+            }
         }
-
-        Position_set valids = evaluate_position_(pos);
-        if (!valids.empty()){
-            next_moves_[pos] = valids;
+    } else {
+        for (auto pos : Model::board()) {
+            //check to make sure that this position is not occupied. if so,
+            //skip this position
+            if (Model::board_[pos] != Player::neither) {
+                continue;
+            }
+            Position_set valids = evaluate_position_(pos);
+            if (!valids.empty()) {
+                next_moves_[pos] = valids;
+            }
         }
     }
 }
@@ -239,5 +257,22 @@ void Model::set_game_over_()
 
 void Model::really_play_move_(Move move)
 {
-    //OPTIONAL HELPER
+    // i put this here just in case
+    int total_plays = board_.count_player(Player::light) + board_
+            .count_player(Player::dark);
+    // check to see if the 4 center moves have been played
+    if (total_plays < 4){
+        Rectangle center_4 = Model::board_.center_positions();
+        // set the center as the center
+        Position_set centers {{center_4.x, center_4.y},
+                              {center_4.x +1, center_4.y},
+                              {center_4.x, center_4.y + 1},
+                              {center_4.x + 1, center_4.y + 1}};
+        // check to see which parts are unoccupied, and pos to next moves if not
+        for (ge211::Posn<int> pos : centers) {
+            if (Model::board_[pos] == Player::neither) {
+                next_moves_[pos];
+            }
+        }
+    }
 }
