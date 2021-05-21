@@ -69,7 +69,21 @@ struct Test_access
         }
         return posns;
     }
+
+    //test_win will also return the player that wins, unlike the void
+    // set_game_winner
+    Player test_win()
+    {
+        model.set_game_over_();
+        return model.winner_;
+    }
 };
+
+// test cases for play game
+TEST_CASE("Play the game")
+{
+    Model model;
+}
 
 // tests find_flips_ in model.cxx
 TEST_CASE("flip check")
@@ -139,6 +153,7 @@ TEST_CASE("evaluating positions")
 }
 
 // tests compute_next_moves_
+// this should work when we get rid of the four tiles in the middle of the board
 TEST_CASE("Possible moves on the board")
 {
     Model model;
@@ -146,7 +161,7 @@ TEST_CASE("Possible moves on the board")
     Position_set f;
 
     f = t.compute_next();
-    CHECK(f == Position_set{{}});
+    CHECK(f.empty());
     t.board()[{2,2}] = Player::dark;
     t.board()[{3,2}] = Player::light;
 
@@ -154,6 +169,34 @@ TEST_CASE("Possible moves on the board")
     f = t.compute_next();
     CHECK( f == Position_set{{4,2}});
 }
+
+//tests the set_game_over function
+TEST_CASE("winner test")
+{
+    Model model;
+    Test_access t{model};
+    Player curr_winner;
+    // case 1: only white remains
+    t.board()[{2,2}] = Player::light;
+    t.board()[{3,2}] = Player::light;
+    t.board()[{4,2}] = Player::light;
+    curr_winner = t.test_win();
+    CHECK(curr_winner == Player::light);
+    // case 2: black by majority
+    t.board()[{2,2}] = Player::dark;
+    t.board()[{3,2}] = Player::dark;
+    t.board()[{4,2}] = Player::light;
+    curr_winner = t.test_win();
+    CHECK(curr_winner == Player::dark);
+    // case 3: tie game
+    t.board()[{2,2}] = Player::dark;
+    t.board()[{3,2}] = Player::dark;
+    t.board()[{4,2}] = Player::light;
+    t.board()[{5, 2}] = Player::light;
+    curr_winner = t.test_win();
+    CHECK(curr_winner == Player::neither);
+}
+
 //things to test:
 
 //test cases:
