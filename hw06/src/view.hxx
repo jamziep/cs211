@@ -34,6 +34,11 @@ public:
     //Lets controller update what exists in the text box based on the
     //state of the board.
     void update_text_box(std::string);
+    // void set_move_preview(Move const*, ge211::Sprite_set&);
+
+    //Lets "view" preview the possible flips caused by a move that the
+    //player scrolls over. Takes in a Move map and a reference to a
+    //sprite set from View::draw(), and adds any
 
 private:
     Model const& model_;
@@ -47,5 +52,10 @@ public:
     ge211::Circle_sprite const gray_tile;
     ge211::Circle_sprite const plays;
     ge211::Rectangle_sprite const board_sprite;
+    ge211::Rectangle_sprite const square_sprite;
     ge211::Text_sprite text_sprite; //not const as it changes
+
+    //for if the player mouses over a square to preview a move
+    Move move_preview;
+
 };

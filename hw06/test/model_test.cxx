@@ -25,6 +25,10 @@ TEST_CASE("Fails with starter code")
 {
     Model m(6);
     CHECK( m.find_move({2, 2}) );
+
+    //{2,2} is the top left corner of the board. why would there be
+    //a move possible there? you would think that this posn has al-
+    //ready been played, so it wouldn't be possible at this point
 }
 
 // This fails with the starter code, but should pass.
@@ -36,24 +40,33 @@ TEST_CASE("Throws with starter code")
 
 // YOU NEED MANY MORE TESTS!
 
-//things to test:
+TEST_CASE("Asymmetric board") {
 
-//test cases:
-//next moves relative to a board that has been created
-//flips caused by each of the possible next moves
-//winner is properly assigned when board is full
-//winner is properly assigned when neither player has any more moves
-//when one player has no more moves, changes to other player
+    //make a board that's not 8x8 and ensure all 4 center
+    //positions are initialized right
 
-//functions to test:
-//play_move
-// - when it's game over
-// - when invalid move happens
-// - changes the player
-//find_flips
-//evaluate_position
-//compute_next_moves
-//set_game_over
+    Model m(6,4);
+    CHECK(m.board() == Model::Rectangle{0,0,6,4});
+
+    //basic checks
+    CHECK_FALSE( m.is_game_over() );
+    CHECK( m.turn() == Player::dark );
+    CHECK( m.winner() == Player::neither );
+    CHECK( m[{0, 0}] == Player::neither );
+    CHECK( m.find_move({0, 0}) == nullptr );
+
+    //check that center four positions are properly initialized
+    CHECK( m[{2,1}] == Player::dark );
+    CHECK( m[{3,1}] == Player::light );
+    CHECK( m[{2,2}] == Player::dark );
+    CHECK( m[{3,2}] == Player::light );
+
+    //check that valid moves
+
+
+
+
+}
 
 
 
