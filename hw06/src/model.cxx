@@ -13,28 +13,6 @@ Model::Model(int width, int height)
         : board_({width, height}),
         next_moves_()
 {
-    //start off with the first four center positions filled in
-    //contains members {posn, {width,height}}
-    //Rectangle center_4 = Model::board_.center_positions();
-
-    //start at the position given by the rectangle, then find the coords
-    //in terms of board position {2,3}, {4,1} etc. of corner squares
-    //Position posn_tl{center_4.x, center_4.y};
-    //Position posn_tr{center_4.x +1, center_4.y};
-    //Position posn_bl{center_4.x, center_4.y + 1};
-    //Position posn_br{center_4.x + 1, center_4.y + 1};
-
-    //fill in the center 4 tiles with alternating colors. advance the
-    //turn as you go
-    //Position_set black_moves{posn_tl,posn_br};
-    //Position_set white_moves{posn_tr,posn_bl};
-
-    //Model::board_.set_all(black_moves, Model::turn_);
-    //Model::turn_ = other_player(Model::turn_);
-
-    //Model::board_.set_all(white_moves, Model::turn_);
-    //Model::turn_ = other_player(Model::turn_);
-
     //initialize next_moves_ to turn_'s possible next moves,
     //using the compute_next_moves helper
     Model::compute_next_moves_();
@@ -64,8 +42,7 @@ Move const* Model::find_move(Position pos) const
 void Model::play_move(Position pos)
 {
      if (is_game_over())
-         // commenting this out for now so we can run our own game over function
-        //throw Client_logic_error("Model::play_move: game over");
+         //rather than throw an error, run our own game over function
          set_game_over_();
 
     Move const* movep = find_move(pos);
@@ -144,6 +121,8 @@ Position_set Model::find_flips_(Position current, Dimensions dir) const
             flips[{current + ii * dir}] = true;
         }
     }
+
+    //add the current player to flips
     return flips;
 }
 
@@ -188,14 +167,17 @@ void Model::compute_next_moves_()
     next_moves_.clear(); // first clear out next moves
     int total_plays = board_.count_player(Player::light) + board_
             .count_player(Player::dark);
+
     // check to see if the 4 center moves have been played
     if (total_plays < 4){
         Rectangle center_4 = Model::board_.center_positions();
+
         // set the center as the center
         Position_set centers {{center_4.x, center_4.y},
                               {center_4.x +1, center_4.y},
                               {center_4.x, center_4.y + 1},
                               {center_4.x + 1, center_4.y + 1}};
+
         // check to see which parts are unoccupied, and pos to next moves if not
         Position_set valid_centers {};
         for (ge211::Posn<int> pos : centers) {
@@ -246,13 +228,10 @@ void Model::set_game_over_()
     // compare tile counts and determine winner.
     if (black_count == white_count){
         Model::winner_ = Player::neither;
-        //std::cout << "tie game";
     } else if (black_count > white_count){
         Model::winner_ = Player::dark;
-        //std::cout << "black win";
     } else {
         Model::winner_ = Player::light;
-        //std::cout << "white win";
     }
 }
 

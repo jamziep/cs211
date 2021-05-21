@@ -25,10 +25,6 @@ TEST_CASE("Fails with starter code")
 {
     Model m(6);
     CHECK( m.find_move({2, 2}) );
-
-    //{2,2} is the top left corner of the board. why would there be
-    //a move possible there? you would think that this posn has al-
-    //ready been played, so it wouldn't be possible at this point
 }
 
 // This fails with the starter code, but should pass.
@@ -38,8 +34,7 @@ TEST_CASE("Throws with starter code")
     m.play_move({1, 1});
 }
 
-// YOU NEED MANY MORE TESTS!
-
+//for accessing the board during testing
 struct Test_access
 {
     Model& model;
@@ -68,8 +63,10 @@ struct Test_access
         model.next_moves_.clear();
         model.compute_next_moves_();
         Position_set posns {};
-        for (const auto & [pos, flips] : model.next_moves_){
-                posns[pos] = true;
+
+        for (const auto& move : model.next_moves_){
+            ge211::Posn<int> pos = move.first;
+            posns[pos] = true;
         }
         return posns;
     }
@@ -105,6 +102,7 @@ TEST_CASE("flip check")
     CHECK(f.empty());
     f = t.find_flips({2,4}, {0, -1});
     CHECK(f == Position_set{{2,3}});
+
     // diagonal flip check
     f.clear();
     t.board()[{3,2}] = Player::dark;
@@ -112,6 +110,7 @@ TEST_CASE("flip check")
     CHECK(f.empty());
     f = t.find_flips({1, 4}, {1, -1});
     CHECK(f == Position_set{{2,3}});
+
     //isolated tile
     f.clear();
     f = t.find_flips({4,4}, {1,1});
@@ -119,6 +118,7 @@ TEST_CASE("flip check")
     f = t.find_flips({4,4}, {1,0});
     f = t.find_flips({4,4}, {-1,-1});
     CHECK(f.empty());
+
     //multiple tiles
     f.clear();
     t.board()[{1,2}] = Player::dark;
@@ -157,7 +157,7 @@ TEST_CASE("evaluating positions")
 }
 
 // tests compute_next_moves_
-// this should work when we get rid of the four tiles in the middle of the board
+// works when we get rid of center 4 tiles
 TEST_CASE("Possible moves on the board")
 {
     Model model(4);
@@ -167,8 +167,6 @@ TEST_CASE("Possible moves on the board")
     // start with the center 4
     f = t.compute_next();
     CHECK(f == Position_set{{1,1}, {1,2}, {2,1}, {2,2}});
-    
-
 
 }
 
@@ -184,12 +182,14 @@ TEST_CASE("winner test")
     t.board()[{4,2}] = Player::light;
     curr_winner = t.test_win();
     CHECK(curr_winner == Player::light);
+
     // case 2: black by majority
     t.board()[{2,2}] = Player::dark;
     t.board()[{3,2}] = Player::dark;
     t.board()[{4,2}] = Player::light;
     curr_winner = t.test_win();
     CHECK(curr_winner == Player::dark);
+
     // case 3: tie game
     t.board()[{2,2}] = Player::dark;
     t.board()[{3,2}] = Player::dark;
@@ -199,24 +199,74 @@ TEST_CASE("winner test")
     CHECK(curr_winner == Player::neither);
 }
 
-//things to test:
+//Carries out some of the tests we did visually, by interacting
+// with the board, at the start of this code process. Figured
+// it might be wise to show them in our test cases as well
+TEST_CASE("Early functionality checks") {
 
-//test cases:
-//next moves relative to a board that has been created
-//flips caused by each of the possible next moves
-//winner is properly assigned when board is full
-//winner is properly assigned when neither player has any more moves
-//when one player has no more moves, changes to other player
+    //initialize board
+    Model model(6,4);
+    Test_access t{model};
 
-//functions to test:
-//play_move
-// - when it's game over
-// - when invalid move happens
-// - changes the player
-//find_flips
-//evaluate_position
-//compute_next_moves
-//set_game_over
+    //test that turn changes properly after each turn
+    // current player is black
+    model.play_move({2,1});
+    CHECK(model.turn() == Player::light);
+    model.play_move({3,1});
+    CHECK(model.turn() == Player::dark);
+    model.play_move({3,2});
+    CHECK(model.turn() == Player::light);
+    model.play_move({2,2});
+    CHECK(model.turn() == Player::dark);
 
+    //check that a valid move registers as such
+    //current player is black
+    CHECK(model.find_move({3,0}));
+    CHECK(model.find_move({4,1}));
+    CHECK(model.find_move({1,2}));
+    CHECK(model.find_move({2,3}));
+
+    //bounds checking: make sure playing positions on the outer
+    //limits of the board doesn't cause out-of-bounds errors
+    t.board()[{4,1}] = Player::light;
+    t.board()[{1,1}] = Player::light;
+
+    Position_set pset;
+
+    //valid directions of travel
+    pset = t.find_flips({0,1},{1,0});
+    CHECK_FALSE(pset.empty());
+    pset = t.find_flips({5,1},{-1,0});
+    CHECK_FALSE(pset.empty());
+
+    //ensure that the position set from evaluate_position includes all
+    //the things that flip AND the cell itself
+    pset = t.evaluate_position({5,1});
+    Position_set test_pset{{3,1},{4,1},{5,1}};
+    CHECK(pset == test_pset);
+
+    //invalid directions of travel, shouldn't crash
+    pset = t.find_flips({5,1},{1,0});
+    CHECK(pset.empty());
+    pset = t.find_flips({0,1},{-1,0});
+    CHECK(pset.empty());
+
+    //ensure that model doesn't let you play in a position that is
+    //already occupied
+    pset = t.evaluate_position({2,1});
+    CHECK(pset.empty());
+
+    //make sure that next_moves_ refills properly after a turn
+    //means light plays are added and dark plays are removed
+    model.play_move({3,0});
+    CHECK(model.turn() == Player::light);
+    CHECK(model.find_move({2,0}));
+    CHECK(model.find_move({4,0}));
+    CHECK(model.find_move({4,2}));
+
+    CHECK_FALSE(model.find_move({5,0}));
+    CHECK_FALSE(model.find_move({5,1}));
+    CHECK_FALSE(model.find_move({1,2}));
+}
 
 

@@ -18,19 +18,13 @@ View::View(Model const& model)
           black_tile(ball_radius, Color(0, 0, 0)),
           white_tile(ball_radius, Color(255, 255, 255)),
           gray_tile(ball_radius, Color(100, 100, 100)),
-          plays(ball_radius, Color(0, 0, 255)),
-          //board_sprite({8*2*ball_radius, 8*2*ball_radius}, board_color)
           board_sprite({grid_size*8,grid_size*8}, board_color),
           square_sprite({grid_size,grid_size}, highlight_color),
           text_sprite(), //initialize empty, then add text later
 
-          //for previewing positions
+          //for previewing positions as you mouse over them
           move_preview({{}})
-{
-    // //using the syntax from the window creation function:
-    // const ge211::Rectangle_sprite board_sprite = ge211::Rectangle_sprite
-    //         (grid_size * model_.board().dimensions(), board_color);
-}
+{}
 
 void View::draw(Sprite_set& set)
 {
@@ -89,14 +83,6 @@ void View::draw(Sprite_set& set)
 
     //if the player is previewing a move, take the full list of tiles
     //overturned by that move, and draw all those tiles in gray to preview
-    //i.e. if move_preview is not empty
-    // if (move_preview.first != Position{NULL,NULL}) {
-    //     //add a sprite for each thing in move_preview.second
-    //     for (Position posn : move_preview.second) {
-    //         Position screen_posn{posn.x * grid_size, posn.y*grid_size};
-    //         set.add_sprite(gray_tile,screen_posn,4)
-    //     }
-    // }
     if (!move_preview.empty()){
         for (Position posn : move_preview) {
             Position screen_posn{posn.x * grid_size, posn.y*grid_size};
@@ -121,7 +107,9 @@ View::initial_window_title() const
     return "Reversi";
 }
 
-//helper function: modify the text stored within the text sprite
+//Helper function: modify the text stored within the text sprite
+//This is mainly used to display text that says "invalid move" if
+//a player tries to make an illegal move.
 void View::update_text_box(std::string text)
 {
     //make a new builder for text
@@ -135,31 +123,8 @@ void View::update_text_box(std::string text)
 
 }
 
-//helper function to draw that takes in a move, and modifies the sprite set
-void View::set_move_preview(Move const* movep, ge211::Sprite_set& set) {
-
-    //if the move pointer is not null, add these sprites to set
-    if (movep) {
-        for (ge211::Posn<int> posn : movep -> second) {
-            set.add_sprite(gray_tile, posn);
-        }
-    }
-}
-
-//trying this again by just editing the member data. now with just
-//a position set, since that seems simpler
-void View::set_move_preview2(Position_set pset)
+//Interacts with controller.cxx.
+void View::set_move_preview(Position_set pset)
 {
     View::move_preview = pset;
 }
-
-
-
-
-//things to do in view:
-
-//make a way to draw all the sprites in the sprite set. in this
-//case, all the sprites are gonna be the tokens on the board
-
-//make a way to initialize the board as a green background with gridlines
-//at every row and column

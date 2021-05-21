@@ -1,8 +1,5 @@
 #include "controller.hxx"
 
-//for visual debug
-#include <iostream>
-
 //copied this value from view.cxx for finding size of board
 //ideally I'd like to include the entire view.cxx file, since
 //these controls depend on the visual board dims
@@ -51,7 +48,7 @@ void Controller::on_mouse_down(ge211::Mouse_button btn,
      //for all the positions currently occupied
     // in board, see all_positions() in model.hxx
 
-    //TODO: de-hardcode this so that it can work w/ boards of
+    //maybeTODO: de-hardcode this so that it can work w/ boards of
     //diff sizes
 
     for (int col_ind = 0; col_ind < 8; ++col_ind) {
@@ -91,7 +88,8 @@ void Controller::on_mouse_down(ge211::Mouse_button btn,
 }
 
 //Helper function for on_mouse_down and on_mouse_move. Takes in the
-//position of a mouse click and determines whe
+//position of a mouse click and determines whether the position is
+//within the current square given by (row,col)
 bool Controller::mouse_is_within_square_(ge211::Posn<int> mouse_posn,
                                         int col_ind, int row_ind) {
 
@@ -114,16 +112,11 @@ bool Controller::mouse_is_within_square_(ge211::Posn<int> mouse_posn,
 
     return (!(mouse_x_board < square_left || mouse_x_board > square_right
           || mouse_y_board < square_top || mouse_y_board > square_bottom));
-
-    //return false; //fix later
 }
 
+//when we move the mouse, if we move the mouse over a valid position to play in,
+//show the possible flips that will result from that play
 void Controller::on_mouse_move(ge211::Posn<int> mouse_posn) {
-
-    //these are placeholders for now, so we can avoid the
-    //override errors
-    // int mouse_x = mouse_posn.x;
-    // int mouse_y = mouse_posn.y;
 
     //iterate through all the squares of the board
     for (int col_ind = 0; col_ind < Controller::model_.board().width;
@@ -141,27 +134,14 @@ void Controller::on_mouse_move(ge211::Posn<int> mouse_posn) {
                 if (movep) {
                     //if so, send this position set to view and tell them
                     //to add sprites to the board for these flips
-                    Position_set pset = movep -> second;
-                    view_.set_move_preview2(movep -> second);
+                    view_.set_move_preview(movep -> second);
                 } else {
-                    //give an empty posn set so as to clear out the sprites,
-                    // maybe
-                    view_.set_move_preview2({{}});
+                    //give an empty posn set so as to clear out the sprites
+                    view_.set_move_preview({{}});
                 }
 
             }
         }
     }
 }
-
-//more functionality we need:
-
-//this can be implemented in view as well. show all possible moves
-//for the player by showing the outline of a token of that color
-//in every square where the player can move. outline should be a
-//border only
-
-//on mouse move, show the possible moves for the player. if the
-//player hovers over a valid position, make the outline slightly
-//darker over that token
 

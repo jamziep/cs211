@@ -19,3 +19,9 @@ Mae Mastin office hours, 5/20/21:
    hacky, because of the restriction that view can't see the private
    members of model, and because we're not allowed to add public members
    to model, per the requirements of the code
+
+Jesse office hours, 5/20/21:
+ - Told us we can use find_move() to determine what's in next_moves_
+ - Gave us the important info that we can't have the first four
+   moves initialized on the board; players have to place the first
+   four tokens

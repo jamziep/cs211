@@ -33,11 +33,6 @@ protected:
     void on_key(ge211::Key) override;
     void on_mouse_move(ge211::Posn<int>) override;
 
-    // TODO: Add any input handlers you need, e.g.:
-    //  - on_mouse_up for mouse clicks,
-    //  - on_mouse_move for mouse tracking, or
-    //  - on_frame for animation (?).
-
     // These three delegate to the view:
     void draw(ge211::Sprite_set&) override;
     View::Dimensions initial_window_dimensions() const override;
