@@ -256,22 +256,4 @@ void Model::set_game_over_()
 
 void Model::really_play_move_(Move move)
 {
-    // i put this here just in case
-    int total_plays = board_.count_player(Player::light) + board_
-            .count_player(Player::dark);
-    // check to see if the 4 center moves have been played
-    if (total_plays < 4){
-        Rectangle center_4 = Model::board_.center_positions();
-        // set the center as the center
-        Position_set centers {{center_4.x, center_4.y},
-                              {center_4.x +1, center_4.y},
-                              {center_4.x, center_4.y + 1},
-                              {center_4.x + 1, center_4.y + 1}};
-        // check to see which parts are unoccupied, and pos to next moves if not
-        for (ge211::Posn<int> pos : centers) {
-            if (Model::board_[pos] == Player::neither) {
-                next_moves_[pos];
-            }
-        }
-    }
 }
