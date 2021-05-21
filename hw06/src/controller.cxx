@@ -51,28 +51,14 @@ void Controller::on_mouse_down(ge211::Mouse_button btn,
      //for all the positions currently occupied
     // in board, see all_positions() in model.hxx
 
+    //TODO: de-hardcode this so that it can work w/ boards of
+    //diff sizes
+
     for (int col_ind = 0; col_ind < 8; ++col_ind) {
         for (int row_ind = 0; row_ind < 8; ++row_ind) {
 
-            //current position we're checking is at (row, col)
-            //a mouse click is inside the square given by this position
-            //if its position is inside its bounding box
-            int square_left = col_ind;
-            int square_right = col_ind + 1;
-            int square_top = row_ind;
-            int square_bottom = row_ind + 1;
-
-            //for converting between screen position and board index
-            double mouse_x_board = mouse_posn.x / double(grid_size);
-            double mouse_y_board = mouse_posn.y / double(grid_size);
-
-            //ways the mouse click posn could be outside the bounding
-            //box of this square: left of square_left, right of square_right,
-            //above square_top, below square_bottom. if none of these are true,
-            //mouse click is inside this current box
-
-            if (!(mouse_x_board < square_left || mouse_x_board > square_right
-            || mouse_y_board < square_top || mouse_y_board > square_bottom)) {
+            if (Controller::mouse_is_within_square_(mouse_posn, col_ind,
+                                                    row_ind)) {
 
                 //eventually this will need to incorporate checks as to
                 //whether or not a move is valid
@@ -81,14 +67,16 @@ void Controller::on_mouse_down(ge211::Mouse_button btn,
                 //add a tile of the current player's color to the board,
                 //by updating the state of the model
 
-                try {
+                //If result of find_move is not null, it's a valid move, so
+                // play it. Else, interpret as an invalid move
+
+                if (Controller::model_.find_move(square_coords)) {
                     Controller::model_.play_move(square_coords);
                     //remove any existing text from screen
                     view_.update_text_box("");
 
-                } catch(ge211::Client_logic_error) {
-                    //catch an invalid move error by printing "invalid move"
-                    // to screen
+                } else {
+                    //handle an invalid move error by printing "invalid move"
                     view_.update_text_box("Invalid move");
                 }
 
@@ -102,6 +90,66 @@ void Controller::on_mouse_down(ge211::Mouse_button btn,
     return;
 }
 
+//Helper function for on_mouse_down and on_mouse_move. Takes in the
+//position of a mouse click and determines whe
+bool Controller::mouse_is_within_square_(ge211::Posn<int> mouse_posn,
+                                        int col_ind, int row_ind) {
+
+    //current position we're checking is at (row, col)
+    //a mouse click is inside the square given by this position
+    //if its position is inside its bounding box
+    int square_left = col_ind;
+    int square_right = col_ind + 1;
+    int square_top = row_ind;
+    int square_bottom = row_ind + 1;
+
+    // //for converting between screen position and board index
+    double mouse_x_board = mouse_posn.x / double(grid_size);
+    double mouse_y_board = mouse_posn.y / double(grid_size);
+
+    //ways the mouse click posn could be outside the bounding
+    //box of this square: left of square_left, right of square_right,
+    //above square_top, below square_bottom. if none of these are true,
+    //mouse click is inside this current box
+
+    return (!(mouse_x_board < square_left || mouse_x_board > square_right
+          || mouse_y_board < square_top || mouse_y_board > square_bottom));
+
+    //return false; //fix later
+}
+
+void Controller::on_mouse_move(ge211::Posn<int> mouse_posn) {
+
+    //these are placeholders for now, so we can avoid the
+    //override errors
+    // int mouse_x = mouse_posn.x;
+    // int mouse_y = mouse_posn.y;
+
+    //iterate through all the squares of the board
+    for (int col_ind = 0; col_ind < Controller::model_.board().width;
+    ++col_ind) {
+        for (int row_ind = 0; row_ind < Controller::model_.board().height;
+        ++row_ind) {
+
+            ge211::Posn<int> square_coords{col_ind,row_ind};
+
+            if (Controller::mouse_is_within_square_(mouse_posn, col_ind,
+                                                    row_ind)) {
+
+                //check to see if this move is one of the next moves possible
+                Move const* movep = model_.find_move(square_coords);
+                if (movep) {
+                    //update the move_preview aspect of view class
+                    Move move = *movep;
+                    // view_.move_preview = move;
+                }
+
+
+            }
+        }
+
+    }
+}
 
 //more functionality we need:
 

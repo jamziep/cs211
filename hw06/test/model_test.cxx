@@ -25,6 +25,10 @@ TEST_CASE("Fails with starter code")
 {
     Model m(6);
     CHECK( m.find_move({2, 2}) );
+
+    //{2,2} is the top left corner of the board. why would there be
+    //a move possible there? you would think that this posn has al-
+    //ready been played, so it wouldn't be possible at this point
 }
 
 // This fails with the starter code, but should pass.

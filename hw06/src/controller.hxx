@@ -31,6 +31,7 @@ protected:
 
     void on_mouse_down(ge211::Mouse_button, ge211::Posn<int>) override;
     void on_key(ge211::Key) override;
+    void on_mouse_move(ge211::Posn<int>) override;
 
     // TODO: Add any input handlers you need, e.g.:
     //  - on_mouse_up for mouse clicks,
@@ -49,4 +50,7 @@ private:
     // TODO: Add any UI state you need, e.g.:
     //  - the position of the mouse, or
     //  - the position of a keyboard-controller cursor.
+
+    //for determining if a mouse click is within a square
+    bool mouse_is_within_square_(ge211::Posn<int>, int, int);
 };

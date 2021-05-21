@@ -70,9 +70,10 @@ void Model::play_move(Position pos)
 
     Move const* movep = find_move(pos);
     if (!movep) {
-        //so that our program doesn't end when someone plays a bad move
+        //now that we've implemented checks for this in controller, we actually
+        //do want this error to throw if we get here, b/c it means we did some-
+        //thing wrong
         throw Client_logic_error("Model::play_move: no such move");
-        // return;
     } else {
 
         //find the position set of all things we've changed via find_move()
