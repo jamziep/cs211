@@ -202,6 +202,7 @@ void Model::compute_next_moves_()
             if (Model::board_[pos] == Player::neither) {
                 valid_centers[{pos}] = true;
                 next_moves_[pos] = valid_centers;
+                valid_centers.clear();
             }
         }
     } else {

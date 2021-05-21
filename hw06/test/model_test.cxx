@@ -160,18 +160,16 @@ TEST_CASE("evaluating positions")
 // this should work when we get rid of the four tiles in the middle of the board
 TEST_CASE("Possible moves on the board")
 {
-    Model model;
+    Model model(4);
     Test_access t{model};
     Position_set f;
 
+    // start with the center 4
     f = t.compute_next();
-    CHECK(f.empty());
-    t.board()[{2,2}] = Player::dark;
-    t.board()[{3,2}] = Player::light;
+    CHECK(f == Position_set{{1,1}, {1,2}, {2,1}, {2,2}});
+    
 
 
-    f = t.compute_next();
-    CHECK( f == Position_set{{4,2}});
 }
 
 //tests the set_game_over function
