@@ -88,7 +88,6 @@ struct Test_access
 TEST_CASE("Play the game")
 {
     Model model(4);
-    Test_access t{model};
 
     // test add pieces to the center.
     model.play_move({1,1});
