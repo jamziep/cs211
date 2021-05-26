@@ -13,11 +13,11 @@
 //not piece is something that can be played or if inactive
 
 enum class Piece_type {
-    pawn;
-    knight;
-    rook;
-    bishop;
-    queen;
+    pawn,
+    knight,
+    rook,
+    bishop,
+    queen,
     king
 };
 
@@ -31,3 +31,5 @@ public:
     void remove_piece()
             {active = false;};
 };
+
+std::ostream& operator<<(std::ostream&, Piece);
