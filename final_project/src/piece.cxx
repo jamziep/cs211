@@ -5,9 +5,15 @@ Piece::Piece(Piece_type ptype, Player aplayer, Position aposn)
     : type_(ptype), posn_(aposn), player_(aplayer)
 { }
 
+//for copying by reference
 Piece::Piece(Piece& that)
     : type_(that.type_), posn_(that.posn_), player_(that.player_)
 {}
+
+//for copying by, well, copying
+// Piece::Piece(Piece const piece)
+//     : type_(piece.type_), posn_(piece.posn_), player_(piece.player_)
+// {}
 
 std::ostream& operator<<(std::ostream& os, Piece p)
 {
@@ -27,5 +33,19 @@ std::ostream& operator<<(std::ostream& os, Piece p)
     default:
         return os << "_";
     }
+}
+
+bool
+operator==(Piece thisone, Piece thatone) {
+
+    return (thisone.player_ == thatone.player_ &&
+            thisone.type_ == thatone.type_ &&
+            thisone.posn_ == thatone.posn_ &&
+            thisone.active_ == thatone.active_);
+}
+
+bool
+operator!=(Piece thisone, Piece thatone) {
+    return !(thisone == thatone);
 }
 

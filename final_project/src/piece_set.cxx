@@ -1,249 +1,111 @@
 
 #include "piece_set.hxx"
 
-Piece_set::Piece_set(std::initializer_list<value_type> elems)
-        : Piece_set(elems.begin(), elems.end())
-{ }
+//Constructor
+Piece_set::Piece_set(std::vector<Piece> pieces)
+    :pieces_(pieces)
+{}
 
-// Piece_set
-// Piece_set::universe()
-// {
-//     return ~Piece_set();
+//Gets the piece at a given position. Gets a reference
+//so you can modify it.
+
+//note: this may be buggy, because I have no idea if you can
+//return a piece like this
+Piece& Piece_set::get(Position posn) {
+
+    for (Piece& piece : pieces_) {
+
+        //if the position of this piece matches the position
+        //passed as input, return a reference to it
+        if (piece.get_posn() == posn) {
+            return piece;
+        }
+    }
+
+    //if we didn't find anything, return a piece that doesn't
+    //represent anything
+    Piece temp_piece(Piece_type::null, Player::neither, {0,0});
+    return temp_piece;
+}
+
+//finds the size of the piece set by looking at its vector.
+size_t Piece_set::size() {
+    return pieces_.size();
+}
+
+//might not need this, since all the same pieces stay in a
+//piece set; we just change their attributes
+// //Adds a piece to the piece set.
+// void Piece_set::set(Piece apiece) {
+//     pieces_.push_back(apiece)
 // }
-//
-// bool
-// Piece_set::empty() const
-// {
-//     return bits_.none();
-// }
-//
-// size_t
-// Piece_set::size() const
-// {
-//     return bits_.count();
-// }
-//
-// bool
-// Piece_set::operator[](Piece_set::value_type p) const
-// {
-//     return bits_.test(index_of_checked_(p));
-// }
-//
-// Piece_set::reference
-// Piece_set::operator[](Piece_set::value_type p)
-// {
-//     return bits_[index_of_checked_(p)];
-// }
-//
-// Piece_set&
-// Piece_set::operator&=(Piece_set that)
-// {
-//     bits_ &= that.bits_;
-//     return *this;
-// }
-//
-// Piece_set&
-// Piece_set::operator|=(Piece_set that)
-// {
-//     bits_ |= that.bits_;
-//     return *this;
-// }
-//
-// Piece_set&
-// Piece_set::operator^=(Piece_set that)
-// {
-//     bits_ ^= that.bits_;
-//     return *this;
-// }
-//
-// Piece_set
-// Piece_set::operator&(Piece_set that) const
-// {
-//     Piece_set result(*this);
-//     return result &= that;
-// }
-//
-// Piece_set
-// Piece_set::operator|(Piece_set that) const
-// {
-//     Piece_set result(*this);
-//     return result |= that;
-// }
-//
-// Piece_set
-// Piece_set::operator^(Piece_set that) const
-// {
-//     Piece_set result(*this);
-//     return result ^= that;
-// }
-//
-// Piece_set
-// Piece_set::operator~() const
-// {
-//     Piece_set result(*this);
-//     result.bits_ = ~result.bits_;
-//     return result;
-// }
-//
-// void
-// Piece_set::clear()
-// {
-//     bits_.reset();
-// }
-//
-// Piece_set::iterator
-// Piece_set::begin() const
-// {
-//     for (size_t i = 0; i < index_limit; ++i) {
-//         if (bits_.test(i)) {
-//             return iterator_(position_of_(i));
-//         }
-//     }
-//
-//     return end();
-// }
-//
-// Piece_set::iterator
-// Piece_set::end() const
-// {
-//     return iterator_(position_of_(index_limit));
-// }
-//
-// bool
-// operator==(Piece_set a, Piece_set b)
-// {
-//     return a.bits_ == b.bits_;
-// }
-//
-// bool
-// operator!=(Piece_set a, Piece_set b)
-// {
-//     return !(a == b);
-// }
-//
-// size_t
-// Piece_set::index_of_checked_(value_type p)
-// {
-//     size_t index = index_of_(p);
-//
-//     if (index >= index_limit) {
-//         throw ge211::Client_logic_error("Piece_set: out of bounds");
-//     }
-//
-//     return index;
-// }
-//
-// size_t
-// Piece_set::index_of_(value_type p)
-// {
-//     return size_t(coord_limit * p.get_posn().x + p.get_posn().y);
-// }
-//
-// Position
-// Piece_set::position_of_(size_t index)
-// {
-//     auto x = int(index / coord_limit);
-//     auto y = int(index % coord_limit);
-//     return {x, y};
-// }
-//
-// // Piece_set::iterator
-// // Piece_set::iterator_(value_type p) const
-// // {
-// //     return {p, &bits_};
-// // }
-//
-// Piece_set::iterator::iterator(value_type p, bits_t const *bits) noexcept
-//         : bits_(bits),
-//           current_(p)
-// { }
-//
-// Piece_set::iterator::value_type
-// Piece_set::iterator::operator*() const
-// {
-//     return current_;
-// }
-//
-// Piece_set::iterator::value_type *
-// Piece_set::iterator::operator->() const
-// {
-//     return &current_;
-// }
-//
-// // Piece_set::iterator&
-// // Piece_set::iterator::operator++()
-// // {
-// //     size_t current = index_of_(current_);
-// //
-// //     do {
-// //         current = current == index_limit ? 0 : current + 1;
-// //     } while (!stopping_point_(current));
-// //
-// //     current_ = position_of_(current);
-// //
-// //     return *this;
-// // }
-//
-// // Piece_set::iterator&
-// // Piece_set::iterator::operator--()
-// // {
-// //     size_t current = index_of_(current_);
-// //
-// //     do {
-// //         current = current == 0 ? index_limit : current - 1;
-// //     } while (!stopping_point_(current));
-// //
-// //     current_ = position_of_(current);
-// //
-// //     return *this;
-// // }
-//
-// Piece_set::iterator
-// Piece_set::iterator::operator++(int)
-// {
-//     iterator result(*this);
-//     ++*this;
-//     return result;
-// }
-//
-// Piece_set::iterator
-// Piece_set::iterator::operator--(int)
-// {
-//     iterator result(*this);
-//     --*this;
-//     return result;
-// }
-//
-// bool
-// Piece_set::iterator::stopping_point_(size_t index) const
-// {
-//     return index == index_limit || bits_->test(index);
-// }
-//
-// // bool
-// // operator==(Piece_set::iterator a, Piece_set::iterator b)
-// // {
-// //     // return *a == *b;
-// //
-// // }
-//
-// bool
-// operator!=(Piece_set::iterator a, Piece_set::iterator b)
-// {
-//     return !(a == b);
-// }
-//
+
+//Removes a piece from the piece set. Accomplished by
+//swapping the last thing in the piece set and the current
+//thing, then popping the last thing in the piece set b/c
+//it is irrelevant.
+void Piece_set::remove(Piece apiece) {
+
+    //checks to see if any pieces in the vector match this piece,
+    //then sets the piece to inactive
+    for (Piece& piece : pieces_) {
+
+        //if we have a match, remove a piece from the board
+        //by setting active to false
+        if (apiece == piece) {
+            piece.remove_piece();
+            return;
+        }
+    }
+
+}
+
+
+/// Prints a `Piece_set`; suitable for debugging.
 // std::ostream&
-// operator<<(std::ostream& os, Piece_set pset)
-// {
-//     os << "{";
-//
-//     char const *before_elem = "";
-//     for (Piece_set::value_type pos : pset) {
-//         os << before_elem << "{" << pos.get_posn().x << ", " << pos.get_posn().y
-//         << "}";
-//         before_elem = ", ";
-//     }
-//
-//     return os << "}";
-// }
+// operator<<(std::ostream&, Piece_set);
+
+//returns whether a position is found in this piece set
+bool Piece_set::operator[](Position posn) const{
+
+    // for (Piece piece : pieces_) {
+    // for (int ii = 0; ii < pieces_.size(); ++ii) {
+    //     pieces_.at(ii)
+    // }
+
+    //idk why none of this is working, so I'll ask for help
+}
+
+// Are two piece sets equal?
+bool operator==(Piece_set a, Piece_set b){
+
+    //iterate through each piece in the two psets, and see if
+    //each piece exists in both psets
+    for (int ii = 0; ii < a.size(); ++ii) {
+        for (int jj = 0; jj < b.size(); ++jj) {
+
+            //start by taking out a piece from A and comparing it
+            //to everything in B. if you find a match, break and
+            //go to the next piece to compare
+            Piece pieceA = a.pieces_[ii];
+            Piece pieceB = b.pieces_[jj];
+            if (pieceA == pieceB) {
+                break;
+            }
+        }
+
+        //if we get here, means that one piece in the piece_set a
+        //doesn't match anything in B
+        return false;
+    }
+
+    //else, if we got here, means all the pieces in piece_set a
+    //match something in B
+    return true;
+}
+
+/// Are two piece sets unequal?
+bool operator!=(Piece_set a, Piece_set b){
+
+    return !(a == b);
+}

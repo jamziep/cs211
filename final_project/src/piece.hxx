@@ -25,7 +25,8 @@ enum class Piece_type {
     rook,
     bishop,
     queen,
-    king
+    king,
+    null //so we can make an "empty piece" for checking
 };
 
 class Piece{
@@ -46,6 +47,12 @@ public:
 
     void remove_piece()
             {active_ = false;};
+
+    //two pieces are equal if their member data is the same
+    friend bool operator==(Piece, Piece);
+
+    friend bool operator!=(Piece, Piece);
+
 private:
     Piece_type type_;
     Position posn_;
