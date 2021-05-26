@@ -98,21 +98,6 @@ public:
     ///  - throws `ge211::Client_logic_error` if `!good_position(pos)`.
     reference operator[](Position pos);
 
-    /// Stores the given player in all the positions in the given set.
-    /// For example,
-    ///
-    /// ```
-    /// // Sets three positions to dark:
-    /// Position_set positions{{0, 0}, {1, 1}, {2, 2}};
-    /// board.set_all(positions, Player::dark);
-    /// ```
-    ///
-    /// ## Errors
-    ///
-    ///  - behavior is undefined if any positions in the `Position_set`
-    ///    are out of bounds.
-    void set_all(Position_set, Player);
-
     /// Counts the number of occurrences of the given player in the board.
     size_t count_player(Player) const;
 
@@ -129,11 +114,6 @@ public:
     /// and left, but open on the bottom and right. The iterator will visit
     /// the correct positions for the board.
     Rectangle all_positions() const;
-
-    /// Returns a rectangle containing the four center positions which
-    /// much be occupied for play to move beyond them. This can be used
-    /// to iterate over those positions.
-    Rectangle center_positions() const;
 
     /// Returns a reference to a `std::vector` containing all eight "unit
     /// direction vectors". In Python notation, these are:

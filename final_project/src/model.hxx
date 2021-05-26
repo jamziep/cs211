@@ -17,7 +17,7 @@
 
 #pragma once
 
-#include "player.hxx"
+#include "piece.hxx"
 #include "board.hxx"
 
 #include <ge211.hxx>
@@ -126,15 +126,11 @@ private:
     Board board_;
 
     Move_map next_moves_;
+    std::vector<Piece> pieces_taken_;
+
+
     // INVARIANT:
     //  - `next_moves_` is always current for the state of the game.
-
-    /**********************************************/
-    /*** DO NOT CHANGE ANYTHING ABOVE THIS LINE ***/
-    /**********************************************/
-    //
-    // You may add or change anything you like below this point.
-    //
 
     //
     // PRIVATE HELPER FUNCTIONS
@@ -142,24 +138,6 @@ private:
     // Implementing these is optional, but likely a good idea.
     //
 
-    /// Computes the set of positions to be flipped in direction `dir` if
-    /// the current player (`turn_`) were to play at position `start`.
-    /// In particular, if there is some `n` such that all of these hold:
-    ///
-    ///  - board_[start + 1 * dir] == other_player(turn_)
-    ///  - board_[start + 2 * dir] == other_player(turn_)
-    ///  - . . .
-    ///  - board_[start + n * dir] == other_player(turn_)
-    ///  - board_[start + (n + 1) * dir] == turn_
-    ///
-    /// then it returns the `Position_set`
-    ///
-    ///    {start + 1 * dir, ..., start + n * dir}
-    ///
-    /// Otherwise, it returns the empty set.
-    ///
-    /// (Helper for `evaluate_position_`.)
-    Position_set find_flips_(Position start, Dimensions dir) const;
 
     /// Returns the set of positions that the current player would gain
     /// by playing in the given position. If the current player cannot
@@ -174,28 +152,10 @@ private:
     /// (Helper for `advance_turn_` and `Model(int, int)`.)
     void compute_next_moves_();
 
-    /// Advances to the next turn by flipping `turn_` and updating
-    /// `next_moves_`. Checks for game over. Returns whether any moves
-    /// are now available (meaning game not over).
-    ///
-    /// (Helper for `really_play_move_`.)
-    bool advance_turn_();
-
     /// Sets the turn to neither and determines the winner, if any.
     ///
     /// (Helper for `really_play_move_`.)
     void set_game_over_();
 
-    /// Assuming `move` has been validated, actually executes it by setting
-    /// the relevant board positions and then advancing the turn and checking
-    /// for the game to be over.
-    ///
-    /// (Helper for `play_move`.)
-    ///
-    /// ## Precondition (UNCHECKED)
-    ///
-    ///  - `move` is a valid move right now, meaning it is present in
-    ///    `next_moves_`
-    void really_play_move_(Move move);
 };
 

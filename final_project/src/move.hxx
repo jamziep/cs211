@@ -1,17 +1,9 @@
-//
-// Created by seanp on 5/25/2021.
-//
+#pragma once
 
 #ifndef CHESS_MOVE_HXX
 #define CHESS_MOVE_HXX
 
 #endif //CHESS_MOVE_HXX
-
-/*******************************************/
-/*** DO NOT CHANGE ANYTHING IN THIS FILE ***/
-/*******************************************/
-
-#pragma once
 
 #include "position_set.hxx"
 

@@ -1,17 +1,9 @@
-//
-// Created by seanp on 5/25/2021.
-//
+#pragma once
 
 #ifndef FINAL_PROJECT_PLAYER_HXX
 #define FINAL_PROJECT_PLAYER_HXX
 
 #endif //FINAL_PROJECT_PLAYER_HXX
-
-/*******************************************/
-/*** DO NOT CHANGE ANYTHING IN THIS FILE ***/
-/*******************************************/
-
-#pragma once
 
 #include <iostream>
 

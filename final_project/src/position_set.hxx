@@ -1,17 +1,9 @@
-//
-// Created by seanp on 5/25/2021.
-//
+#pragma once
 
 #ifndef CHESS_POSITION_SET_HXX
 #define CHESS_POSITION_SET_HXX
 
 #endif //CHESS_POSITION_SET_HXX
-
-/*******************************************/
-/*** DO NOT CHANGE ANYTHING IN THIS FILE ***/
-/*******************************************/
-
-#pragma once
 
 #include <ge211.hxx>
 
