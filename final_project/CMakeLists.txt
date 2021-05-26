@@ -7,7 +7,9 @@ include(.cs211/cmake/CMakeLists.txt)
 set(MODEL_SRC
         src/model.cxx
         src/player.cxx
+        src/piece.cxx
         src/board.cxx
+        src/position_set.cxx
         src/move.cxx)
 
 # TODO: PUT ADDITIONAL NON-MODEL (UI) .cxx FILES IN THIS LIST:
