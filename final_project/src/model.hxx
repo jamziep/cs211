@@ -84,7 +84,7 @@ public:
     ///
     ///  - Throws `ge211::Client_logic_error` if the position is out of
     ///    bounds.
-    Player operator[](Position) const;
+    Piece operator[](Position) const;
 
     /// Returns a pointer to the move that will result if the current
     /// player plays at the given position. If the current player cannot
