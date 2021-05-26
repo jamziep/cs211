@@ -11,6 +11,7 @@ static int const grid_size = 36;
 static int const ball_radius = grid_size/2;
 static Color board_color = Color(61,165,98);
 static Color highlight_color = Color(200,20,20);
+static Color tile_color = Color(0, 0, 255);
 
 View::View(Model const& model)
         : model_(model),
@@ -18,10 +19,10 @@ View::View(Model const& model)
           black_tile(ball_radius, Color(0, 0, 0)),
           white_tile(ball_radius, Color(255, 255, 255)),
           gray_tile(ball_radius, Color(100, 100, 100)),
+          tile_sprite({grid_size, grid_size}, tile_color),
           board_sprite({grid_size*8,grid_size*8}, board_color),
           square_sprite({grid_size,grid_size}, highlight_color),
           text_sprite(), //initialize empty, then add text later
-
           //for previewing positions as you mouse over them
           move_preview({{}})
 {}
@@ -30,6 +31,21 @@ void View::draw(Sprite_set& set)
 {
     //draw the board sprite, a rectangle located at 0,0
     set.add_sprite(View::board_sprite, ge211::Posn<int>{0,0} );
+
+    // for putting down a checkerboard
+    for (Position posn : View::model_.board()) {
+        if (posn.y % 2 == 0) {
+            if (posn.x % 2 == 0) {
+                set.add_sprite(View::tile_sprite, {posn.x*grid_size, posn
+                .y*grid_size}, 2);
+            }
+        } else {
+            if (posn.x % 2 != 0) {
+                set.add_sprite(View::tile_sprite, {posn.x*grid_size, posn
+                                                                             .y*grid_size}, 2);
+            }
+        }
+    }
 
     //iterate through the list of black and white tiles, and display.
     //goes into the "model" attribute of "View" and returns
