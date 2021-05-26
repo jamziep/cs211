@@ -46,6 +46,7 @@ public:
     ge211::Circle_sprite const gray_tile;
     ge211::Rectangle_sprite const board_sprite;
     ge211::Rectangle_sprite const square_sprite;
+    ge211::Rectangle_sprite const tile_sprite;
     ge211::Text_sprite text_sprite; //not const as it changes
 
     //for if the player scrolls over a square to preview a move
