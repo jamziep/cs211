@@ -7,6 +7,7 @@
 
 #include "move.hxx"
 #include "piece.hxx"
+#include "piece_set.hxx"
 
 #include <ge211.hxx>
 
@@ -45,8 +46,8 @@ private:
     // Position_set dark_;
 
     //change this member data to be a vector of pieces
-    std::vector<Piece> light_;
-    std::vector<Piece> dark_;
+    Piece_set light_;
+    Piece_set dark_;
 
     // INVARIANT: (light_ & dark_).empty()
 
@@ -189,7 +190,7 @@ operator<<(std::ostream&, Board const&);
 class Board::reference
 {
     Board& board_;
-    Position pos_;
+    Piece piece_;
 
 public:
     /// Assigns the value of `that` to the object of `this`.

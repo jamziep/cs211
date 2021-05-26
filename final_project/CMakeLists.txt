@@ -9,6 +9,7 @@ set(MODEL_SRC
         src/player.cxx
         src/piece.cxx
         src/board.cxx
+        src/piece_set.cxx
         src/position_set.cxx
         src/move.cxx)
 

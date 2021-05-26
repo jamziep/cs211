@@ -50,19 +50,19 @@ Board::operator[](Position pos)
     return reference(*this, pos);
 }
 
-size_t
-Board::count_player(Player player) const
-{
-    switch (player) {
-    case Player::light:
-        return light_.size();
-    case Player::dark:
-        return dark_.size();
-    default:
-        return dims_.width * dims_.height -
-               light_.size() - dark_.size();
-    }
-}
+// size_t
+// Board::count_player(Player player) const
+// {
+//     switch (player) {
+//     case Player::light:
+//         return light_.size();
+//     case Player::dark:
+//         return dark_.size();
+//     default:
+//         return dims_.width * dims_.height -
+//                light_.size() - dark_.size();
+//     }
+// }
 
 
 static std::vector<Board::Dimensions>
@@ -94,52 +94,52 @@ Board::all_positions() const
     return Rectangle::from_top_left(the_origin, dims_);
 }
 
-bool
-operator==(Board const& b1, Board const& b2)
-{
-    return b1.dims_ == b2.dims_ &&
-           b1.light_ == b2.light_ &&
-           b1.dark_ == b2.dark_;
-}
+// bool
+// operator==(Board const& b1, Board const& b2)
+// {
+//     return b1.dims_ == b2.dims_ &&
+//            b1.light_ == b2.light_ &&
+//            b1.dark_ == b2.dark_;
+// }
 
 //used primarily for getting the color of the piece at this
 //current position
-Player
-Board::get_(Position pos) const
-{
-    if (dark_[pos]) {
-        return Player::dark;
-    } else if (light_[pos]) {
-        return Player::light;
-    } else {
-        return Player::neither;
-    }
-}
+// Player
+// Board::get_(Position pos) const
+// {
+//     // if (dark_[pos]) {
+//     //     return Player::dark;
+//     // } else if (light_[pos]) {
+//     //     return Player::light;
+//     // } else {
+//     //     return Player::neither;
+//     //}
+// }
 
 Piece
 Board::get_piece_(Position pos) const
 {
     //fix later
-    return Piece(Piece_type::king,Player::dark);
+    return Piece(Piece_type::king, Player::dark, Position{0,0});
 }
 
 void
 Board::set_(Position pos, Player player)
 {
     switch (player) {
-    case Player::dark:
-        dark_[pos] = true;
-        light_[pos] = false;
-        break;
-
-    case Player::light:
-        dark_[pos] = false;
-        light_[pos] = true;
-        break;
-
-    default:
-        dark_[pos] = false;
-        light_[pos] = false;
+    // case Player::dark:
+    //     dark_[pos] = true;
+    //     light_[pos] = false;
+    //     break;
+    //
+    // case Player::light:
+    //     dark_[pos] = false;
+    //     light_[pos] = true;
+    //     break;
+    //
+    // default:
+    //     dark_[pos] = false;
+    //     light_[pos] = false;
     }
 }
 
@@ -158,43 +158,43 @@ operator!=(Board const& b1, Board const& b2)
     return !(b1 == b2);
 }
 
-std::ostream&
-operator<<(std::ostream& os, Board const& board)
-{
-    Board::Dimensions dims = board.dimensions();
+// std::ostream&
+// operator<<(std::ostream& os, Board const& board)
+// {
+//     Board::Dimensions dims = board.dimensions();
+//
+//     for (int y = 0; y < dims.height; ++y) {
+//         for (int x = 0; x < dims.width; ++x) {
+//             os << board[{x, y}];
+//         }
+//         os << "\n";
+//     }
+//
+//     return os;
+// }
 
-    for (int y = 0; y < dims.height; ++y) {
-        for (int x = 0; x < dims.width; ++x) {
-            os << board[{x, y}];
-        }
-        os << "\n";
-    }
-
-    return os;
-}
-
-Board::reference::reference(Board& board, Position pos) noexcept
+Board::reference::reference(Board& board, Piece piece) noexcept
         : board_(board),
-          pos_(pos)
+          piece_(piece)
 { }
 
 Board::reference&
 Board::reference::operator=(reference const& that) noexcept
 {
-    *this = Player(that);
+    *this = Piece(that);
     return *this;
 }
 
 Board::reference&
 Board::reference::operator=(Player player) noexcept
 {
-    board_.set_(pos_, player);
+    board_.set_(piece_, player);
     return *this;
 }
 
 Board::reference::operator Player() const noexcept
 {
-    return board_.get_(pos_);
+    return board_.get_(piece_);
 }
 
 Board::multi_reference

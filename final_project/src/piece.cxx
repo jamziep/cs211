@@ -1,13 +1,17 @@
 #include "piece.hxx"
 
 //constructor for the class
-Piece::Piece(Piece_type ptype, Player aplayer)
-    : type(ptype), player(aplayer)
+Piece::Piece(Piece_type ptype, Player aplayer, Position aposn)
+    : type_(ptype), posn_(aposn), player_(aplayer)
 { }
+
+Piece::Piece(Piece& that)
+    : type_(that.type_), posn_(that.posn_), player_(that.player_)
+{}
 
 std::ostream& operator<<(std::ostream& os, Piece p)
 {
-    switch (p.type) {
+    switch (p.get_piece_type()) {
     case Piece_type::pawn:
         return os << "P";
     case Piece_type::knight:

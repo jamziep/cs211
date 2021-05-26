@@ -16,7 +16,7 @@ Model::Model(int width, int height)
 {
     //for now set up the board with all the squares in the
     //basic positions
-
+    board_[{0,0}] = Piece(Piece_type::rook,Player::dark,Position{0,0});
 
 
 

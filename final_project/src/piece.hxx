@@ -6,6 +6,11 @@
 #endif //CHESS_PIECE_HXX
 
 #include "player.hxx"
+#include <ge211.hxx>
+
+#include <bitset>
+#include <cstddef>
+#include <initializer_list>
 
 using Position = ge211::Posn<int>;
 
@@ -26,29 +31,25 @@ enum class Piece_type {
 class Piece{
 
 public:
-    Piece(Piece_type ptype, Player aplayer);
 
-    Piece_type type;
-    Player player;
-    bool active;
+    Piece(Piece_type ptype, Player aplayer, Position aposn);
+    Piece(Piece&);
+
+    Player get_player()
+    {return player_;}
+
+    Piece_type get_piece_type()
+    {return type_;}
+
+    Position get_posn()
+    {return posn_;}
 
     void remove_piece()
-            {active = false;};
-};
-
-std::ostream& operator<<(std::ostream&, Piece);
-
-//a new type to enable us to represent a piece with a
-//position and the type of piece
-
-class Piece_set
-{
-public:
-
-    //take inspiration from position_set for some of the operator== stuff
-
+            {active_ = false;};
 private:
+    Piece_type type_;
     Position posn_;
-    Piece piece_;
-
+    Player player_;
+    bool active_;
 };
+
