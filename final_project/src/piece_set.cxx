@@ -33,21 +33,39 @@ size_t Piece_set::size() {
     return pieces_.size();
 }
 
-//might not need this, since all the same pieces stay in a
-//piece set; we just change their attributes
-// //Adds a piece to the piece set.
-// void Piece_set::set(Piece apiece) {
-//     pieces_.push_back(apiece)
-// }
+//takes in a piece and a position, and modifies the position
+//of that existing piece by reference
+void Piece_set::set_posn(Piece& apiece, Position posn) {
 
-//Removes a piece from the piece set. Accomplished by
-//swapping the last thing in the piece set and the current
-//thing, then popping the last thing in the piece set b/c
-//it is irrelevant.
+    //maybe do bounds checking on this?
+
+    //iterate through the piece set and see if we have a match
+    //between the desired piece and a piece in the set. if so,
+    //change the position of that piece
+    for (Piece& piece : pieces_) {
+
+        if (piece == apiece) {
+            piece.set_posn(posn);
+            return;
+        }
+    }
+
+}
+
+//takes in a position, gets the piece that corresponds to that
+//position on the board, and modifies the position of the piece
+//to the new position
+void Piece_set::change_posn(Position start, Position end) {
+
+    //get a reference to piece
+    Piece& piece = get(start);
+    set_posn(piece, end);
+}
+
+//"Removes" a piece from the piece set by setting the
+//piece to inactive.
 void Piece_set::remove(Piece apiece) {
 
-    //checks to see if any pieces in the vector match this piece,
-    //then sets the piece to inactive
     for (Piece& piece : pieces_) {
 
         //if we have a match, remove a piece from the board
@@ -68,19 +86,24 @@ void Piece_set::remove(Piece apiece) {
 //returns whether a position is found in this piece set
 bool Piece_set::operator[](Position posn) const{
 
-    // for (Piece piece : pieces_) {
-    // for (int ii = 0; ii < pieces_.size(); ++ii) {
-    //     pieces_.at(ii)
-    // }
+    for (Piece piece : pieces_) {
+        if (piece.get_posn() == posn) {
+            return true;
+        }
+    }
+    //else, if we didn't find a piece that matches this
+    //posn, return false--the position does not appear to be
+    //occupied
+    return false;
 
-    //idk why none of this is working, so I'll ask for help
+    //fixed, I think: I removed the copy constructor from piece.hxx
 }
 
 // Are two piece sets equal?
 bool operator==(Piece_set a, Piece_set b){
 
-    //iterate through each piece in the two psets, and see if
-    //each piece exists in both psets
+    //iterate through each piece in the two sets, and see if
+    //each piece exists in both sets
     for (int ii = 0; ii < a.size(); ++ii) {
         for (int jj = 0; jj < b.size(); ++jj) {
 
@@ -104,7 +127,7 @@ bool operator==(Piece_set a, Piece_set b){
     return true;
 }
 
-/// Are two piece sets unequal?
+// Are two piece sets unequal?
 bool operator!=(Piece_set a, Piece_set b){
 
     return !(a == b);

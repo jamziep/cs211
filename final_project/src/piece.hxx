@@ -34,7 +34,7 @@ class Piece{
 public:
 
     Piece(Piece_type ptype, Player aplayer, Position aposn);
-    Piece(Piece&);
+    //Piece(Piece&);
 
     Player get_player()
     {return player_;}
@@ -44,6 +44,9 @@ public:
 
     Position get_posn()
     {return posn_;}
+
+    void set_posn(Position posn)
+    {posn_ = posn;}
 
     void remove_piece()
             {active_ = false;};

@@ -34,8 +34,12 @@ public:
     //so you can modify it.
     Piece& get(Position);
 
-    //Adds a piece to the piece set.
-    void set(Piece);
+    //Changes the position of a piece by reference.
+    void set_posn(Piece&, Position);
+
+    //changes the position of a piece located at a certain
+    //position "start" to a new position "end"
+    void change_posn(Position start, Position end);
 
     //Removes a piece from the piece set. Really does this by
     //setting "active" to false, so piece won't show up on board.

@@ -120,7 +120,7 @@ Piece
 Board::get_piece_(Position pos) const
 {
     //fix later
-    return Piece(Piece_type::king, Player::dark, Position{0,0});
+    return Piece(Piece_type::king, Position{0,0}, Player::dark);
 }
 
 void
