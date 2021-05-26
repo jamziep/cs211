@@ -1,5 +1,10 @@
 #include "piece.hxx"
 
+//constructor for the class
+Piece::Piece(Piece_type ptype, Player aplayer)
+    : type(ptype), player(aplayer)
+{ }
+
 std::ostream& operator<<(std::ostream& os, Piece p)
 {
     switch (p.type) {

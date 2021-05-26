@@ -14,7 +14,9 @@ Model::Model(int width, int height)
           next_moves_(),
           pieces_taken_()
 {
-    //for now set up the board with all the basic
+    //for now set up the board with all the squares in the
+    //basic positions
+
 
 
 

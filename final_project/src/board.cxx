@@ -29,11 +29,18 @@ Board::good_position(Position pos) const
            0 <= pos.y && pos.y < dims_.height;
 }
 
+// Player
+// Board::operator[](Position pos) const
+// {
+//     bounds_check_(pos);
+//     return get_(pos);
+// }
+
 Piece
 Board::operator[](Position pos) const
 {
     bounds_check_(pos);
-    return get_(pos);
+    return get_piece_(pos);
 }
 
 Board::reference
@@ -95,6 +102,8 @@ operator==(Board const& b1, Board const& b2)
            b1.dark_ == b2.dark_;
 }
 
+//used primarily for getting the color of the piece at this
+//current position
 Player
 Board::get_(Position pos) const
 {
@@ -105,6 +114,13 @@ Board::get_(Position pos) const
     } else {
         return Player::neither;
     }
+}
+
+Piece
+Board::get_piece_(Position pos) const
+{
+    //fix later
+    return Piece(Piece_type::king,Player::dark);
 }
 
 void

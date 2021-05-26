@@ -41,8 +41,13 @@ private:
     //
 
     Dimensions dims_;
-    Position_set light_;
-    Position_set dark_;
+    // Position_set light_;
+    // Position_set dark_;
+
+    //change this member data to be a vector of pieces
+    std::vector<Piece> light_;
+    std::vector<Piece> dark_;
+
     // INVARIANT: (light_ & dark_).empty()
 
 public:
@@ -70,8 +75,10 @@ public:
     /// ## Errors
     ///
     ///  - throws `ge211::Client_logic_error` if `!good_position(pos)`.
+    //Player operator[](Position pos) const;
     Piece operator[](Position pos) const;
 
+    //Piece operator[](Position pos) const;
 
     //
     // PUBLIC CONSTRUCTOR & FUNCTION MEMBERS
@@ -140,6 +147,7 @@ private:
     //
 
     Player get_(Position where) const;
+    Piece get_piece_(Position where) const;
     void set_(Position where, Player who);
     void bounds_check_(Position where) const;
 
