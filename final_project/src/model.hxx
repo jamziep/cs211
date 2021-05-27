@@ -13,6 +13,7 @@
 class Model
 {
 public:
+
     /// Model dimensions will use `int` coordinates, as board dimensions do.
     using Dimensions = Board::Dimensions;
 
