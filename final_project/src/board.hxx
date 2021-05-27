@@ -1,20 +1,8 @@
-//
-// Created by seanp on 5/25/2021.
-//
-
-#ifndef CHESS_BOARD_HXX
-#define CHESS_BOARD_HXX
-
-#endif //CHESS_BOARD_HXX
-
-/*******************************************/
-/*** DO NOT CHANGE ANYTHING IN THIS FILE ***/
-/*******************************************/
-
 #pragma once
 
-#include "player.hxx"
 #include "move.hxx"
+#include "piece.hxx"
+#include "piece_set.hxx"
 
 #include <ge211.hxx>
 
@@ -49,8 +37,13 @@ private:
     //
 
     Dimensions dims_;
-    Position_set light_;
-    Position_set dark_;
+    // Position_set light_;
+    // Position_set dark_;
+
+    //change this member data to be a vector of pieces
+    Piece_set light_;
+    Piece_set dark_;
+
     // INVARIANT: (light_ & dark_).empty()
 
 public:
@@ -78,8 +71,10 @@ public:
     /// ## Errors
     ///
     ///  - throws `ge211::Client_logic_error` if `!good_position(pos)`.
-    Player operator[](Position pos) const;
+    //Player operator[](Position pos) const;
+    Piece operator[](Position pos) const;
 
+    //Piece operator[](Position pos) const;
 
     //
     // PUBLIC CONSTRUCTOR & FUNCTION MEMBERS
@@ -148,6 +143,7 @@ private:
     //
 
     Player get_(Position where) const;
+    Piece get_piece_(Position where) const;
     void set_(Position where, Player who);
     void bounds_check_(Position where) const;
 
@@ -189,7 +185,7 @@ operator<<(std::ostream&, Board const&);
 class Board::reference
 {
     Board& board_;
-    Position pos_;
+    Piece piece_;
 
 public:
     /// Assigns the value of `that` to the object of `this`.

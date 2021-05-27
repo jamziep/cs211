@@ -9,8 +9,12 @@ set(MODEL_SRC
         src/player.cxx
         src/piece.cxx
         src/board.cxx
+        src/piece_set.cxx
         src/position_set.cxx
-        src/move.cxx)
+        src/move.cxx
+#        src/std_black.cxx,
+#        src/std_white.cxx
+        )
 
 # TODO: PUT ADDITIONAL NON-MODEL (UI) .cxx FILES IN THIS LIST:
 add_program(main

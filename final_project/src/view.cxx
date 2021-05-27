@@ -1,13 +1,8 @@
-//
-// Created by seanp on 5/25/2021.
-//
-
 #include "view.hxx"
 
 using namespace ge211;
 using Color = ge211::Color;
 using Sprite_set = ge211::Sprite_set;
-
 
 // change this to whatever we need it to be
 static int const grid_size = 36;
@@ -27,7 +22,7 @@ View::View(Model const& model)
 
 
 // helper for Draw. Draws the background board and the alternating colors.
-void draw_board ()
+void View::draw_board()
 {
     //draw the board sprite, a rectangle located at 0,0
     set.add_sprite(View::board_sprite, ge211::Posn<int>{0,0} );
