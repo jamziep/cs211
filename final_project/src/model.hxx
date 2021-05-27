@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <ge211.hxx>
@@ -159,5 +158,4 @@ private:
     void set_game_over_();
 
 };
-
 

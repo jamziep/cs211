@@ -51,4 +51,5 @@ public:
 
     //for if the player scrolls over a square to preview a move
     Position_set move_preview;
+
 };
