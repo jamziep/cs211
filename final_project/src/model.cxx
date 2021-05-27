@@ -14,6 +14,15 @@ Model::Model(int width, int height)
           next_moves_(),
           pieces_taken_()
 {
+<<<<<<< HEAD
+=======
+    //for now set up the board with all the squares in the
+    //basic positions
+    //board_[{0,0}] = Piece(Piece_type::rook,Player::dark,Position{0,0});
+
+
+
+>>>>>>> fba0e7485ea8e8fe69dff09e2fcc299efc64cc58
     //initialize next_moves_ to turn_'s possible next moves,
     //using the compute_next_moves helper
     Model::compute_next_moves_();
