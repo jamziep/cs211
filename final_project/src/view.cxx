@@ -16,29 +16,26 @@ View::View(Model const& model)
         // board sprites
           board_sprite({420, 420}, Color(30,30,30)),
           dark_squares({30, 30}, Color(10,10,10)),
-          white_pawn(),
-          white_rook(),
-          white_knight(),
-          white_bishop(),
-          white_king(),
-          white_queen(),
-          black_pawn(),
-          black_rook(),
-          black_knight(),
-          black_bishop(),
-          black_king(),
-          black_queen()
+          white_pawn("white_pawn.png"),
+          white_rook("white_rook.png"),
+          white_knight("white_knight.png"),
+          white_bishop("white_bishop.png"),
+          white_king("white_king.png"),
+          white_queen("white_queen.png"),
+          black_pawn("black_pawn.png"),
+          black_rook("black_rook.png"),
+          black_knight("black_knight.png"),
+          black_bishop("black_bishop.png"),
+          black_king("black_king.png"),
+          black_queen("black_queen.png")
           // these are arbitrary values for size and color (for now)
         // sprite initialization
 {}
 
-// DRAW
-// pretend that the big draw function is written here
-// DRAW
+// main draw function
 void View::draw(Sprite_set& set)
 {
 }
-
 
 // helper for Draw. Draws the background board and the alternating colors.
 void draw_board (Sprite_set& set)
