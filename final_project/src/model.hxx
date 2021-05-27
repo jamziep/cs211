@@ -1,6 +1,23 @@
 
 #pragma once
 
+#include <ge211.hxx>
+
+//
+// TODO: Sketch the structure of your model and declare its operations.
+//
+
+/*************************************************/
+/*** DO NOT CHANGE THE PUBLIC API IN THIS FILE ***/
+/*************************************************/
+//
+// You may add private members if you like, or even remove
+// the private helper functions, but you mustn't change the
+// existing public members, nor add new ones. If you do, your
+// code may not build for automated tests.
+
+#pragma once
+
 #include "piece.hxx"
 #include "board.hxx"
 
@@ -9,10 +26,13 @@
 #include <iostream>
 #include <vector>
 
-// Represents the state of the game.
+// Represents the state of the Reversi game.
 class Model
 {
 public:
+    /***************************************************/
+    /*** DON'T CHANGE ANYTHING IN THE PUBLIC SECTION ***/
+    /***************************************************/
 
     /// Model dimensions will use `int` coordinates, as board dimensions do.
     using Dimensions = Board::Dimensions;
@@ -65,7 +85,7 @@ public:
     ///
     ///  - Throws `ge211::Client_logic_error` if the position is out of
     ///    bounds.
-    Piece operator[](Position) const;
+    Player operator[](Position) const;
 
     /// Returns a pointer to the move that will result if the current
     /// player plays at the given position. If the current player cannot

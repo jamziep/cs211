@@ -1,12 +1,20 @@
-#pragma once
+//
+// Created by seanp on 5/25/2021.
+//
 
 #ifndef CHESS_BOARD_HXX
 #define CHESS_BOARD_HXX
 
 #endif //CHESS_BOARD_HXX
 
+/*******************************************/
+/*** DO NOT CHANGE ANYTHING IN THIS FILE ***/
+/*******************************************/
+
+#pragma once
+
+#include "player.hxx"
 #include "move.hxx"
-#include "piece.hxx"
 
 #include <ge211.hxx>
 
@@ -70,7 +78,7 @@ public:
     /// ## Errors
     ///
     ///  - throws `ge211::Client_logic_error` if `!good_position(pos)`.
-    Piece operator[](Position pos) const;
+    Player operator[](Position pos) const;
 
 
     //

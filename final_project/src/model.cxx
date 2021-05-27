@@ -14,10 +14,6 @@ Model::Model(int width, int height)
           next_moves_(),
           pieces_taken_()
 {
-    //for now set up the board with all the basic
-
-
-
     //initialize next_moves_ to turn_'s possible next moves,
     //using the compute_next_moves helper
     Model::compute_next_moves_();
@@ -64,7 +60,7 @@ void Model::play_move(Position pos)
 
         //add the position set of all the things we've changed via find_move()
         //to the data of which tiles are where in board
-        //Model::board_.set_all(pset, turn);
+        Model::board_.set_all(pset, turn);
 
         //advance the turn. using function from player.cxx
         Model::turn_ = other_player(Model::turn_);
@@ -86,6 +82,11 @@ void Model::play_move(Position pos)
 //
 // BELOW ARE *OPTIONAL* HELPER FUNCTIONS
 //
+
+Position_set Model::find_flips_(Position current, Dimensions dir) const
+{
+
+}
 
 Position_set Model::evaluate_position_(Position pos) const
 {
@@ -120,6 +121,12 @@ void Model::compute_next_moves_()
 
 }
 
+bool Model::advance_turn_()
+{
+    //OPTIONAL HELPER
+    return false;
+    // ^^^ this is wrong
+}
 
 void Model::set_game_over_()
 {

@@ -1,3 +1,11 @@
+//
+// Created by seanp on 5/25/2021.
+//
+
+/*******************************************/
+/*** DO NOT CHANGE ANYTHING IN THIS FILE ***/
+/*******************************************/
+
 #include "board.hxx"
 #include <algorithm>
 
@@ -29,7 +37,7 @@ Board::good_position(Position pos) const
            0 <= pos.y && pos.y < dims_.height;
 }
 
-Piece
+Player
 Board::operator[](Position pos) const
 {
     bounds_check_(pos);
@@ -57,6 +65,13 @@ Board::count_player(Player player) const
     }
 }
 
+Board::Rectangle
+Board::center_positions() const
+{
+    return Rectangle::from_top_left({dims_.width / 2 - 1,
+                                     dims_.height / 2 - 1},
+                                    {2, 2});
+}
 
 static std::vector<Board::Dimensions>
 build_directions()
@@ -127,6 +142,25 @@ Board::set_(Position pos, Player player)
     }
 }
 
+void
+Board::set_all(Position_set pos_set, Player player)
+{
+    switch (player) {
+    case Player::light:
+        light_ |= pos_set;
+        dark_ &= ~pos_set;
+        break;
+
+    case Player::dark:
+        dark_ |= pos_set;
+        light_ &= ~pos_set;
+        break;
+
+    default:
+        dark_ &= ~pos_set;
+        light_ &= ~pos_set;
+    }
+}
 
 void
 Board::bounds_check_(Position pos) const
@@ -194,5 +228,10 @@ Board::multi_reference::multi_reference(
           pos_set_(pos_set)
 { }
 
-
+Board::multi_reference&
+Board::multi_reference::operator=(Player player) noexcept
+{
+    board_.set_all(pos_set_, player);
+    return *this;
+}
 
