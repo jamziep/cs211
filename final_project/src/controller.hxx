@@ -1,12 +1,3 @@
-//
-// Created by seanp on 5/25/2021.
-//
-
-#ifndef FINAL_PROJECT_CONTROLLER_HXX
-#define FINAL_PROJECT_CONTROLLER_HXX
-
-#endif //FINAL_PROJECT_CONTROLLER_HXX
-
 #pragma once
 
 #include "model.hxx"

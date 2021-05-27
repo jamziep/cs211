@@ -6,9 +6,9 @@ Piece::Piece(Piece_type ptype, Player aplayer, Position aposn)
 { }
 
 //for copying by reference
-Piece::Piece(Piece& that)
-    : type_(that.type_), posn_(that.posn_), player_(that.player_)
-{}
+// Piece::Piece(Piece& that)
+//     : type_(that.type_), posn_(that.posn_), player_(that.player_)
+// {}
 
 //for copying by, well, copying
 // Piece::Piece(Piece const piece)

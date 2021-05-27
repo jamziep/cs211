@@ -1,10 +1,5 @@
 #pragma once
 
-#ifndef CHESS_BOARD_HXX
-#define CHESS_BOARD_HXX
-
-#endif //CHESS_BOARD_HXX
-
 #include "move.hxx"
 #include "piece.hxx"
 #include "piece_set.hxx"

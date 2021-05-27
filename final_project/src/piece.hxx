@@ -1,10 +1,5 @@
 #pragma once
 
-#ifndef CHESS_PIECE_HXX
-#define CHESS_PIECE_HXX
-
-#endif //CHESS_PIECE_HXX
-
 #include "player.hxx"
 #include <ge211.hxx>
 

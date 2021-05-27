@@ -1,9 +1,4 @@
-//
-// Created by seanp on 5/25/2021.
-//
-
-#ifndef FINAL_PROJECT_VIEW_HXX
-#define FINAL_PROJECT_VIEW_HXX
+#pragma once
 
 #include "model.cxx"
 #include <string>
@@ -62,8 +57,5 @@ public:
     ge211::Image_sprite const black_king;
     ge211::Image_sprite const black_queen;
 };
-
-#endif //FINAL_PROJECT_VIEW_HXX
-
 
 
