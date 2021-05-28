@@ -61,7 +61,7 @@ void Model::play_move(Position pos)
     } else {
 
         //find the position set of all things we've changed via find_move()
-        Position_set pset = movep->second;
+        // Position_set pset = movep->second;
         Player turn = Model::turn();
 
         //add the position set of all the things we've changed via find_move()
@@ -117,8 +117,8 @@ void Model::compute_next_moves_()
     // iterate through entire board all call eval_position on every spot.
     // Only add non empty position sets  to next_moves_.
     next_moves_.clear(); // first clear out next moves
-    int total_plays = board_.count_player(Player::light) + board_
-            .count_player(Player::dark);
+    // int total_plays = board_.count_player(Player::light) + board_
+    //         .count_player(Player::dark);
 
 }
 

@@ -1,5 +1,10 @@
 #pragma once
 
+#ifndef FINAL_PROJECT_VIEW_HXX
+#define FINAL_PROJECT_VIEW_HXX
+
+#endif //FINAL_PROJECT_VIEW_HXX
+
 #include "model.cxx"
 #include <string>
 
@@ -20,7 +25,12 @@ public:
     // You will probably want to add arguments here so that the
     // controller can communicate UI state (such as a mouse or
     // cursor position):
+
+    //for drawing all sprites:
     void draw(ge211::Sprite_set& set);
+
+    //helper function specifically for the board
+    void draw_board(ge211::Sprite_set& set);
 
     Dimensions initial_window_dimensions() const;
 

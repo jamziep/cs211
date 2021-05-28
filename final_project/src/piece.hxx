@@ -1,5 +1,11 @@
 #pragma once
 
+#ifndef CHESS_PIECE_HXX
+  #define CHESS_PIECE_HXX
+
+#endif //CHESS_PIECE_HXX
+
+
 #include "player.hxx"
 #include <ge211.hxx>
 
@@ -39,6 +45,9 @@ public:
 
     Position get_posn()
     {return posn_;}
+
+    bool is_active()
+    {return active_;}
 
     void set_posn(Position posn)
     {posn_ = posn;}

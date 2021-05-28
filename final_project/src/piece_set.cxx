@@ -10,14 +10,14 @@ Piece_set::Piece_set(std::vector<Piece> pieces)
 //so you can modify it.
 
 //note: this may be buggy, because I have no idea if you can
-//return a piece like this
+//return temp_piece like this
 Piece& Piece_set::get(Position posn) {
 
     for (Piece& piece : pieces_) {
 
         //if the position of this piece matches the position
         //passed as input, return a reference to it
-        if (piece.get_posn() == posn) {
+        if (piece.get_posn() == posn && piece.is_active()) {
             return piece;
         }
     }

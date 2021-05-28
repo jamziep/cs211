@@ -1,10 +1,14 @@
 #include "board.hxx"
+
 #include <algorithm>
 
 using namespace ge211;
 
 Board::Board(Dimensions dims)
-        : dims_(dims)
+        : dims_(dims),
+        light_(white_start_moves),
+        dark_(black_start_moves)
+
 {
     if (dims_.width < 2 || dims_.height < 2) {
         throw Client_logic_error("Board::Board: dims too small");
@@ -119,20 +123,23 @@ Board::all_positions() const
 Piece
 Board::get_piece_(Position pos) const
 {
-    //fix later
-    return Piece(Piece_type::king, Position{0,0}, Player::dark);
+    // Piece white_piece = light_.get(pos);
+    // Piece& black_piece = dark_.get(pos);
+
+
+    return Piece{Piece_type::null, Player::dark, Position{0,0}};
 }
 
 void
 Board::set_(Position pos, Player player)
 {
-    switch (player) {
-    // case Player::dark:
+    //switch (player) {
+    //case Player::dark:
     //     dark_[pos] = true;
     //     light_[pos] = false;
     //     break;
     //
-    // case Player::light:
+    //case Player::light:
     //     dark_[pos] = false;
     //     light_[pos] = true;
     //     break;
@@ -140,7 +147,7 @@ Board::set_(Position pos, Player player)
     // default:
     //     dark_[pos] = false;
     //     light_[pos] = false;
-    }
+    //}
 }
 
 
@@ -173,29 +180,30 @@ operator!=(Board const& b1, Board const& b2)
 //     return os;
 // }
 
-Board::reference::reference(Board& board, Piece piece) noexcept
-        : board_(board),
-          piece_(piece)
-{ }
+// Board::reference::reference(Board& board, Piece piece) noexcept
+//         : board_(board),
+//           piece_(piece)
+// { }
 
-Board::reference&
-Board::reference::operator=(reference const& that) noexcept
-{
-    *this = Piece(that);
-    return *this;
-}
+// Board::reference&
+// Board::reference::operator=(reference const& that) noexcept
+// {
+//     *this = Piece(that);
+//     return *this;
+// }
 
-Board::reference&
-Board::reference::operator=(Player player) noexcept
-{
-    board_.set_(piece_, player);
-    return *this;
-}
+// Board::reference&
+// Board::reference::operator=(Player player) noexcept
+// {
+//     board_.set_(piece_, player);
+//     return *this;
+// }
 
-Board::reference::operator Player() const noexcept
-{
-    return board_.get_(piece_);
-}
+
+// Board::reference::operator Player() const noexcept
+// {
+//     return board_.get_(piece_);
+// }
 
 Board::multi_reference
 Board::at_set(Position_set pos_set)

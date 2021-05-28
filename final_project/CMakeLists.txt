@@ -16,12 +16,18 @@ set(MODEL_SRC
 #        src/std_white.cxx
         )
 
+#trying this out to include these as headers
+set(HEADERS
+        src/std_black.hxx
+        src/std_white.hxx
+        )
+
 # TODO: PUT ADDITIONAL NON-MODEL (UI) .cxx FILES IN THIS LIST:
 add_program(main
     src/main.cxx
     src/view.cxx
     src/controller.cxx
-    ${MODEL_SRC})
+    ${MODEL_SRC} ${HEADERS})
 target_link_libraries(main ge211)
 
 add_test_program(model_test

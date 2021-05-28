@@ -1,6 +1,6 @@
 #pragma once
 
-#include "piece.hxx"
+//#include "piece.hxx"
 #include "board.hxx"
 
 #include <ge211.hxx>

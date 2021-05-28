@@ -1,6 +1,11 @@
 #pragma once
 
-#include "model.hxx"
+#ifndef FINAL_PROJECT_CONTROLLER_HXX
+  #define FINAL_PROJECT_CONTROLLER_HXX
+
+#endif //FINAL_PROJECT_CONTROLLER_HXX
+
+//#include "model.hxx"
 #include "view.hxx"
 
 // The main game class for Reversi.

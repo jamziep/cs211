@@ -1,7 +1,3 @@
-//
-// Created by seanp on 5/26/2021.
-//
-
 #include <vector>
 #include "piece.hxx"
 

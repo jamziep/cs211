@@ -1,5 +1,11 @@
 #pragma once
 
+#ifndef CHESS_MOVE_HXX
+  #define CHESS_MOVE_HXX
+
+#endif //CHESS_MOVE_HXX
+
+
 #include "position_set.hxx"
 
 #include <ge211.hxx>

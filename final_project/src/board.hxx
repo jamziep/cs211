@@ -1,10 +1,19 @@
 #pragma once
 
-#include "move.hxx"
-#include "piece.hxx"
-#include "piece_set.hxx"
+#ifndef CHESS_BOARD_HXX
+  #define CHESS_BOARD_HXX
 
-#include <ge211.hxx>
+#endif //CHESS_BOARD_HXX
+
+
+#include "move.hxx"
+
+//#include "piece.hxx"
+#include "piece_set.hxx"
+#include "std_black.hxx"
+#include "std_white.hxx"
+
+//#include <ge211.hxx>
 
 #include <iostream>
 #include <unordered_map>
