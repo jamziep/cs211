@@ -1,5 +1,7 @@
 #include "piece.hxx"
 
+<<<<<<< HEAD
+=======
 //constructor for the class
 Piece::Piece(Piece_type ptype, Player aplayer, Position aposn)
     : type_(ptype), posn_(aposn), player_(aplayer)
@@ -49,3 +51,4 @@ operator!=(Piece thisone, Piece thatone) {
     return !(thisone == thatone);
 }
 
+>>>>>>> fba0e7485ea8e8fe69dff09e2fcc299efc64cc58

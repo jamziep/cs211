@@ -21,6 +21,14 @@ using Position = ge211::Posn<int>;
 //not piece is something that can be played or if inactive
 
 enum class Piece_type {
+<<<<<<< HEAD
+    pawn;
+    knight;
+    rook;
+    bishop;
+    queen;
+    king
+=======
     pawn,
     knight,
     rook,
@@ -28,6 +36,7 @@ enum class Piece_type {
     queen,
     king,
     null //so we can make an "empty piece" for checking
+>>>>>>> fba0e7485ea8e8fe69dff09e2fcc299efc64cc58
 };
 
 class Piece{
@@ -53,6 +62,10 @@ public:
     {posn_ = posn;}
 
     void remove_piece()
+<<<<<<< HEAD
+            {active = false;};
+};
+=======
             {active_ = false;};
 
     //two pieces are equal if their member data is the same
@@ -67,3 +80,4 @@ private:
     bool active_;
 };
 
+>>>>>>> fba0e7485ea8e8fe69dff09e2fcc299efc64cc58
