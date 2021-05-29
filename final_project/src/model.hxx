@@ -135,6 +135,10 @@ private:
     //for pieces that only move a limited # of pieces: pawn, knight, king
     Position_set spaces_ltd(Piece);
 
+    //adapted from reversi. takes in a position of a piece and a direction
+    //of travel, and finds all the moves where the piece can go
+    //in that direction, including positions where an enemy piece exists
+    Position_set moves_in_dir_(Position, Dimensions);
 
 
     /// Updates `next_moves_` to contain the moves available the current
