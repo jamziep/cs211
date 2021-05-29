@@ -1,10 +1,5 @@
 #pragma once
 
-#ifndef FINAL_PROJECT_CONTROLLER_HXX
-  #define FINAL_PROJECT_CONTROLLER_HXX
-
-#endif //FINAL_PROJECT_CONTROLLER_HXX
-
 //#include "model.hxx"
 #include "view.hxx"
 
@@ -18,14 +13,14 @@ public:
     // ERRORS:
     //  - Throws `ge211::Client_logic_error` if `size` is less than 2
     //    or greater than 8.
-    explicit Controller(int size = 8);
+    ///explicit Controller(int size = 8);
 
     // Constructs a game with the given width and height.
     //
     // ERRORS:
     //  - Throws `ge211::Client_logic_error` if either dimension is less
     //    than 2 or greater than 8.
-    Controller(int width, int height);
+    Controller();
 
     // `protected` means that GE211 (via base class `ge211::Abstract_game`)
     // can access these members, but arbitrary other code cannot:

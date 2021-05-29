@@ -4,11 +4,16 @@
 
 using namespace ge211;
 
+//for debug
+// Piece piece(Piece_type::rook,Player::dark,{0,0});
+// Piece_set pieces({piece});
+
 Board::Board(Dimensions dims)
         : dims_(dims),
         light_(white_start_moves),
         dark_(black_start_moves)
-
+        // light_(pieces),
+        // dark_(pieces)
 {
     if (dims_.width < 2 || dims_.height < 2) {
         throw Client_logic_error("Board::Board: dims too small");
@@ -41,33 +46,18 @@ Board::good_position(Position pos) const
 // }
 
 Piece
-Board::operator[](Position pos) const
+Board::operator[](Position pos)// const
 {
     bounds_check_(pos);
     return get_piece_(pos);
 }
 
-Board::reference
-Board::operator[](Position pos)
-{
-    bounds_check_(pos);
-    return reference(*this, pos);
-}
-
-// size_t
-// Board::count_player(Player player) const
+// Board::reference
+// Board::operator[](Position pos)
 // {
-//     switch (player) {
-//     case Player::light:
-//         return light_.size();
-//     case Player::dark:
-//         return dark_.size();
-//     default:
-//         return dims_.width * dims_.height -
-//                light_.size() - dark_.size();
-//     }
+//     bounds_check_(pos);
+//     return reference(*this, pos);
 // }
-
 
 static std::vector<Board::Dimensions>
 build_directions()
@@ -92,63 +82,123 @@ Board::all_directions()
     return result;
 }
 
+//extra directions for the travel of each piece
+std::vector<Board::Dimensions> const&
+Board::knight_directions()
+{
+    static std::vector<Board::Dimensions> result;
+
+    result.push_back({1,2});
+    result.push_back({1,-2});
+    result.push_back({-1,2});
+    result.push_back({-1,-2});
+
+    result.push_back({2,1});
+    result.push_back({2,-1});
+    result.push_back({-2,1});
+    result.push_back({-2,-1});
+
+    return result;
+}
+
+std::vector<Board::Dimensions> const&
+Board::rook_directions()
+{
+    //modify this so it just has horizontal directions
+    //use an XOR: +/-x or +/-y, but not both
+    static std::vector<Board::Dimensions> result;
+
+    for (int dx = -1; dx <= 1; ++dx) {
+        for (int dy = -1; dy <= 1; ++dy) {
+            if ((dx || dy) && !(dx && dy)) {
+                result.push_back({dx, dy});
+            }
+        }
+    }
+
+    return result;
+}
+
+std::vector<Board::Dimensions> const&
+Board::bishop_directions()
+{
+    //modify this so it uses only the diagonals
+    //use an AND: both x and y must exist
+    static std::vector<Board::Dimensions> result;
+
+    for (int dx = -1; dx <= 1; ++dx) {
+        for (int dy = -1; dy <= 1; ++dy) {
+            if (dx && dy) {
+                result.push_back({dx, dy});
+            }
+        }
+    }
+
+    return result;
+}
+
+std::vector<Board::Dimensions> const&
+Board::pawn_directions_light()
+{
+    static std::vector<Board::Dimensions> result;
+
+    //ses just the forward position
+    //and the two diagonal captures as directions of travel
+    result.push_back({0,-1});
+    result.push_back({1,-1});
+    result.push_back({-1,-1});
+
+    return result;
+}
+
+std::vector<Board::Dimensions> const&
+Board::pawn_directions_dark()
+{
+    static std::vector<Board::Dimensions> result;
+
+    //uses just the forward direction
+    //and the two diagonal captures as directions of travel
+    result.push_back({0, 1});
+    result.push_back({1, 1});
+    result.push_back({-1, 1});
+
+    return result;
+}
+
 Board::Rectangle
 Board::all_positions() const
 {
     return Rectangle::from_top_left(the_origin, dims_);
 }
 
-// bool
-// operator==(Board const& b1, Board const& b2)
-// {
-//     return b1.dims_ == b2.dims_ &&
-//            b1.light_ == b2.light_ &&
-//            b1.dark_ == b2.dark_;
-// }
-
-//used primarily for getting the color of the piece at this
-//current position
-// Player
-// Board::get_(Position pos) const
-// {
-//     // if (dark_[pos]) {
-//     //     return Player::dark;
-//     // } else if (light_[pos]) {
-//     //     return Player::light;
-//     // } else {
-//     //     return Player::neither;
-//     //}
-// }
-
 Piece
-Board::get_piece_(Position pos) const
+Board::get_piece_(Position pos)
 {
-    // Piece white_piece = light_.get(pos);
-    // Piece& black_piece = dark_.get(pos);
+    //figure this shit out, bc it's really a necessary step
+    //in order to get pieces out of board
 
+    Piece* white_piece_ptr = light_.get_piece_ptr(pos);
+    Piece* black_piece_ptr = dark_.get_piece_ptr(pos);
 
-    return Piece{Piece_type::null, Player::dark, Position{0,0}};
+    //if there's a white piece at the given position, return that
+    //piece. if there's a black piece, same. else, return a piece that
+    //doesn't mean anything
+    if (white_piece_ptr) {
+        return *white_piece_ptr;
+    } else if (black_piece_ptr) {
+        return *black_piece_ptr;
+    } else {
+        return Piece{Piece_type::null, Player::dark, Position{0, 0}};
+    }
 }
 
 void
 Board::set_(Position pos, Player player)
 {
-    //switch (player) {
-    //case Player::dark:
-    //     dark_[pos] = true;
-    //     light_[pos] = false;
-    //     break;
-    //
-    //case Player::light:
-    //     dark_[pos] = false;
-    //     light_[pos] = true;
-    //     break;
-    //
-    // default:
-    //     dark_[pos] = false;
-    //     light_[pos] = false;
-    //}
+
 }
+
+
 
 
 void
@@ -160,50 +210,18 @@ Board::bounds_check_(Position pos) const
 }
 
 bool
+operator==(Board const& b1, Board const& b2)
+{
+    //two boards are equal if all their member data is equal
+    return (b1.dims_ == b2.dims_ && b1.dark_ == b2.dark_
+            && b1.light_ == b2.light_)   ;
+}
+
+bool
 operator!=(Board const& b1, Board const& b2)
 {
     return !(b1 == b2);
 }
-
-// std::ostream&
-// operator<<(std::ostream& os, Board const& board)
-// {
-//     Board::Dimensions dims = board.dimensions();
-//
-//     for (int y = 0; y < dims.height; ++y) {
-//         for (int x = 0; x < dims.width; ++x) {
-//             os << board[{x, y}];
-//         }
-//         os << "\n";
-//     }
-//
-//     return os;
-// }
-
-// Board::reference::reference(Board& board, Piece piece) noexcept
-//         : board_(board),
-//           piece_(piece)
-// { }
-
-// Board::reference&
-// Board::reference::operator=(reference const& that) noexcept
-// {
-//     *this = Piece(that);
-//     return *this;
-// }
-
-// Board::reference&
-// Board::reference::operator=(Player player) noexcept
-// {
-//     board_.set_(piece_, player);
-//     return *this;
-// }
-
-
-// Board::reference::operator Player() const noexcept
-// {
-//     return board_.get_(piece_);
-// }
 
 Board::multi_reference
 Board::at_set(Position_set pos_set)

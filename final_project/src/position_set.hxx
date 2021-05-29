@@ -1,10 +1,5 @@
 #pragma once
 
-#ifndef CHESS_POSITION_SET_HXX
-#define CHESS_POSITION_SET_HXX
-
-#endif //CHESS_POSITION_SET_HXX
-
 #include <ge211.hxx>
 
 #include <bitset>

@@ -11,22 +11,49 @@ Piece_set::Piece_set(std::vector<Piece> pieces)
 
 //note: this may be buggy, because I have no idea if you can
 //return temp_piece like this
-Piece& Piece_set::get(Position posn) {
+// Piece& Piece_set::get(Position posn) {
+//
+//     for (Piece& piece : pieces_) {
+//
+//         //if the position of this piece matches the position
+//         //passed as input, return a reference to it
+//         if (piece.get_posn() == posn && piece.is_active()) {
+//             return piece;
+//         }
+//     }
+//
+//     //if we didn't find anything, return a piece that doesn't
+//     //represent anything
+//     Piece temp_piece(Piece_type::null, Player::neither, {0,0});
+//     return temp_piece;
+// }
 
+Piece* Piece_set::get_piece_ptr(Position posn)
+{
+    //I really want to use a reference for this so that
+    //we can modify the member data within pieces_ with this
+    //pointer
+
+    // for (Piece& piece : pieces_) {
     for (Piece& piece : pieces_) {
+
 
         //if the position of this piece matches the position
         //passed as input, return a reference to it
         if (piece.get_posn() == posn && piece.is_active()) {
-            return piece;
+            return &piece;
         }
     }
 
     //if we didn't find anything, return a piece that doesn't
     //represent anything
-    Piece temp_piece(Piece_type::null, Player::neither, {0,0});
-    return temp_piece;
+    // Piece temp_piece(Piece_type::null, Player::neither, {0,0});
+    // return temp_piece;
+    return nullptr;
 }
+
+
+
 
 //finds the size of the piece set by looking at its vector.
 size_t Piece_set::size() {
@@ -104,8 +131,8 @@ bool operator==(Piece_set a, Piece_set b){
 
     //iterate through each piece in the two sets, and see if
     //each piece exists in both sets
-    for (int ii = 0; ii < a.size(); ++ii) {
-        for (int jj = 0; jj < b.size(); ++jj) {
+    for (size_t ii = 0; ii < a.size(); ++ii) {
+        for (size_t jj = 0; jj < b.size(); ++jj) {
 
             //start by taking out a piece from A and comparing it
             //to everything in B. if you find a match, break and

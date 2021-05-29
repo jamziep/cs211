@@ -1,13 +1,7 @@
 #pragma once
 
-#ifndef CHESS_PIECE_SET_HXX
-  #define CHESS_PIECE_SET_HXX
-
-#endif //CHESS_PIECE_SET_HXX
-
-
 #include "piece.hxx"
-#include <ge211.hxx>
+//#include <ge211.hxx>
 
 // #include <bitset>
 // #include <cstddef>
@@ -34,6 +28,8 @@ public:
     //Gets the piece at a given position. Gets a reference
     //so you can modify it.
     Piece& get(Position);
+
+    Piece* get_piece_ptr(Position);
 
     //Changes the position of a piece by reference.
     void set_posn(Piece&, Position);

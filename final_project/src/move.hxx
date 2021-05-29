@@ -1,23 +1,20 @@
 #pragma once
 
-#ifndef CHESS_MOVE_HXX
-  #define CHESS_MOVE_HXX
-
-#endif //CHESS_MOVE_HXX
-
-
 #include "position_set.hxx"
 
-#include <ge211.hxx>
+//#include <ge211.hxx>
 
 #include <unordered_map>
 #include <utility>
 
+//NOTE: this has been modified for the sake of the CHESS game.
+//see changes to what "first" and "second" mean.
+
 /// A move. The two fields are:
 ///
-///   - first:  the position played in
+///   - first:  the current position of a piece
 ///
-///   - second: all positions changed by the move, *including* `first`
+///   - second: all positions where that piece could move, NOT including "first"
 ///
 /// See the documentation for std::pair for details.
 using Move = std::pair<ge211::Posn<int> const, Position_set>;
@@ -26,7 +23,7 @@ using Move = std::pair<ge211::Posn<int> const, Position_set>;
 /// value type `V`, a `std::unordered_map<K, V>` acts like a container holding
 /// `std::pair<K, V>`s in which 1) the `K` values are distinct, and 2) pairs
 /// can be found easily by their `K` values. Thus a `Move_map` is a collection
-/// of `Move`s that we can look up by `first` (the position played in).
+/// of `Move`s that we can look up by `first` (initial position).
 using Move_map = std::unordered_map<ge211::Posn<int>, Position_set>;
 
 /// Prints a `Move`; suitable for debugging.

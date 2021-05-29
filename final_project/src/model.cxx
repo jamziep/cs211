@@ -5,28 +5,26 @@
 
 using namespace ge211;
 
-Model::Model(int size)
-        : Model(size, size)
-{ }
 
-Model::Model(int width, int height)
-        : board_({width, height}),
+Model::Model()
+        : board_({8,8}),
           next_moves_(),
           pieces_taken_()
 {
-<<<<<<< HEAD
-=======
-    //for now set up the board with all the squares in the
-    //basic positions
-    //board_[{0,0}] = Piece(Piece_type::rook,Player::dark,Position{0,0});
 
-
-
->>>>>>> fba0e7485ea8e8fe69dff09e2fcc299efc64cc58
     //initialize next_moves_ to turn_'s possible next moves,
     //using the compute_next_moves helper
-    Model::compute_next_moves_();
+    //Model::compute_next_moves_();
 }
+
+Player Model::turn() const
+{return turn_;}
+
+Player Model::winner() const
+{return winner_;}
+
+bool Model::is_game_over() const
+{return turn() == Player::neither;}
 
 
 Model::Rectangle Model::board() const
@@ -34,7 +32,7 @@ Model::Rectangle Model::board() const
     return board_.all_positions();
 }
 
-Piece Model::operator[](Position pos) const
+Piece Model::operator[](Position pos) //const
 {
     return board_[pos];
 }
@@ -69,7 +67,7 @@ void Model::play_move(Position pos)
 
         //add the position set of all the things we've changed via find_move()
         //to the data of which tiles are where in board
-        Model::board_.set_all(pset, turn);
+        //Model::board_.set_all(pset, turn);
 
         //advance the turn. using function from player.cxx
         Model::turn_ = other_player(Model::turn_);
@@ -91,11 +89,6 @@ void Model::play_move(Position pos)
 //
 // BELOW ARE *OPTIONAL* HELPER FUNCTIONS
 //
-
-Position_set Model::find_flips_(Position current, Dimensions dir) const
-{
-
-}
 
 Position_set Model::evaluate_position_(Position pos) const
 {
@@ -120,21 +113,32 @@ Position_set Model::evaluate_position_(Position pos) const
     return curr_pos;
 }
 
+//calculate possible moves for pieces that can move unlimited # of spaces
+//includes rook, bishop, queen
+Position_set Model::spaces_ult(Piece)
+{
+
+
+}
+
+//calculate possible moves for pieces that can move a limited # of spaces
+//includes pawn, knight, king
+Position_set Model::spaces_ltd(Piece)
+{
+
+
+}
+
+
+
 void Model::compute_next_moves_()
 {
     // iterate through entire board all call eval_position on every spot.
     // Only add non empty position sets  to next_moves_.
     next_moves_.clear(); // first clear out next moves
-    // int total_plays = board_.count_player(Player::light) + board_
-    //         .count_player(Player::dark);
 
-}
+    //iterate through each
 
-bool Model::advance_turn_()
-{
-    //OPTIONAL HELPER
-    return false;
-    // ^^^ this is wrong
 }
 
 void Model::set_game_over_()

@@ -1,10 +1,5 @@
 #pragma once
 
-#ifndef FINAL_PROJECT_VIEW_HXX
-#define FINAL_PROJECT_VIEW_HXX
-
-#endif //FINAL_PROJECT_VIEW_HXX
-
 #include "model.cxx"
 #include <string>
 

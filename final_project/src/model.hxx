@@ -3,10 +3,10 @@
 //#include "piece.hxx"
 #include "board.hxx"
 
-#include <ge211.hxx>
+//#include <ge211.hxx>
 
-#include <iostream>
-#include <vector>
+//#include <iostream>
+//#include <vector>
 
 // Represents the state of the game.
 class Model
@@ -28,7 +28,7 @@ public:
     ///
     ///  - Throws `ge211::Client_logic_error` if `size` is less than 2
     ///    or greater than 8.
-    explicit Model(int size = 8);
+    //explicit Model(int size = 8);
 
     /// Constructs a model with the given width and height.
     ///
@@ -36,7 +36,7 @@ public:
     ///
     ///  - Throws `ge211::Client_logic_error` if either dimension is less
     ///    than 2 or greater than 8.
-    Model(int width, int height);
+    Model();
 
     /// Returns a rectangle containing all the positions of the board.
     /// This can be used to iterate over the positions.
@@ -44,18 +44,18 @@ public:
 
     /// Returns whether the game is finished. This is true when neither
     /// player can move.
-    bool is_game_over() const
-    { return turn() == Player::neither; }
+    bool is_game_over() const;
+    //{ return turn() == Player::neither; }
 
     /// Returns the current turn, or `Player::neither` if the game is
     /// over.
-    Player turn() const
-    { return turn_; }
+    Player turn() const;
+    //{ return turn_; }
 
     /// Returns the winner, or `Player::neither` if there is no winner
     /// (either because the game isn't over, or because it's a draw).
-    Player winner() const
-    { return winner_; }
+    Player winner() const;
+    //{ return winner_; }
 
     /// Returns the player at the given position, or `Player::neither` if
     /// the position is unoccupied.
@@ -64,7 +64,7 @@ public:
     ///
     ///  - Throws `ge211::Client_logic_error` if the position is out of
     ///    bounds.
-    Piece operator[](Position) const;
+    Piece operator[](Position) ;//const;
 
     /// Returns a pointer to the move that will result if the current
     /// player plays at the given position. If the current player cannot
@@ -125,6 +125,17 @@ private:
     ///
     /// (Helper for `compute_next_moves_`.)
     Position_set evaluate_position_(Position) const;
+
+
+    //helper function for compute_next_moves: finds spaces of travel
+    //for pieces that can move an unlimited # of spaces: rook, bishop, queen
+    Position_set spaces_ult(Piece);
+
+    //helper function for compute_next_moves: finds spaces of travel
+    //for pieces that only move a limited # of pieces: pawn, knight, king
+    Position_set spaces_ltd(Piece);
+
+
 
     /// Updates `next_moves_` to contain the moves available the current
     /// player.
