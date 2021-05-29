@@ -199,57 +199,14 @@ Position_set Model::spaces_ult(Piece p)
     // - piece, in which case we'd be able to take that piece
     for (auto dir : dirs_travel) {
 
-        //the code we wrote  to try to solve this problem at first
-        //commented out b/c we might co-opt part of reversi code
-
-        // //get the position in that direction of travel from curr piece
-        // Position adjacent_posn = p.get_posn() + dir;
-        // Piece adjacent_piece = board_[adjacent_posn];
-        //
-        // //need to manually bounds check this so it doesn't throw
-        // //filter out the directions that are out of bounds. Out of bounds
-        // //means a value less than 0 or greater than width of board. reversi:
-        // // if (next_pos.x < 0 || next_pos.x >= Model::board_.dimensions().width
-        // //     || next_pos.y < 0 || next_pos.y >= Model::board_.dimensions().height){
-        // //     continue;
-        // //}
-        //
-        // //repeat this process until getting to a position that's out of bounds
-        // //or that's the same piece as the player. may go on infinitely until
-        // //reaching an error state until we debug
-        // while (adjacent_piece.get_player() != p.get_player()) {
-        //
-        //     //if there's actually a piece here: check to see if the piece
-        //     //is the same player or opposite player. if opposite player,
-        //     //add to possible next moves
-        //     if (adjacent_piece.get_piece_type() != Piece_type::null) {
-        //
-        //         if (adjacent_piece.get_player() ==
-        //             other_player(p.get_player())) {
-        //             //add to list of possible moves. see position_set documentation
-        //             possible_moves[adjacent_posn] = true;
-        //
-        //         } else if (adjacent_piece.get_player() != p.get_player()) {
-        //             //if the adjacent piece isn't black or white (i.e. neither),
-        //             //this is an error state: no piece should be player "neither"
-        //             throw Client_logic_error("Model::spaces_ult: can't have"
-        //                                      "a piece with 'neither' as its player");
-        //         }
-        //
-        //     //else, if there's no player in this direction, we want to travel
-        //     //as far as possible in that direction and add all the spaces there
-        //     // to the position_set
-        //     } else {
-        //         //maybe this could be done w/ recursion?
-        //         adjacent_posn = adjacent_piece.get_posn() + dir;
-        //         //same here: need to manually bounds check this
-        //         adjacent_piece = board_[adjacent_posn];
-        //     }
-        // }
-
-
-
+        //add the moves possible in this direction to the total list
+        //of possible moves for this piece using union |=
+        Position_set moves_in_dir = moves_in_dir_(p.get_posn(), dir);
+        possible_moves.operator|=(moves_in_dir);
     }
+
+    //return all possible moves for this piece
+    return possible_moves;
 }
 
 //calculate possible moves for pieces that can move a limited # of spaces
