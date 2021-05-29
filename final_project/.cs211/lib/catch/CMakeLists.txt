@@ -11,24 +11,7 @@ project(Catch2
 add_library(catch
         include/catch.hxx
         src/catch.cxx
-
-    #gonna try adding model
-        ../../../src/model.cxx
-        ../../../src/model.hxx
-        ../../../src/player.cxx
-        ../../../src/player.hxx
-        ../../../src/view.cxx
-        ../../../src/view.hxx
-        ../../../src/controller.cxx
-        ../../../src/controller.hxx
-        ../../../src/board.cxx
-        ../../../src/board.hxx
-        ../../../src/move.cxx
-        ../../../src/move.hxx
-        ../../../src/piece.cxx
-        ../../../src/piece.hxx
-        ../../../src/position_set.cxx
-        ../../../src/position_set.hxx)
+        )
 
 set_target_properties(catch PROPERTIES
         CXX_STANDARD            14

@@ -126,7 +126,6 @@ private:
     /// (Helper for `compute_next_moves_`.)
     Position_set evaluate_position_(Position) const;
 
-
     //helper function for compute_next_moves: finds spaces of travel
     //for pieces that can move an unlimited # of spaces: rook, bishop, queen
     Position_set spaces_ult(Piece);

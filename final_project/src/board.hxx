@@ -130,6 +130,7 @@ public:
     //directions of travel for pawn
     static std::vector<Dimensions> const& pawn_directions_light();
     static std::vector<Dimensions> const& pawn_directions_dark();
+    void modify_pawn_dirs(Piece, std::vector<Dimensions>&);
 
 
 

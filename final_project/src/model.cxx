@@ -63,7 +63,7 @@ void Model::play_move(Position pos)
 
         //find the position set of all things we've changed via find_move()
         // Position_set pset = movep->second;
-        Player turn = Model::turn();
+        // Player turn = Model::turn();
 
         //add the position set of all the things we've changed via find_move()
         //to the data of which tiles are where in board
@@ -97,10 +97,10 @@ Position_set Model::evaluate_position_(Position pos) const
     Position_set curr_pos {};
 
     // iterate through all possible directions and call find_flips
-    for (auto dir : Board::all_directions())
-    {
-        //find the next square in each direction.
-    }
+    // for (auto dir : Board::all_directions())
+    // {
+    //     //find the next square in each direction.
+    // }
 
     //if the curr_pos is not empty, meaning this is a valid move that will cause
     //flips, add curr_pos to the Position_set that will become "second" in
@@ -171,6 +171,14 @@ Position_set Model::moves_in_dir_(Position current, Dimensions dir) {
 
 //calculate possible moves for pieces that can move unlimited # of spaces
 //includes rook, bishop, queen
+
+//in each direction of travel, take the current posn of piece
+//and add the vector of the dir_travel to it.
+// - bounds-check the posn to make sure it's between (0,0) and (7,7)
+//      --this happens in [], but could throw an error
+// - move as many free spaces as possible in that direction
+// - if there's a piece at the end of the line, check if it's an enemy
+// - piece, in which case we'd be able to take that piece
 Position_set Model::spaces_ult(Piece p)
 {
     //initialize sets of data of unknown size
@@ -190,14 +198,7 @@ Position_set Model::spaces_ult(Piece p)
         throw Client_logic_error("Model::spaces_ult: piece must be r/b/q");
     }
 
-    //in each direction of travel, take the current posn of piece
-    //and add the vector of the dir_travel to it.
-    // - bounds-check the posn to make sure it's between (0,0) and (7,7)
-    //      --this happens in [], but could throw an error
-    // - move as many free spaces as possible in that direction
-    // - if there's a piece at the end of the line, check if it's an enemy
-    // - piece, in which case we'd be able to take that piece
-    for (auto dir : dirs_travel) {
+    for (Dimensions dir : dirs_travel) {
 
         //add the moves possible in this direction to the total list
         //of possible moves for this piece using union |=
@@ -213,10 +214,69 @@ Position_set Model::spaces_ult(Piece p)
 //includes pawn, knight, king
 Position_set Model::spaces_ltd(Piece p)
 {
+    //initialize sets of data of unknown size
+    Position_set possible_moves = Position_set();
+    std::vector<Board::Dimensions> dirs_travel;
 
+    //find the directions of travel possible for this piece
+    switch(p.get_piece_type()) {
 
+    case Piece_type::pawn:
+
+        //pawn has different possible directions of travel depending
+        //on which side of the board they're on
+        if (p.get_player() == Player::dark) {
+            dirs_travel = board_.pawn_directions_dark();
+        } else if (p.get_player() == Player::light) {
+            dirs_travel = board_.pawn_directions_light();
+        } else {
+            throw Client_logic_error("Model::spaces_ltd: pawn cannot"
+                                     "have player 'neither'");
+        }
+        //pawn has special directions of travel depending on what's around
+        //it, so account for there. do using a reference to dirs_travel
+        board_.modify_pawn_dirs(p, dirs_travel);
+
+    case Piece_type::knight:
+        dirs_travel = board_.knight_directions();
+    case Piece_type::king:
+        dirs_travel = board_.all_directions();
+    default:
+        throw Client_logic_error("Model::spaces_ult: piece must be kn/ki/p");
+    }
+
+    //in each direction of travel, take the current posn of piece
+    //and add the vector of the dir_travel to it.
+    // - bounds-check the posn to make sure it's between (0,0) and (7,7)
+    //      --this happens in [], but could throw an error
+    // - move as many free spaces as possible in that direction
+    // - if there's a piece at the end of the line, check if it's an enemy
+    // - piece, in which case we'd be able to take that piece
+    for (Dimensions dir : dirs_travel ) {
+
+        //find the first position in the direction where we're looking
+        //if it's out of bounds, skip
+        Position posn = p.get_posn() + dir;
+        if (posn.x < 0 || posn.x >= Model::board_.dimensions().width
+            || posn.y < 0 || posn.y >= Model::board_.dimensions().height) {
+            continue;
+
+        //if the square in that direction is occupied by a piece of the
+        //same color as this piece, skip
+        } else if (board_[posn].get_piece_type() != Piece_type::null
+            && board_[posn].get_player() == p.get_player() ){
+            continue;
+
+        //else: the position is either free or occupied by the opposite
+        //player
+        } else {
+            possible_moves[posn] = true;
+        }
+    }
+
+    //return all unoccupied or enemy-occupied spaces
+    return possible_moves;
 }
-
 
 
 void Model::compute_next_moves_()
@@ -225,8 +285,42 @@ void Model::compute_next_moves_()
     // Only add non empty position sets  to next_moves_.
     next_moves_.clear(); // first clear out next moves
 
-    //iterate through each
+    //iterate through each space on the board and find the moves associated
+    //with that piece
+    for (auto pos : board_.all_positions()) {
 
+        //get the piece at this position, if any
+        Piece piece = board_[pos];
+
+        //conditions: the piece must exist and the piece must be of
+        //the current player, given by move)
+
+        //other condition that hasn't been checked for: that the piece
+        //at this position is active. piece_set may take care of this
+        if (piece.get_piece_type() != Piece_type::null
+                && piece.get_player() == turn_) {
+
+            //get the possible positions of motion for this turn;
+            //add a Move containing {position of curr piece, all possible
+            //places to move} to next_moves_
+            if (piece.get_piece_type() == Piece_type::bishop
+                    || piece.get_piece_type() == Piece_type::rook
+                    || piece.get_piece_type() == Piece_type:: queen) {
+
+                //for the pieces that have unlimited movement
+                Position_set curr_moves = spaces_ult(piece);
+                next_moves_[pos] = curr_moves;
+
+            } else if (piece.get_piece_type() == Piece_type::pawn
+                    || piece.get_piece_type() == Piece_type::knight
+                    || piece.get_piece_type() == Piece_type::king) {
+
+                //for the pieces that have limited movement
+                Position_set curr_moves = spaces_ltd(piece);
+                next_moves_[pos] = curr_moves;
+            }
+        }
+    }
 }
 
 void Model::set_game_over_()
