@@ -64,7 +64,7 @@ void Controller::on_mouse_down(ge211::Mouse_button btn,
                 // play it. Else, interpret as an invalid move
 
                 if (Controller::model_.find_move(square_coords)) {
-                    Controller::model_.play_move(square_coords);
+                    // Controller::model_.play_move(square_coords);
                     //remove any existing text from screen
                     // view_.update_text_box("");
 

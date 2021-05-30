@@ -1,3 +1,7 @@
+
+#ifndef CHESS_STD_WHITE_HXX
+  #define CHESS_STD_WHITE_HXX
+
 #include <vector>
 #include "piece.hxx"
 
@@ -20,3 +24,5 @@ std::vector<Piece> white_start_moves{
         Piece(Piece_type::knight, Player::light,{6,0} ),
         Piece(Piece_type::rook, Player::light,{7,0} ),
 };
+
+  #endif //std_white_hxx

@@ -37,7 +37,6 @@ Piece* Piece_set::get_piece_ptr(Position posn)
     // for (Piece& piece : pieces_) {
     for (Piece& piece : pieces_) {
 
-
         //if the position of this piece matches the position
         //passed as input, return a reference to it
         if (piece.get_posn() == posn && piece.is_active()) {
@@ -47,12 +46,8 @@ Piece* Piece_set::get_piece_ptr(Position posn)
 
     //if we didn't find anything, return a piece that doesn't
     //represent anything
-    // Piece temp_piece(Piece_type::null, Player::neither, {0,0});
-    // return temp_piece;
     return nullptr;
 }
-
-
 
 
 //finds the size of the piece set by looking at its vector.
@@ -125,6 +120,13 @@ bool Piece_set::operator[](Position posn) const{
 
     //fixed, I think: I removed the copy constructor from piece.hxx
 }
+
+//for iterating through a piece_set
+Piece Piece_set::operator[](size_t ii) {
+
+    return pieces_[ii];
+}
+
 
 // Are two piece sets equal?
 bool operator==(Piece_set a, Piece_set b){

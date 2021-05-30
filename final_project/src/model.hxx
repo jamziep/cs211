@@ -1,4 +1,7 @@
-#pragma once
+//#pragma once
+
+#ifndef CHESS_MODEL_HXX
+  #define CHESS_MODEL_HXX
 
 //#include "piece.hxx"
 #include "board.hxx"
@@ -28,7 +31,7 @@ public:
     ///
     ///  - Throws `ge211::Client_logic_error` if `size` is less than 2
     ///    or greater than 8.
-    //explicit Model(int size = 8);
+    explicit Model();
 
     /// Constructs a model with the given width and height.
     ///
@@ -36,7 +39,7 @@ public:
     ///
     ///  - Throws `ge211::Client_logic_error` if either dimension is less
     ///    than 2 or greater than 8.
-    Model();
+    // Model();
 
     /// Returns a rectangle containing all the positions of the board.
     /// This can be used to iterate over the positions.
@@ -87,7 +90,18 @@ public:
     ///  - Throws `ge211::Client_logic_error` if the move is not currently
     ///    allowed for the current player.
     ///
-    void play_move(Position);
+    void play_move(Position, Position);
+
+    //determines whether or not the model is currently at a state of check.
+    //applies to any theoretical model so that we can look at the status of
+    // either the current board or another board after a move has been made
+    bool is_in_check(Player p);
+
+    //determines whether the model is at a state of checkmate.
+    //takes in a player, then carries out is_in_check for all possible
+    //future states of the board after a move is made
+    bool is_checkmate(Player p);
+
 
 #ifdef CS211_TESTING
     // When this class is compiled for testing, members of a struct named
@@ -108,23 +122,8 @@ private:
     Move_map next_moves_;
     std::vector<Piece> pieces_taken_;
 
-
     // INVARIANT:
     //  - `next_moves_` is always current for the state of the game.
-
-    //
-    // PRIVATE HELPER FUNCTIONS
-    //
-    // Implementing these is optional, but likely a good idea.
-    //
-
-
-    /// Returns the set of positions that the current player would gain
-    /// by playing in the given position. If the current player cannot
-    /// play in the given position then the result is empty.
-    ///
-    /// (Helper for `compute_next_moves_`.)
-    Position_set evaluate_position_(Position) const;
 
     //helper function for compute_next_moves: finds spaces of travel
     //for pieces that can move an unlimited # of spaces: rook, bishop, queen
@@ -139,6 +138,9 @@ private:
     //in that direction, including positions where an enemy piece exists
     Position_set moves_in_dir_(Position, Dimensions);
 
+    //takes in a position where the piece starts, a piece where it ends, and
+    //changes the position of that piece
+    void set_new_posn(Position start, Position end);
 
     /// Updates `next_moves_` to contain the moves available the current
     /// player.
@@ -152,4 +154,6 @@ private:
     void set_game_over_();
 
 };
+
+#endif //chess_model_hxx
 

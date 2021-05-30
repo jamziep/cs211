@@ -14,7 +14,7 @@ Model::Model()
 
     //initialize next_moves_ to turn_'s possible next moves,
     //using the compute_next_moves helper
-    //Model::compute_next_moves_();
+    Model::compute_next_moves_();
 }
 
 Player Model::turn() const
@@ -47,13 +47,14 @@ Move const* Model::find_move(Position pos) const
         return &*i;
 }
 
-void Model::play_move(Position pos)
+void Model::play_move(Position start, Position end)
 {
     if (is_game_over())
         //rather than throw an error, run our own game over function
         set_game_over_();
 
-    Move const* movep = find_move(pos);
+    //see if there is a piece at the position where player wants to play
+    Move const* movep = find_move(start);
     if (!movep) {
         //now that we've implemented checks for this in controller, we actually
         //do want this error to throw if we get here, b/c it means we did some-
@@ -61,56 +62,23 @@ void Model::play_move(Position pos)
         throw Client_logic_error("Model::play_move: no such move");
     } else {
 
-        //find the position set of all things we've changed via find_move()
-        // Position_set pset = movep->second;
-        // Player turn = Model::turn();
+        //check to see that the position the player wants to move their
+        //piece to exists. i.e. check that "end" is in movep -> second
+        Position_set possible_moves = movep -> second;
+        if (!possible_moves[end]) {
+            throw Client_logic_error("Model::play_move: position to move"
+                                     "to not found");
+        }
 
-        //add the position set of all the things we've changed via find_move()
-        //to the data of which tiles are where in board
-        //Model::board_.set_all(pset, turn);
+        //set the new position of the piece
+        set_new_posn(start, end);
 
         //advance the turn. using function from player.cxx
         Model::turn_ = other_player(Model::turn_);
 
         //refill next_moves_ for the current player
         Model::compute_next_moves_();
-        if (next_moves_.empty()){
-            Model::turn_ = other_player(Model::turn_);
-
-            //if neither player has any moves left, set game over
-            Model::compute_next_moves_();
-            if(next_moves_.empty()){
-                set_game_over_();
-            }
-        }
     }
-}
-
-//
-// BELOW ARE *OPTIONAL* HELPER FUNCTIONS
-//
-
-Position_set Model::evaluate_position_(Position pos) const
-{
-    //try initializing the position set with the posn we're looking at,
-    //as well, so it gets flipped too
-    Position_set curr_pos {};
-
-    // iterate through all possible directions and call find_flips
-    // for (auto dir : Board::all_directions())
-    // {
-    //     //find the next square in each direction.
-    // }
-
-    //if the curr_pos is not empty, meaning this is a valid move that will cause
-    //flips, add curr_pos to the Position_set that will become "second" in
-    // next_moves
-    if (curr_pos.size()) {
-        Position_set start_posn{pos};
-        curr_pos |= start_posn;
-    }
-
-    return curr_pos;
 }
 
 Position_set Model::moves_in_dir_(Position current, Dimensions dir) {
@@ -323,14 +291,112 @@ void Model::compute_next_moves_()
     }
 }
 
+//takes in a position where the piece starts, a piece where it ends, and
+//changes the position of that piece
+void Model::set_new_posn(Position start, Position end) {
+
+    //get the piece at a given posn from board
+    Piece p = board_[start];
+
+    //if no piece is found, throw error
+    if (p.get_piece_type() == Piece_type::null) {
+        throw Client_logic_error("Model::set_new_posn: no piece at "
+                                 "this start posn");
+    }
+
+    //modify the position of this piece
+    board_.change_piece_posn(p, end);
+}
+
+//checks if a a model "m" (NOT the current model used in model.is_in_check()
+//uses) has a player in check
+bool Model::is_in_check(Player p){
+
+    //ensure next_moves_ is calculated for the opposite player as p
+    Player temp = turn();
+    turn_ = other_player(p);
+
+    //find the location of the king in this player's piece_set
+    // Position king_posn = board_.find_king_location(p);
+    Position king_posn = board_.find_king_location(p);
+
+    //compute next moves for the other player of the piece we're checking
+    compute_next_moves_();
+
+    //if the opposite player has a move that could threaten the
+    //king, the current player is in check
+    for (Move move : next_moves_) {
+
+        Position curr_piece_posn = move.first;
+        //iterate through all the places where this piece can move and
+        //see if player p's king is at one of those pieces
+        for (Position posn : move.second) {
+            if (posn == king_posn) {
+
+                //reset the turn of this model and revert next_moves_
+                //to what it was before
+                turn_ = temp;
+                compute_next_moves_();
+                return true;
+            }
+        }
+    }
+
+    //ensure the turn gets set back to what it was before this function
+    turn_ = temp;
+    compute_next_moves_();
+
+    //if none of the moves of the other player
+    //could put the king in danger, curr player is not in check
+    return false;
+}
+
+bool Model::is_checkmate(Player p)
+{
+    //first, check if the current player is in check
+    if (!is_in_check(p)) {
+        return false;
+    }
+
+    //set the current player to piece p. revert after function is over
+    Player temp = turn_;
+    turn_ = p;
+    compute_next_moves_();
+
+    //make a copy of the model and analyze all possible moves
+    Model other = *this;
+
+    //player is in check. let's see if there are any moves the
+    //player could make that get the king out of check
+    for (Move move : next_moves_) {
+
+        //see if moving this piece to any of its possible positions
+        //gets the king out of check
+        Position start = move.first;
+        for (Position end : move.second) {
+            other.turn_ = p;
+            other.play_move(start, end);
+            if (!other.is_in_check(p)) {
+
+                //if player p is not in check after a move, then success--
+                //player is not in checkmate
+
+                //TODO
+
+            }
+        }
+
+
+    }
+
+    //revert the changes we made to the turn and moves
+    turn_ = temp;
+    compute_next_moves_();
+}
+
 void Model::set_game_over_()
 {
     Model::turn_ = Player::neither;
-
 }
 
-
-//is_check
-
-//is_checkmate
 

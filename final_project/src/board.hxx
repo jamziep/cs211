@@ -132,8 +132,12 @@ public:
     static std::vector<Dimensions> const& pawn_directions_dark();
     void modify_pawn_dirs(Piece, std::vector<Dimensions>&);
 
+    //take in a piece, and change its position. essential for making
+    //a move
+    void change_piece_posn(Piece p, Position posn);
 
-
+    //find the location of the king in either of the piece_sets
+    Position find_king_location(Player);
 
     /// Equality for boards.
     friend bool operator==(Board const&, Board const&);

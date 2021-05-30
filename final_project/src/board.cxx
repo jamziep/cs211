@@ -52,6 +52,74 @@ Board::operator[](Position pos)// const
     return get_piece_(pos);
 }
 
+
+//take in a piece (not a reference), go into the board,
+//and modify the position of a piece at that same position
+//using board.light_ or dark_
+void Board::change_piece_posn(Piece p, Position end) {
+
+    //find the starting position of piece
+    Position start = p.get_posn();
+
+    //modify the appropriate Piece_set
+    if (p.get_player() == Player::light) {
+        light_.change_posn(start, end);
+    } else if (p.get_player() == Player::dark) {
+        dark_.change_posn(start, end);
+    } else {
+        throw Client_logic_error("Model::change_piece_posn: cannot"
+                                 "change the position of Player::neither");
+    }
+
+
+}
+
+//find the king in either of the piece_sets, and return its location
+//commented out for now, but KEEP WORKING on it
+
+Position Board::find_king_location(Player p)
+{
+    //decide which piece_set to iterate through
+    if (p == Player::dark) {
+        //iterate through the piece_set and try to find a piece that has
+        //piece_type king
+        Piece_set pcset = dark_;
+        for (size_t ii = 0; ii < pcset.size(); ++ii) {
+            Piece curr_piece = pcset[ii];
+            if (curr_piece.get_piece_type() == Piece_type::king) {
+                //return the position of the king
+                return curr_piece.get_posn();
+            }
+        }
+
+        //if no king is found, that's a problem
+        throw Client_logic_error("Board::find_king_location: no king"
+                                 "found for dark");
+
+    } else if (p == Player::light) {
+        //iterate through the piece_set and try to find a piece that has
+        //piece_type king
+        Piece_set pcset = light_;
+        for (size_t ii = 0; ii < pcset.size(); ++ii) {
+            Piece curr_piece = pcset[ii];
+            if (curr_piece.get_piece_type() == Piece_type::king) {
+                //return the position of the king
+                return curr_piece.get_posn();
+            }
+        }
+
+        //if no king is found, that's a problem
+        throw Client_logic_error("Board::find_king_location: no king"
+                                 "found for light");
+
+    } else {
+        throw Client_logic_error("Board::find_king_location: can't find"
+                                 "a king for a non black/white player");
+    }
+}
+
+
+
 // Board::reference
 // Board::operator[](Position pos)
 // {
