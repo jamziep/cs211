@@ -54,8 +54,8 @@ std::vector<Piece> white_start_moves{
 
 Board::Board(Dimensions dims)
         : dims_(dims),
-        light_(white_start_moves),
-        dark_(black_start_moves)
+        white_(white_start_moves),
+        black_(black_start_moves)
         // light_(pieces),
         // dark_(pieces)
 {
@@ -99,7 +99,7 @@ Board::operator[](Position pos)
 
 //take in a piece (not a reference), go into the board,
 //and modify the position of a piece at that same position
-//using board.light_ or dark_
+//using board.white_ or black_
 void Board::change_piece_posn(Piece p, Position end) {
 
     //find the starting position of piece
@@ -107,9 +107,9 @@ void Board::change_piece_posn(Piece p, Position end) {
 
     //modify the appropriate Piece_set
     if (p.get_player() == Player::white) {
-        light_.change_posn(start, end);
+        white_.change_posn(start, end);
     } else if (p.get_player() == Player::black) {
-        dark_.change_posn(start, end);
+        black_.change_posn(start, end);
     } else {
         throw Client_logic_error("Model::change_piece_posn: cannot"
                                  "change the position of Player::neither");
@@ -127,7 +127,7 @@ Position Board::find_king_location(Player p)
     if (p == Player::black) {
         //iterate through the piece_set and try to find a piece that has
         //piece_type king
-        Piece_set pcset = dark_;
+        Piece_set pcset = black_;
         for (size_t ii = 0; ii < pcset.size(); ++ii) {
             Piece curr_piece = pcset[ii];
             if (curr_piece.get_piece_type() == Piece_type::king) {
@@ -143,7 +143,7 @@ Position Board::find_king_location(Player p)
     } else if (p == Player::white) {
         //iterate through the piece_set and try to find a piece that has
         //piece_type king
-        Piece_set pcset = light_;
+        Piece_set pcset = white_;
         for (size_t ii = 0; ii < pcset.size(); ++ii) {
             Piece curr_piece = pcset[ii];
             if (curr_piece.get_piece_type() == Piece_type::king) {
@@ -168,9 +168,9 @@ void Board::remove_by_posn(Position posn) {
     Piece piece = operator[](posn);
 
     if (piece.get_player() == Player::white) {
-        dark_.remove(piece);
+        black_.remove(piece);
     } else if (piece.get_player() == Player::black) {
-        light_.remove(piece);
+        white_.remove(piece);
     } else {
         throw Client_logic_error("Board::remove_by_posn: can't remove"
                                  "a player of type 'neither'");
@@ -340,8 +340,8 @@ Board::get_piece_(Position pos) const
     //figure this shit out, bc it's really a necessary step
     //in order to get pieces out of board
 
-    Piece* white_piece_ptr = light_.get_piece_ptr(pos);
-    Piece* black_piece_ptr = dark_.get_piece_ptr(pos);
+    Piece* white_piece_ptr = white_.get_piece_ptr(pos);
+    Piece* black_piece_ptr = black_.get_piece_ptr(pos);
 
     //if there's a white piece at the given position, return that
     //piece. if there's a black piece, same. else, return a piece that
@@ -376,8 +376,8 @@ bool
 operator==(Board const& b1, Board const& b2)
 {
     //two boards are equal if all their member data is equal
-    return (b1.dims_ == b2.dims_ && b1.dark_ == b2.dark_
-            && b1.light_ == b2.light_)   ;
+    return (b1.dims_ == b2.dims_ && b1.black_ == b2.black_
+            && b1.white_ == b2.white_)   ;
 }
 
 bool

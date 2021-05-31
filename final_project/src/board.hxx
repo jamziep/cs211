@@ -38,8 +38,8 @@ private:
     Dimensions dims_;
 
     //changed this member data to be a vector of pieces
-    Piece_set light_;
-    Piece_set dark_;
+    Piece_set white_;
+    Piece_set black_;
 
     // INVARIANT: (light_ & dark_) at initial board state
 
