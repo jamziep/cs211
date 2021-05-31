@@ -1,11 +1,12 @@
 #pragma once
 
 #include "player.hxx"
-#include <ge211.hxx>
+#include "position_set.hxx"
+//#include <ge211.hxx>
 
-#include <bitset>
-#include <cstddef>
-#include <initializer_list>
+// #include <bitset>
+// #include <cstddef>
+// #include <initializer_list>
 
 using Position = ge211::Posn<int>;
 
@@ -40,13 +41,14 @@ public:
     Position get_posn()
     {return posn_;}
 
+    bool is_active()
+    {return active_;}
+
     void set_posn(Position posn)
     {posn_ = posn;}
 
     void remove_piece()
-            {active = false;};
-};
-
+            {active_ = false;};
 
     //two pieces are equal if their member data is the same
     friend bool operator==(Piece, Piece);
@@ -59,4 +61,3 @@ private:
     Player player_;
     bool active_;
 };
-

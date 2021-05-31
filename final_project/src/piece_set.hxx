@@ -1,7 +1,10 @@
 #pragma once
 
+#ifndef CHESS_PIECE_SET_HXX
+  #define CHESS_PIECE_SET_HXX
+
 #include "piece.hxx"
-#include <ge211.hxx>
+//#include <ge211.hxx>
 
 // #include <bitset>
 // #include <cstddef>
@@ -27,10 +30,15 @@ public:
 
     //Gets the piece at a given position. Gets a reference
     //so you can modify it.
-    Piece& get(Position);
+    // Piece& get(Position);
+
+    //Takes in a position on the board, finds a piece there, and
+    //returns a pointer to that piece. If no piece found, returns
+    //a null ptr.
+    Piece* get_piece_ptr(Position);
 
     //Changes the position of a piece by reference.
-    void set_posn(Piece&, Position);
+    void set_posn(Piece*, Position);
 
     //changes the position of a piece located at a certain
     //position "start" to a new position "end"
@@ -64,6 +72,9 @@ public:
     // ```
     bool operator[](Position posn) const;
 
+    //lets you iterate through pieces_
+    Piece operator[](size_t ii);
+
     /// Are two position sets equal?
     friend bool operator==(Piece_set, Piece_set);
 
@@ -78,3 +89,5 @@ private:
     //member data
     std::vector<Piece> pieces_;
 };
+
+#endif

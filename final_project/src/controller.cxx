@@ -1,7 +1,3 @@
-//
-// Created by seanp on 5/25/2021.
-//
-
 #include "controller.hxx"
 
 //copied this value from view.cxx for finding size of board
@@ -9,12 +5,8 @@
 //these controls depend on the visual board dims
 static int const grid_size = 36;
 
-Controller::Controller(int size)
-        : Controller(size, size)
-{ }
-
-Controller::Controller(int width, int height)
-        : model_(width, height),
+Controller::Controller()
+        : model_(),
           view_(model_)
 { }
 
@@ -72,13 +64,13 @@ void Controller::on_mouse_down(ge211::Mouse_button btn,
                 // play it. Else, interpret as an invalid move
 
                 if (Controller::model_.find_move(square_coords)) {
-                    Controller::model_.play_move(square_coords);
+                    // Controller::model_.play_move(square_coords);
                     //remove any existing text from screen
-                    view_.update_text_box("");
+                    // view_.update_text_box("");
 
                 } else {
                     //handle an invalid move error by printing "invalid move"
-                    view_.update_text_box("Invalid move");
+                    // view_.update_text_box("Invalid move");
                 }
 
                 //now that we've found the closest square, break out
@@ -134,15 +126,15 @@ void Controller::on_mouse_move(ge211::Posn<int> mouse_posn) {
                                                     row_ind)) {
 
                 //check to see if this move is one of the next moves possible
-                Move const* movep = model_.find_move(square_coords);
-                if (movep) {
-                    //if so, send this position set to view and tell them
-                    //to add sprites to the board for these flips
-                    view_.set_move_preview(movep -> second);
-                } else {
-                    //give an empty posn set so as to clear out the sprites
-                    view_.set_move_preview({{}});
-                }
+                // Move const* movep = model_.find_move(square_coords);
+                // if (movep) {
+                //     //if so, send this position set to view and tell them
+                //     //to add sprites to the board for these flips
+                //     view_.set_move_preview(movep -> second);
+                // } else {
+                //     //give an empty posn set so as to clear out the sprites
+                //     view_.set_move_preview({{}});
+                // }
 
             }
         }

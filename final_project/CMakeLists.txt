@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.3)
 # TODO: CHANGE THE NEXT LINE TO THE INCLUDE THE TITLE OF YOUR GAME:
-project(chess CXX)
+set(GAME_EXE chess)
+
+project(${GAME_EXE} CXX)
 include(.cs211/cmake/CMakeLists.txt)
 
 # TODO: PUT ADDITIONAL MODEL .cxx FILES IN THIS LIST:
@@ -12,17 +14,15 @@ set(MODEL_SRC
         src/piece_set.cxx
         src/position_set.cxx
         src/move.cxx
-#        src/std_black.cxx,
-#        src/std_white.cxx
         )
 
 # TODO: PUT ADDITIONAL NON-MODEL (UI) .cxx FILES IN THIS LIST:
-add_program(main
+add_program(${GAME_EXE}
     src/main.cxx
     src/view.cxx
     src/controller.cxx
-    ${MODEL_SRC})
-target_link_libraries(main ge211)
+    ${MODEL_SRC})#${SPRITES}) #${HEADERS})
+target_link_libraries(${GAME_EXE} ge211)
 
 add_test_program(model_test
     test/model_test.cxx

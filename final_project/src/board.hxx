@@ -1,10 +1,9 @@
 #pragma once
 
 #include "move.hxx"
-#include "piece.hxx"
 #include "piece_set.hxx"
-
-#include <ge211.hxx>
+// #include "std_black.hxx"
+// #include "std_white.hxx"
 
 #include <iostream>
 #include <unordered_map>
@@ -37,14 +36,12 @@ private:
     //
 
     Dimensions dims_;
-    // Position_set light_;
-    // Position_set dark_;
 
-    //change this member data to be a vector of pieces
+    //changed this member data to be a vector of pieces
     Piece_set light_;
     Piece_set dark_;
 
-    // INVARIANT: (light_ & dark_).empty()
+    // INVARIANT: (light_ & dark_) at initial board state
 
 public:
     //
@@ -72,7 +69,7 @@ public:
     ///
     ///  - throws `ge211::Client_logic_error` if `!good_position(pos)`.
     //Player operator[](Position pos) const;
-    Piece operator[](Position pos) const;
+    Piece operator[](Position pos); //const;
 
     //Piece operator[](Position pos) const;
 
@@ -91,7 +88,7 @@ public:
     /// ## Errors
     ///
     ///  - throws `ge211::Client_logic_error` if `!good_position(pos)`.
-    reference operator[](Position pos);
+    //reference operator[](Position pos);
 
     /// Counts the number of occurrences of the given player in the board.
     size_t count_player(Player) const;
@@ -121,6 +118,31 @@ public:
     /// ```
     static std::vector<Dimensions> const& all_directions();
 
+    //directions of travel for knight
+    static std::vector<Dimensions> const& knight_directions();
+
+    //directions of travel for bishop
+    static std::vector<Dimensions> const& bishop_directions();
+
+    //directions of travel for rook
+    static std::vector<Dimensions> const& rook_directions();
+
+    //directions of travel for pawn
+    static std::vector<Dimensions> const& pawn_directions_light();
+    static std::vector<Dimensions> const& pawn_directions_dark();
+    void modify_pawn_dirs(Piece, std::vector<Dimensions>&);
+
+    //take in a piece, and change its position. essential for making
+    //a move
+    void change_piece_posn(Piece p, Position posn);
+
+    //find the location of the king in either of the piece_sets
+    Position find_king_location(Player);
+
+    //remove a piece from board by setting it to "active = false". search
+    //by position because that's more convenient
+    void remove_by_posn(Position);
+
     /// Equality for boards.
     friend bool operator==(Board const&, Board const&);
 
@@ -142,8 +164,8 @@ private:
     // PRIVATE HELPER FUNCTION MEMBERS
     //
 
-    Player get_(Position where) const;
-    Piece get_piece_(Position where) const;
+    Player get_(Position where); //const before
+    Piece get_piece_(Position where) ; //const before I changed it
     void set_(Position where, Player who);
     void bounds_check_(Position where) const;
 
