@@ -5,30 +5,30 @@ using Color = ge211::Color;
 using Sprite_set = ge211::Sprite_set;
 
 // change this to whatever we need it to be
-static int const grid_size = 36;
+static int const grid_size = 90;
 
 View::View(Model const& model)
         : model_(model),
         // board sprites
-          board_sprite({420, 420}, Color(30,30,30)),
-          dark_squares({30, 30}, Color(10,10,10)),
+          board_sprite({8*grid_size, 8*grid_size}, Color(198,161,126)),
+          dark_squares({grid_size, grid_size}, Color(10,10,10)),
           // these are arbitrary values for size and color (for now)
 
           //white sprites:
-          white_pawn("rsrc/white_pawn.png"),
-          white_rook("rsrc/white_rook.png"),
-          white_knight("rsrc/white_knight.png"),
-          white_bishop("rsrc/white_bishop.png"),
-          white_king("rsrc/white_king.png"),
-          white_queen("rsrc/white_queen.png"),
+          white_pawn("white_pawn.png"),
+          white_rook("white_rook.png"),
+          white_knight("white_knight.png"),
+          white_bishop("white_bishop.png"),
+          white_king("white_king.png"),
+          white_queen("white_queen.png"),
 
           //black sprites:
-          black_pawn("rsrc/black_pawn.png"),
-          black_rook("rsrc/black_rook.png"),
-          black_knight("rsrc/black_knight.png"),
-          black_bishop("rsrc/black_bishop.png"),
-          black_king("rsrc/black_king.png"),
-          black_queen("rsrc/black_queen.png")
+          black_pawn("black_pawn.png"),
+          black_rook("black_rook.png"),
+          black_knight("black_knight.png"),
+          black_bishop("black_bishop.png"),
+          black_king("black_king.png"),
+          black_queen("black_queen.png")
 
 // sprite initialization
 {}
