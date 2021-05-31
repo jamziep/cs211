@@ -1,9 +1,9 @@
 #include "controller.hxx"
-#include "view.cxx"
 
 //copied this value from view.cxx for finding size of board
 //ideally I'd like to include the entire view.cxx file, since
 //these controls depend on the visual board dims
+static int grid_size = 90;
 
 Controller::Controller()
         : model_(),
