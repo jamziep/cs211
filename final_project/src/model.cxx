@@ -8,8 +8,8 @@ using namespace ge211;
 
 Model::Model()
         : board_({8,8}),
-          next_moves_(),
-          pieces_taken_()
+          next_moves_()
+          //pieces_taken_()
 {
     // throw down some pieces for testing
 
@@ -71,6 +71,18 @@ void Model::play_move(Position start, Position end)
 
         //set the new position of the piece
         set_new_posn(start, end);
+
+        //pause the timer for the current player, start the timer
+        //for the other timer
+        if (turn() == Player::black) {
+            pause_black();
+            resume_white();
+        } else if (turn() == Player::white) {
+            pause_white();
+            resume_black();
+        } else {
+            //case where current turn is player "neither"
+        }
 
         //advance the turn. using function from player.cxx
         Model::turn_ = other_player(Model::turn_);

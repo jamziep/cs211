@@ -40,14 +40,17 @@ View::View(Model& model)
           black_knight("black_knight.png"),
           black_bishop("black_bishop.png"),
           black_king("black_king.png"),
-          black_queen("black_queen.png")
+          black_queen("black_queen.png"),
+
+          //clock sprites
+          black_time_text(),
+          white_time_text()
 
 // sprite initialization
 {}
 
 void View::draw(Sprite_set& set)
 {
-
     //draw the background and the board
     draw_board(set);
     draw_background(set);
@@ -57,7 +60,7 @@ void View::draw(Sprite_set& set)
         Piece curr_piece = View::model_[posn];
 
         // DEBUG:
-        std::cout << posn << "\n";
+        // std::cout << posn << "\n";
 
         Position screen_posn = {posn.x * grid_size, posn.y * grid_size};
 
@@ -66,30 +69,23 @@ void View::draw(Sprite_set& set)
             switch (curr_piece.get_piece_type()) {
             case Piece_type::pawn:
                 set.add_sprite(black_pawn, screen_posn, 3);
-                std::cout<< "black pawn" << "\n";
                 break;
             case Piece_type::rook:
                 set.add_sprite(black_rook, screen_posn, 3);
-                std::cout<< "black rook" << "\n";
                 break;
             case Piece_type::knight:
                 set.add_sprite(black_knight, screen_posn, 3);
-                std::cout<< "black knight" << "\n";
                 break;
             case Piece_type::bishop:
                 set.add_sprite(black_bishop, screen_posn, 3);
-                std::cout<< "black bishop" << "\n";
                 break;
             case Piece_type::queen:
                 set.add_sprite(black_queen, screen_posn, 3);
-                std::cout<< "black queen" << "\n";
                 break;
             case Piece_type::king:
                 set.add_sprite(black_king, screen_posn, 3);
-                std::cout<< "black king" << "\n";
                 break;
             case Piece_type::null: // skip it
-                std::cout<< "black null" << "\n";
                 break;
             }
 
@@ -98,34 +94,27 @@ void View::draw(Sprite_set& set)
             switch (curr_piece.get_piece_type()) {
             case Piece_type::pawn:
                 set.add_sprite(white_pawn, screen_posn, 3);
-                std::cout<< "white pawn" << "\n";
                 break;
             case Piece_type::rook:
                 set.add_sprite(white_rook, screen_posn, 3);
-                std::cout<< "white rook" << "\n";
                 break;
             case Piece_type::knight:
                 set.add_sprite(white_knight, screen_posn, 3);
-                std::cout<< "white knight" << "\n";
                 break;
             case Piece_type::bishop:
                 set.add_sprite(white_bishop, screen_posn, 3);
-                std::cout<< "white bishop" << "\n";
                 break;
             case Piece_type::queen:
                 set.add_sprite(white_queen, screen_posn, 3);
-                std::cout<< "white queen" << "\n";
                 break;
             case Piece_type::king:
                 set.add_sprite(white_king, screen_posn, 3);
-                std::cout<< "white king" << "\n";
                 break;
             case Piece_type::null: // skip it
-                std::cout<< "white null" << "\n";
                 break;
             }
         } else {
-            std::cout << "nothing \n";
+            //like the "default" case
         }
     }
 }
@@ -181,3 +170,26 @@ View::initial_window_title() const
     return "Chess";
 }
 
+void View::update_text_box(Player p, std::string text)
+{
+    //make a new builder for text
+    ge211::Font sans30{"sans.ttf", 30};
+    ge211::Text_sprite::Builder text_builder(sans30);
+
+    //add the text to our builder and reconfigure
+    text_builder.message(text);
+
+    //different colors and sprites for black and white
+    if (p == Player::black) {
+        text_builder.color(ge211::Color(255,255,255));
+        black_time_text.reconfigure(text_builder);
+    } else if (p == Player:: white) {
+        text_builder.color(ge211::Color(0,0,0));
+        white_time_text.reconfigure(text_builder);
+    } else {
+        throw Client_logic_error("View::update_text_box: can't update"
+                                 "the text box of player 'neither'");
+    }
+
+
+}
