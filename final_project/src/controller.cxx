@@ -36,45 +36,56 @@ void Controller::on_key(ge211::Key key) {
     }
 }
 
-//on mouse down, try to place a token at the position in board
-//that's closest to that mouse click. iterate through all the squares
-// of the board and see what the closest square is.
+//on mouse down, select a piece. switch the select bool. If the same tile is
+// clicked again, then we return the select bool back to false. If we click
+// on another valid square, then we move the piece to that square.
+
+bool selected = false;
+ge211::Posn<int> selected_posn{0, 0};
 void Controller::on_mouse_down(ge211::Mouse_button btn,
                                ge211::Posn<int> mouse_posn)
 {
-
     for (int col_ind = 0; col_ind < 8; ++col_ind) {
         for (int row_ind = 0; row_ind < 8; ++row_ind) {
-
             if (Controller::mouse_is_within_square_(mouse_posn, col_ind,
                                                     row_ind)) {
-
-                //eventually this will need to incorporate checks as to
-                //whether or not a move is valid
+                // if selected is false, we switch selected to true and break
+                // out.
+                // gives you selected coordinates
                 ge211::Posn<int> square_coords{col_ind, row_ind};
 
-                //add a tile of the current player's color to the board,
-                //by updating the state of the model
+                //DEBUG
+                std::cout << model_.turn() << "\n";
+                std::cout << square_coords << "\n";
+                std::cout << "selected?: " << selected << "\n";
 
-                //If result of find_move is not null, it's a valid move, so
-                // play it. Else, interpret as an invalid move
+                if (!selected) {
+                    selected = true;
+                    selected_posn = square_coords;
+                    return;
 
-                if (Controller::model_.find_move(square_coords)) {
-                    // Controller::model_.play_move(square_coords);
-                    //remove any existing text from screen
-                    // view_.update_text_box("");
+                    // if selected is true but square_coords is the same as
+                    // the same place you clicked, then you deselected the
+                    // spot.
+                }else if (selected && square_coords == selected_posn){
+                    selected = false;
+                    selected_posn = {0,0};
 
+                    // otherwise check for valid move. if valid, play move.
                 } else {
-                    //handle an invalid move error by printing "invalid move"
-                    // view_.update_text_box("Invalid move");
+                    if (Controller::model_.find_move(square_coords))
+                    {
+                        Controller::model_.play_move(selected_posn,
+                                                     square_coords);
+                        std::cout << "valid move found" << "\n";
+                    }
+                    selected = false;
+                    selected_posn = {0,0};
+                    return;
                 }
-
-                //now that we've found the closest square, break out
-                return;
             }
         }
     }
-
     //if we got here, mouse click was not associated with any square
     return;
 }

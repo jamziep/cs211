@@ -60,7 +60,8 @@ Piece Piece_set::get_piece_from_set(Position posn) const
 
         //if the position of this piece matches the position
         //passed as input, return a reference to it
-        if (piece.get_posn() == posn && piece.is_active()) {
+        // former:piece.get_posn() == posn && piece.is_active()
+        if (piece.get_posn() == posn) {
             return piece;
         }
     }
