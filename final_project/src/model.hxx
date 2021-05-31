@@ -67,7 +67,7 @@ public:
     ///
     ///  - Throws `ge211::Client_logic_error` if the position is out of
     ///    bounds.
-    Piece operator[](Position) ;//const;
+    Piece operator[](Position);
 
     /// Returns a pointer to the move that will result if the current
     /// player plays at the given position. If the current player cannot
@@ -115,7 +115,7 @@ private:
     // (Don't change these!)
     //
 
-    Player turn_   = Player::dark;
+    Player turn_   = Player::white;
     Player winner_ = Player::neither;
     Board board_;
 

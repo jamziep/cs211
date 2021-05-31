@@ -69,7 +69,7 @@ public:
     ///
     ///  - throws `ge211::Client_logic_error` if `!good_position(pos)`.
     //Player operator[](Position pos) const;
-    Piece operator[](Position pos); //const;
+    Piece operator[](Position pos);
 
     //Piece operator[](Position pos) const;
 
@@ -165,7 +165,7 @@ private:
     //
 
     Player get_(Position where); //const before
-    Piece get_piece_(Position where) ; //const before I changed it
+    Piece get_piece_(Position where) const; //const before I changed it
     void set_(Position where, Player who);
     void bounds_check_(Position where) const;
 

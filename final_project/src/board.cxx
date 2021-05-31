@@ -8,43 +8,43 @@ using namespace ge211;
 //black player and white
 
 std::vector<Piece> black_start_moves{
-        Piece(Piece_type::pawn, Player::dark,{0,6} ),
-        Piece(Piece_type::pawn, Player::dark,{1,6} ),
-        Piece(Piece_type::pawn, Player::dark,{2,6} ),
-        Piece(Piece_type::pawn, Player::dark,{3,6} ),
-        Piece(Piece_type::pawn, Player::dark,{4,6} ),
-        Piece(Piece_type::pawn, Player::dark,{5,6} ),
-        Piece(Piece_type::pawn, Player::dark,{6,6} ),
-        Piece(Piece_type::pawn, Player::dark,{7,6} ),
+        Piece(Piece_type::pawn, Player::black,{0,6} ),
+        Piece(Piece_type::pawn, Player::black,{1,6} ),
+        Piece(Piece_type::pawn, Player::black,{2,6} ),
+        Piece(Piece_type::pawn, Player::black,{3,6} ),
+        Piece(Piece_type::pawn, Player::black,{4,6} ),
+        Piece(Piece_type::pawn, Player::black,{5,6} ),
+        Piece(Piece_type::pawn, Player::black,{6,6} ),
+        Piece(Piece_type::pawn, Player::black,{7,6} ),
 
-        Piece(Piece_type::rook, Player::dark,{0,7} ),
-        Piece(Piece_type::knight, Player::dark,{1,7} ),
-        Piece(Piece_type::bishop, Player::dark,{2,7} ),
-        Piece(Piece_type::king, Player::dark,{3,7} ),
-        Piece(Piece_type::queen, Player::dark,{4,7} ),
-        Piece(Piece_type::bishop, Player::dark,{5,7} ),
-        Piece(Piece_type::knight, Player::dark,{6,7} ),
-        Piece(Piece_type::rook, Player::dark,{7,7} ),
+        Piece(Piece_type::rook, Player::black,{0,7} ),
+        Piece(Piece_type::knight, Player::black,{1,7} ),
+        Piece(Piece_type::bishop, Player::black,{2,7} ),
+        Piece(Piece_type::king, Player::black,{3,7} ),
+        Piece(Piece_type::queen, Player::black,{4,7} ),
+        Piece(Piece_type::bishop, Player::black,{5,7} ),
+        Piece(Piece_type::knight, Player::black,{6,7} ),
+        Piece(Piece_type::rook, Player::black,{7,7} ),
 };
 
 std::vector<Piece> white_start_moves{
-        Piece(Piece_type::pawn, Player::light,{0,1} ),
-        Piece(Piece_type::pawn, Player::light,{1,1} ),
-        Piece(Piece_type::pawn, Player::light,{2,1} ),
-        Piece(Piece_type::pawn, Player::light,{3,1} ),
-        Piece(Piece_type::pawn, Player::light,{4,1} ),
-        Piece(Piece_type::pawn, Player::light,{5,1} ),
-        Piece(Piece_type::pawn, Player::light,{6,1} ),
-        Piece(Piece_type::pawn, Player::light,{7,1} ),
+        Piece(Piece_type::pawn, Player::white,{0,1} ),
+        Piece(Piece_type::pawn, Player::white,{1,1} ),
+        Piece(Piece_type::pawn, Player::white,{2,1} ),
+        Piece(Piece_type::pawn, Player::white,{3,1} ),
+        Piece(Piece_type::pawn, Player::white,{4,1} ),
+        Piece(Piece_type::pawn, Player::white,{5,1} ),
+        Piece(Piece_type::pawn, Player::white,{6,1} ),
+        Piece(Piece_type::pawn, Player::white,{7,1} ),
 
-        Piece(Piece_type::rook, Player::light,{0,0} ),
-        Piece(Piece_type::knight, Player::light,{1,0} ),
-        Piece(Piece_type::bishop, Player::light,{2,0} ),
-        Piece(Piece_type::king, Player::light,{3,0} ),
-        Piece(Piece_type::queen, Player::light,{4,0} ),
-        Piece(Piece_type::bishop, Player::light,{5,0} ),
-        Piece(Piece_type::knight, Player::light,{6,0} ),
-        Piece(Piece_type::rook, Player::light,{7,0} ),
+        Piece(Piece_type::rook, Player::white,{0,0} ),
+        Piece(Piece_type::knight, Player::white,{1,0} ),
+        Piece(Piece_type::bishop, Player::white,{2,0} ),
+        Piece(Piece_type::king, Player::white,{3,0} ),
+        Piece(Piece_type::queen, Player::white,{4,0} ),
+        Piece(Piece_type::bishop, Player::white,{5,0} ),
+        Piece(Piece_type::knight, Player::white,{6,0} ),
+        Piece(Piece_type::rook, Player::white,{7,0} ),
 };
 
 
@@ -90,7 +90,7 @@ Board::good_position(Position pos) const
 // }
 
 Piece
-Board::operator[](Position pos)// const
+Board::operator[](Position pos)
 {
     bounds_check_(pos);
     return get_piece_(pos);
@@ -106,9 +106,9 @@ void Board::change_piece_posn(Piece p, Position end) {
     Position start = p.get_posn();
 
     //modify the appropriate Piece_set
-    if (p.get_player() == Player::light) {
+    if (p.get_player() == Player::white) {
         light_.change_posn(start, end);
-    } else if (p.get_player() == Player::dark) {
+    } else if (p.get_player() == Player::black) {
         dark_.change_posn(start, end);
     } else {
         throw Client_logic_error("Model::change_piece_posn: cannot"
@@ -124,7 +124,7 @@ void Board::change_piece_posn(Piece p, Position end) {
 Position Board::find_king_location(Player p)
 {
     //decide which piece_set to iterate through
-    if (p == Player::dark) {
+    if (p == Player::black) {
         //iterate through the piece_set and try to find a piece that has
         //piece_type king
         Piece_set pcset = dark_;
@@ -140,7 +140,7 @@ Position Board::find_king_location(Player p)
         throw Client_logic_error("Board::find_king_location: no king"
                                  "found for dark");
 
-    } else if (p == Player::light) {
+    } else if (p == Player::white) {
         //iterate through the piece_set and try to find a piece that has
         //piece_type king
         Piece_set pcset = light_;
@@ -167,9 +167,9 @@ void Board::remove_by_posn(Position posn) {
     //first, find a piece that matches this posn
     Piece piece = operator[](posn);
 
-    if (piece.get_player() == Player::dark) {
+    if (piece.get_player() == Player::white) {
         dark_.remove(piece);
-    } else if (piece.get_player() == Player::light) {
+    } else if (piece.get_player() == Player::black) {
         light_.remove(piece);
     } else {
         throw Client_logic_error("Board::remove_by_posn: can't remove"
@@ -314,8 +314,8 @@ Board::modify_pawn_dirs(Piece p, std::vector<Dimensions>& dirs_travel)
     //if the pawn is not in its starting row, remove the second element from
     //vector as the pawn can't move two spaces otherwise
     int curr_y = p.get_posn().y;
-    if ( (p.get_player() == Player::dark && curr_y != 1)
-           || (p.get_player() == Player::light && curr_y != 6) ){
+    if ( (p.get_player() == Player::black && curr_y != 1)
+           || (p.get_player() == Player::white && curr_y != 6) ){
         dirs_travel.erase(dirs_travel.begin() + 1);
     }
 
@@ -335,7 +335,7 @@ Board::all_positions() const
 }
 
 Piece
-Board::get_piece_(Position pos)
+Board::get_piece_(Position pos) const
 {
     //figure this shit out, bc it's really a necessary step
     //in order to get pieces out of board
@@ -351,7 +351,7 @@ Board::get_piece_(Position pos)
     } else if (black_piece_ptr) {
         return *black_piece_ptr;
     } else {
-        return Piece{Piece_type::null, Player::dark, Position{0, 0}};
+        return Piece{Piece_type::null, Player::black, Position{0, 0}};
     }
 }
 

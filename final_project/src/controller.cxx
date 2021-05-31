@@ -1,9 +1,9 @@
 #include "controller.hxx"
+#include "view.cxx"
 
 //copied this value from view.cxx for finding size of board
 //ideally I'd like to include the entire view.cxx file, since
 //these controls depend on the visual board dims
-static int const grid_size = 36;
 
 Controller::Controller()
         : model_(),
@@ -41,11 +41,6 @@ void Controller::on_key(ge211::Key key) {
 void Controller::on_mouse_down(ge211::Mouse_button btn,
                                ge211::Posn<int> mouse_posn)
 {
-    //for all the positions currently occupied
-    // in board, see all_positions() in model.hxx
-
-    //maybeTODO: de-hardcode this so that it can work w/ boards of
-    //diff sizes
 
     for (int col_ind = 0; col_ind < 8; ++col_ind) {
         for (int row_ind = 0; row_ind < 8; ++row_ind) {

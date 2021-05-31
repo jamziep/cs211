@@ -11,6 +11,8 @@ Model::Model()
           next_moves_(),
           pieces_taken_()
 {
+    // throw down some pieces for testing
+
 
     //initialize next_moves_ to turn_'s possible next moves,
     //using the compute_next_moves helper
@@ -23,7 +25,7 @@ Model::Rectangle Model::board() const
     return board_.all_positions();
 }
 
-Piece Model::operator[](Position pos) //const
+Piece Model::operator[](Position pos)
 {
     return board_[pos];
 }
@@ -190,9 +192,9 @@ Position_set Model::spaces_ltd(Piece p)
 
         //pawn has different possible directions of travel depending
         //on which side of the board they're on
-        if (p.get_player() == Player::dark) {
+        if (p.get_player() == Player::black) {
             dirs_travel = board_.pawn_directions_dark();
-        } else if (p.get_player() == Player::light) {
+        } else if (p.get_player() == Player::white) {
             dirs_travel = board_.pawn_directions_light();
         } else {
             throw Client_logic_error("Model::spaces_ltd: pawn cannot"

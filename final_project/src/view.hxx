@@ -16,16 +16,13 @@ public:
     using Rectangle = ge211::Rect<int>;
 
     /// Constructs a view that knows about the given model.
-    explicit View(Model const&);
+    explicit View(Model&);
     // You will probably want to add arguments here so that the
     // controller can communicate UI state (such as a mouse or
     // cursor position):
 
     //for drawing all sprites:
     void draw(ge211::Sprite_set& set);
-
-    //helper function specifically for the board
-    void draw_board(ge211::Sprite_set& set);
 
     Dimensions initial_window_dimensions() const;
 
@@ -40,16 +37,16 @@ public:
     //which view can create as sprites on the board.
     void set_move_preview(Position_set);
 
-    // decleration of helper function draw_board
-    void draw_board(Sprite_set& set);
-
 private:
-    Model const& model_;
+    Model model_;
 
 public:
     // board shit
     ge211::Rectangle_sprite const board_sprite;
     ge211::Rectangle_sprite const dark_squares;
+    ge211::Rectangle_sprite const background;
+    ge211::Rectangle_sprite const black_matte;
+    ge211::Rectangle_sprite const white_matte;
 
     // for all of your fun sprites
     ge211::Image_sprite const white_pawn;
@@ -64,6 +61,11 @@ public:
     ge211::Image_sprite const black_bishop;
     ge211::Image_sprite const black_king;
     ge211::Image_sprite const black_queen;
+
+    // decleration of helper function draw_board
+    void draw_board(ge211::Sprite_set& set);
+    void
+    draw_background(ge211::Sprite_set& set);
 };
 
 

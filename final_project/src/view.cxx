@@ -1,17 +1,29 @@
 #include "view.hxx"
+#include "model.hxx"
 
 using namespace ge211;
 using Color = ge211::Color;
 using Sprite_set = ge211::Sprite_set;
 
 // change this to whatever we need it to be
-static int const grid_size = 90;
+static int const grid_size = 95;
 
-View::View(Model const& model)
+//default declarations:
+static Color board_color = Color(97,53,13);
+static Color dark_color = Color(217, 171, 128);
+static Color background_color = Color(107,16, 49);
+static Color black = Color(0,0,0);
+static Color white = Color(255, 255, 255);
+
+
+View::View(Model& model)
         : model_(model),
         // board sprites
-          board_sprite({8*grid_size, 8*grid_size}, Color(198,161,126)),
-          dark_squares({grid_size, grid_size}, Color(10,10,10)),
+          board_sprite({8*grid_size, 8*grid_size}, board_color),
+          dark_squares({grid_size, grid_size}, dark_color),
+          background({1080, 761}, background_color),
+          black_matte({240,75}, black),
+          white_matte({240,75}, white),
           // these are arbitrary values for size and color (for now)
 
           //white sprites:
@@ -33,16 +45,58 @@ View::View(Model const& model)
 // sprite initialization
 {}
 
-// DRAW
-// pretend that the big draw function is written here
-// DRAW
-void View::draw(Sprite_set& set) {
+void View::draw(Sprite_set& set)
+{
 
-    //first, let's draw the board
+    //draw the background and the board
     draw_board(set);
+    draw_background(set);
+
+    // next, iterate through all the squares and draw each piece.
+    for (Position posn : View::model_.board()) {
+        Piece curr_piece = View::model_[posn];
+
+        // draws black pieces
+        if (curr_piece.get_player() == Player::black) {
+            switch (curr_piece.get_piece_type()) {
+            case Piece_type::pawn:
+                set.add_sprite(black_pawn, posn);
+            case Piece_type::rook:
+                set.add_sprite(black_rook, posn);
+            case Piece_type::knight:
+                set.add_sprite(black_knight, posn);
+            case Piece_type::bishop:
+                set.add_sprite(black_bishop, posn);
+            case Piece_type::queen:
+                set.add_sprite(black_queen, posn);
+            case Piece_type::king:
+                set.add_sprite(black_king, posn);
+            case Piece_type::null:;
+            }
+
+            // draws white pieces
+        } else if (curr_piece.get_player() == Player::white) {
+            switch (curr_piece.get_piece_type()) {
+            case Piece_type::pawn:
+                set.add_sprite(white_pawn, posn);
+            case Piece_type::rook:
+                set.add_sprite(white_rook, posn);
+            case Piece_type::knight:
+                set.add_sprite(white_knight, posn);
+            case Piece_type::bishop:
+                set.add_sprite(white_bishop, posn);
+            case Piece_type::queen:
+                set.add_sprite(white_queen, posn);
+            case Piece_type::king:
+                set.add_sprite(white_king, posn);
+            case Piece_type::null:;
+            }
+        }
+    }
 }
 
 
+// HELPERS //
 
 // helper for Draw. Draws the background board and the alternating colors.
 void View::draw_board(Sprite_set& set)
@@ -66,12 +120,23 @@ void View::draw_board(Sprite_set& set)
     }
 }
 
+// helper for drawing the background and the clock.
+void View::draw_background(Sprite_set& set)
+{
+    // background:
+    set.add_sprite(background, {0,0}, 0);
+
+    // clock:
+    set.add_sprite(black_matte, {800,125}, 3);
+    set.add_sprite(white_matte, {800,200}, 3);
+}
+
 View::Dimensions
 View::initial_window_dimensions() const
 {
-    // You can change this if you want:
-    return grid_size * model_.board().dimensions();
-    //return Dimensions(1024, 768);
+    // always return this default window size since we will keep the board
+    // and UI constant.
+    return Dimensions(1080, 761);
 }
 
 std::string

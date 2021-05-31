@@ -5,8 +5,8 @@
 // A player or lack thereof.
 enum class Player
 {
-    dark,
-    light,
+    black,
+    white,
     neither,
 };
 
