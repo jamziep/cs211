@@ -8,43 +8,46 @@ using namespace ge211;
 //black player and white
 
 std::vector<Piece> black_start_moves{
-        Piece(Piece_type::pawn, Player::black,{0,6} ),
-        Piece(Piece_type::pawn, Player::black,{1,6} ),
-        Piece(Piece_type::pawn, Player::black,{2,6} ),
-        Piece(Piece_type::pawn, Player::black,{3,6} ),
-        Piece(Piece_type::pawn, Player::black,{4,6} ),
-        Piece(Piece_type::pawn, Player::black,{5,6} ),
-        Piece(Piece_type::pawn, Player::black,{6,6} ),
-        Piece(Piece_type::pawn, Player::black,{7,6} ),
+        Piece(Piece_type::pawn, Player::black,{0,1} ),
+        Piece(Piece_type::pawn, Player::black,{1,1} ),
+        Piece(Piece_type::pawn, Player::black,{2,1} ),
+        Piece(Piece_type::pawn, Player::black,{3,1} ),
+        Piece(Piece_type::pawn, Player::black,{4,1} ),
+        Piece(Piece_type::pawn, Player::black,{5,1} ),
+        Piece(Piece_type::pawn, Player::black,{6,1} ),
+        Piece(Piece_type::pawn, Player::black,{7,1} ),
 
-        Piece(Piece_type::rook, Player::black,{0,7} ),
-        Piece(Piece_type::knight, Player::black,{1,7} ),
-        Piece(Piece_type::bishop, Player::black,{2,7} ),
-        Piece(Piece_type::king, Player::black,{3,7} ),
-        Piece(Piece_type::queen, Player::black,{4,7} ),
-        Piece(Piece_type::bishop, Player::black,{5,7} ),
-        Piece(Piece_type::knight, Player::black,{6,7} ),
-        Piece(Piece_type::rook, Player::black,{7,7} ),
+
+
+        Piece(Piece_type::rook, Player::black,{0,0} ),
+        Piece(Piece_type::knight, Player::black,{1,0} ),
+        Piece(Piece_type::bishop, Player::black,{2,0} ),
+        Piece(Piece_type::king, Player::black,{3,0} ),
+        Piece(Piece_type::queen, Player::black,{4,0} ),
+        Piece(Piece_type::bishop, Player::black,{5,0} ),
+        Piece(Piece_type::knight, Player::black,{6,0} ),
+        Piece(Piece_type::rook, Player::black,{7,0} ),
 };
 
 std::vector<Piece> white_start_moves{
-        Piece(Piece_type::pawn, Player::white,{0,1} ),
-        Piece(Piece_type::pawn, Player::white,{1,1} ),
-        Piece(Piece_type::pawn, Player::white,{2,1} ),
-        Piece(Piece_type::pawn, Player::white,{3,1} ),
-        Piece(Piece_type::pawn, Player::white,{4,1} ),
-        Piece(Piece_type::pawn, Player::white,{5,1} ),
-        Piece(Piece_type::pawn, Player::white,{6,1} ),
-        Piece(Piece_type::pawn, Player::white,{7,1} ),
+        Piece(Piece_type::pawn, Player::white,{0,6} ),
+        Piece(Piece_type::pawn, Player::white,{1,6} ),
+        Piece(Piece_type::pawn, Player::white,{2,6} ),
+        Piece(Piece_type::pawn, Player::white,{3,6} ),
+        Piece(Piece_type::pawn, Player::white,{4,6} ),
+        Piece(Piece_type::pawn, Player::white,{5,6} ),
+        Piece(Piece_type::pawn, Player::white,{6,6} ),
+        Piece(Piece_type::pawn, Player::white,{7,6} ),
 
-        Piece(Piece_type::rook, Player::white,{0,0} ),
-        Piece(Piece_type::knight, Player::white,{1,0} ),
-        Piece(Piece_type::bishop, Player::white,{2,0} ),
-        Piece(Piece_type::king, Player::white,{3,0} ),
-        Piece(Piece_type::queen, Player::white,{4,0} ),
-        Piece(Piece_type::bishop, Player::white,{5,0} ),
-        Piece(Piece_type::knight, Player::white,{6,0} ),
-        Piece(Piece_type::rook, Player::white,{7,0} ),
+
+        Piece(Piece_type::rook, Player::white,{0,7} ),
+        Piece(Piece_type::knight, Player::white,{1,7} ),
+        Piece(Piece_type::bishop, Player::white,{2,7} ),
+        Piece(Piece_type::king, Player::white,{3,7} ),
+        Piece(Piece_type::queen, Player::white,{4,7} ),
+        Piece(Piece_type::bishop, Player::white,{5,7} ),
+        Piece(Piece_type::knight, Player::white,{6,7} ),
+        Piece(Piece_type::rook, Player::white,{7,7} ),
 };
 
 
@@ -346,6 +349,8 @@ Board::get_piece_(Position pos) const
     //if there's a white piece at the given position, return that
     //piece. if there's a black piece, same. else, return a piece that
     //doesn't mean anything
+
+
     if (white_piece.get_piece_type() != Piece_type::null) {
         return white_piece;
     } else if (black_piece.get_piece_type() != Piece_type::null) {
