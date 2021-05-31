@@ -12,8 +12,8 @@ static int const grid_size = 95;
 static Color board_color = Color(97,53,13);
 static Color dark_color = Color(217, 171, 128);
 static Color background_color = Color(107,16, 49);
-static Color black = Color(0,0,0);
-static Color white = Color(255, 255, 255);
+static Color black_color = Color(0,0,0);
+static Color white_color = Color(255, 255, 255);
 
 
 View::View(Model& model)
@@ -22,8 +22,8 @@ View::View(Model& model)
           board_sprite({8*grid_size, 8*grid_size}, board_color),
           dark_squares({grid_size, grid_size}, dark_color),
           background({1080, 761}, background_color),
-          black_matte({240,75}, black),
-          white_matte({240,75}, white),
+          black_matte({240,75}, black_color),
+          white_matte({240,75}, white_color),
           // these are arbitrary values for size and color (for now)
 
           //white sprites:
@@ -56,41 +56,76 @@ void View::draw(Sprite_set& set)
     for (Position posn : View::model_.board()) {
         Piece curr_piece = View::model_[posn];
 
+        // DEBUG:
+        std::cout << posn << "\n";
+
+        Position screen_posn = {posn.x * grid_size, posn.y * grid_size};
+
         // draws black pieces
         if (curr_piece.get_player() == Player::black) {
             switch (curr_piece.get_piece_type()) {
             case Piece_type::pawn:
-                set.add_sprite(black_pawn, posn);
+                set.add_sprite(black_pawn, screen_posn, 3);
+                std::cout<< "black pawn" << "\n";
+                break;
             case Piece_type::rook:
-                set.add_sprite(black_rook, posn);
+                set.add_sprite(black_rook, screen_posn, 3);
+                std::cout<< "black rook" << "\n";
+                break;
             case Piece_type::knight:
-                set.add_sprite(black_knight, posn);
+                set.add_sprite(black_knight, screen_posn, 3);
+                std::cout<< "black knight" << "\n";
+                break;
             case Piece_type::bishop:
-                set.add_sprite(black_bishop, posn);
+                set.add_sprite(black_bishop, screen_posn, 3);
+                std::cout<< "black bishop" << "\n";
+                break;
             case Piece_type::queen:
-                set.add_sprite(black_queen, posn);
+                set.add_sprite(black_queen, screen_posn, 3);
+                std::cout<< "black queen" << "\n";
+                break;
             case Piece_type::king:
-                set.add_sprite(black_king, posn);
-            case Piece_type::null:;
+                set.add_sprite(black_king, screen_posn, 3);
+                std::cout<< "black king" << "\n";
+                break;
+            case Piece_type::null: // skip it
+                std::cout<< "black null" << "\n";
+                break;
             }
 
             // draws white pieces
         } else if (curr_piece.get_player() == Player::white) {
             switch (curr_piece.get_piece_type()) {
             case Piece_type::pawn:
-                set.add_sprite(white_pawn, posn);
+                set.add_sprite(white_pawn, screen_posn, 3);
+                std::cout<< "white pawn" << "\n";
+                break;
             case Piece_type::rook:
-                set.add_sprite(white_rook, posn);
+                set.add_sprite(white_rook, screen_posn, 3);
+                std::cout<< "white rook" << "\n";
+                break;
             case Piece_type::knight:
-                set.add_sprite(white_knight, posn);
+                set.add_sprite(white_knight, screen_posn, 3);
+                std::cout<< "white knight" << "\n";
+                break;
             case Piece_type::bishop:
-                set.add_sprite(white_bishop, posn);
+                set.add_sprite(white_bishop, screen_posn, 3);
+                std::cout<< "white bishop" << "\n";
+                break;
             case Piece_type::queen:
-                set.add_sprite(white_queen, posn);
+                set.add_sprite(white_queen, screen_posn, 3);
+                std::cout<< "white queen" << "\n";
+                break;
             case Piece_type::king:
-                set.add_sprite(white_king, posn);
-            case Piece_type::null:;
+                set.add_sprite(white_king, screen_posn, 3);
+                std::cout<< "white king" << "\n";
+                break;
+            case Piece_type::null: // skip it
+                std::cout<< "white null" << "\n";
+                break;
             }
+        } else {
+            std::cout << "nothing \n";
         }
     }
 }
