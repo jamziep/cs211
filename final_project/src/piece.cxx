@@ -2,8 +2,8 @@
 
 //constructor for the class
 Piece::Piece(Piece_type ptype, Player aplayer, Position aposn)
-    : type_(ptype), posn_(aposn), player_(aplayer)
-{ }
+    : type_(ptype), posn_(aposn), player_(aplayer), active_(true)
+{}
 
 //for copying by reference
 // Piece::Piece(Piece& that)

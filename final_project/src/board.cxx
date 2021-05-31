@@ -17,13 +17,11 @@ std::vector<Piece> black_start_moves{
         Piece(Piece_type::pawn, Player::black,{6,1} ),
         Piece(Piece_type::pawn, Player::black,{7,1} ),
 
-
-
         Piece(Piece_type::rook, Player::black,{0,0} ),
         Piece(Piece_type::knight, Player::black,{1,0} ),
         Piece(Piece_type::bishop, Player::black,{2,0} ),
-        Piece(Piece_type::king, Player::black,{3,0} ),
-        Piece(Piece_type::queen, Player::black,{4,0} ),
+        Piece(Piece_type::queen, Player::black,{3,0} ),
+        Piece(Piece_type::king, Player::black,{4,0} ),
         Piece(Piece_type::bishop, Player::black,{5,0} ),
         Piece(Piece_type::knight, Player::black,{6,0} ),
         Piece(Piece_type::rook, Player::black,{7,0} ),
@@ -43,8 +41,8 @@ std::vector<Piece> white_start_moves{
         Piece(Piece_type::rook, Player::white,{0,7} ),
         Piece(Piece_type::knight, Player::white,{1,7} ),
         Piece(Piece_type::bishop, Player::white,{2,7} ),
-        Piece(Piece_type::king, Player::white,{3,7} ),
-        Piece(Piece_type::queen, Player::white,{4,7} ),
+        Piece(Piece_type::queen, Player::white,{3,7} ),
+        Piece(Piece_type::king, Player::white,{4,7} ),
         Piece(Piece_type::bishop, Player::white,{5,7} ),
         Piece(Piece_type::knight, Player::white,{6,7} ),
         Piece(Piece_type::rook, Player::white,{7,7} ),
