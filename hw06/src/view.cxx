@@ -42,7 +42,7 @@ void View::draw(Sprite_set& set)
         } else {
             if (posn.x % 2 != 0) {
                 set.add_sprite(View::tile_sprite, {posn.x*grid_size, posn
-                                                                             .y*grid_size}, 2);
+                .y*grid_size}, 2);
             }
         }
     }

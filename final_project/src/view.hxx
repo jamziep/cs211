@@ -35,6 +35,9 @@ public:
     //which view can create as sprites on the board.
     void set_move_preview(Position_set);
 
+    // decleration of helper function draw_board
+    void draw_board(Sprite_set& set);
+
 private:
     Model const& model_;
 

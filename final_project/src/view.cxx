@@ -16,13 +16,16 @@ View::View(Model const& model)
         // sprite initialization
 {}
 
-// DRAW
-// pretend that the big draw function is written here
-// DRAW
+void View::draw(Sprite_set& set)
+{
+    // initially draws the board with light and dark squares.
+    draw_board(set);
+
+}
 
 
 // helper for Draw. Draws the background board and the alternating colors.
-void View::draw_board()
+void View::draw_board(Sprite_set& set)
 {
     //draw the board sprite, a rectangle located at 0,0
     set.add_sprite(View::board_sprite, ge211::Posn<int>{0,0} );
