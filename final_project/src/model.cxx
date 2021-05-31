@@ -14,17 +14,8 @@ Model::Model()
 
     //initialize next_moves_ to turn_'s possible next moves,
     //using the compute_next_moves helper
-    Model::compute_next_moves_();
+    //Model::compute_next_moves_();
 }
-
-Player Model::turn() const
-{return turn_;}
-
-Player Model::winner() const
-{return winner_;}
-
-bool Model::is_game_over() const
-{return turn() == Player::neither;}
 
 
 Model::Rectangle Model::board() const
@@ -327,7 +318,6 @@ bool Model::is_in_check(Player p){
     //king, the current player is in check
     for (Move move : next_moves_) {
 
-        Position curr_piece_posn = move.first;
         //iterate through all the places where this piece can move and
         //see if player p's king is at one of those pieces
         for (Position posn : move.second) {
@@ -392,6 +382,10 @@ bool Model::is_checkmate(Player p)
     //revert the changes we made to the turn and moves
     turn_ = temp;
     compute_next_moves_();
+
+    //if we've gotten here, means the player IS in checkmate--
+    //none of the possible moves can get the player out of checkmate
+    return true;
 }
 
 void Model::set_game_over_()

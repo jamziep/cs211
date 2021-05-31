@@ -1,5 +1,8 @@
 #pragma once
 
+#ifndef CHESS_PIECE_SET_HXX
+  #define CHESS_PIECE_SET_HXX
+
 #include "piece.hxx"
 //#include <ge211.hxx>
 
@@ -27,7 +30,7 @@ public:
 
     //Gets the piece at a given position. Gets a reference
     //so you can modify it.
-    Piece& get(Position);
+    // Piece& get(Position);
 
     //Takes in a position on the board, finds a piece there, and
     //returns a pointer to that piece. If no piece found, returns
@@ -35,7 +38,7 @@ public:
     Piece* get_piece_ptr(Position);
 
     //Changes the position of a piece by reference.
-    void set_posn(Piece&, Position);
+    void set_posn(Piece*, Position);
 
     //changes the position of a piece located at a certain
     //position "start" to a new position "end"
@@ -86,3 +89,5 @@ private:
     //member data
     std::vector<Piece> pieces_;
 };
+
+#endif

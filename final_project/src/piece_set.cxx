@@ -57,7 +57,7 @@ size_t Piece_set::size() {
 
 //takes in a piece and a position, and modifies the position
 //of that existing piece by reference
-void Piece_set::set_posn(Piece& apiece, Position posn) {
+void Piece_set::set_posn(Piece* piece_ptr, Position posn) {
 
     //maybe do bounds checking on this?
 
@@ -66,7 +66,7 @@ void Piece_set::set_posn(Piece& apiece, Position posn) {
     //change the position of that piece
     for (Piece& piece : pieces_) {
 
-        if (piece == apiece) {
+        if (piece == *piece_ptr) {
             piece.set_posn(posn);
             return;
         }
@@ -79,9 +79,11 @@ void Piece_set::set_posn(Piece& apiece, Position posn) {
 //to the new position
 void Piece_set::change_posn(Position start, Position end) {
 
-    //get a reference to piece
-    Piece& piece = get(start);
-    set_posn(piece, end);
+    //get a pointer to piece
+    // Piece& piece = get(start);
+    Piece* piece_ptr = get_piece_ptr(start);
+
+    set_posn(piece_ptr, end);
 }
 
 //"Removes" a piece from the piece set by setting the
@@ -161,3 +163,5 @@ bool operator!=(Piece_set a, Piece_set b){
 
     return !(a == b);
 }
+
+

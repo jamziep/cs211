@@ -1,11 +1,12 @@
 #pragma once
 
 #include "player.hxx"
-#include <ge211.hxx>
+#include "position_set.hxx"
+//#include <ge211.hxx>
 
-#include <bitset>
-#include <cstddef>
-#include <initializer_list>
+// #include <bitset>
+// #include <cstddef>
+// #include <initializer_list>
 
 using Position = ge211::Posn<int>;
 

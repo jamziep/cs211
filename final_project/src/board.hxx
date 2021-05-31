@@ -2,8 +2,8 @@
 
 #include "move.hxx"
 #include "piece_set.hxx"
-#include "std_black.hxx"
-#include "std_white.hxx"
+// #include "std_black.hxx"
+// #include "std_white.hxx"
 
 #include <iostream>
 #include <unordered_map>

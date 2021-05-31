@@ -1,6 +1,6 @@
 #pragma once
 
-#include "model.cxx"
+#include "model.hxx"
 #include <string>
 
 class View

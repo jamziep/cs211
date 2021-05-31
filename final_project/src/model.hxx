@@ -1,4 +1,4 @@
-//#pragma once
+#pragma once
 
 #ifndef CHESS_MODEL_HXX
   #define CHESS_MODEL_HXX
@@ -47,18 +47,18 @@ public:
 
     /// Returns whether the game is finished. This is true when neither
     /// player can move.
-    bool is_game_over() const;
-    //{ return turn() == Player::neither; }
+    bool is_game_over() const
+    {return turn() == Player::neither;}
 
     /// Returns the current turn, or `Player::neither` if the game is
     /// over.
-    Player turn() const;
-    //{ return turn_; }
+    Player turn() const
+    {return turn_;}
 
     /// Returns the winner, or `Player::neither` if there is no winner
     /// (either because the game isn't over, or because it's a draw).
-    Player winner() const;
-    //{ return winner_; }
+    Player winner() const
+    {return winner_;}
 
     /// Returns the player at the given position, or `Player::neither` if
     /// the position is unoccupied.
