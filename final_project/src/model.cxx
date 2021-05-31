@@ -61,6 +61,12 @@ void Model::play_move(Position start, Position end)
                                      "to not found");
         }
 
+        //if there was already a piece at the place where the
+        //move was going to be made, remove piece from board
+        if (board_[end].get_piece_type() != Piece_type::null) {
+            board_.remove_by_posn(end);
+        }
+
         //set the new position of the piece
         set_new_posn(start, end);
 

@@ -139,6 +139,10 @@ public:
     //find the location of the king in either of the piece_sets
     Position find_king_location(Player);
 
+    //remove a piece from board by setting it to "active = false". search
+    //by position because that's more convenient
+    void remove_by_posn(Position);
+
     /// Equality for boards.
     friend bool operator==(Board const&, Board const&);
 

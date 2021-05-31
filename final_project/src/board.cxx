@@ -162,7 +162,20 @@ Position Board::find_king_location(Player p)
     }
 }
 
+void Board::remove_by_posn(Position posn) {
 
+    //first, find a piece that matches this posn
+    Piece piece = operator[](posn);
+
+    if (piece.get_player() == Player::dark) {
+        dark_.remove(piece);
+    } else if (piece.get_player() == Player::light) {
+        light_.remove(piece);
+    } else {
+        throw Client_logic_error("Board::remove_by_posn: can't remove"
+                                 "a player of type 'neither'");
+    }
+}
 
 // Board::reference
 // Board::operator[](Position pos)

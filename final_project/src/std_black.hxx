@@ -1,10 +1,6 @@
+// #pragma once
 //
-// #ifndef CHESS_STD_BLACK_HXX
-// #define CHESS_STD_BLACK_HXX
-//
-// #include <vector>
 // #include "piece.hxx"
-//
 //
 // std::vector<Piece> black_start_moves{
 //         Piece(Piece_type::pawn, Player::dark,{0,6} ),
@@ -25,5 +21,3 @@
 //         Piece(Piece_type::knight, Player::dark,{6,7} ),
 //         Piece(Piece_type::rook, Player::dark,{7,7} ),
 // };
-
-// #endif //std_black_hxx
