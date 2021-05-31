@@ -35,10 +35,15 @@ public:
     //Takes in a position on the board, finds a piece there, and
     //returns a pointer to that piece. If no piece found, returns
     //a null ptr.
-    Piece* get_piece_ptr(Position);
+    // Piece* get_piece_ptr(Position);
 
-    //Changes the position of a piece by reference.
-    void set_posn(Piece*, Position);
+    //edited: takes in a position and returns a (non-reference) piece
+    Piece get_piece_from_set(Position) const;
+
+    //Changes the position of a piece in the member data. Function compares
+    //the piece given as input to the pieces in its data.
+    // void set_posn(Piece*, Position);
+    void set_posn(Piece, Position);
 
     //changes the position of a piece located at a certain
     //position "start" to a new position "end"

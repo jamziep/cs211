@@ -28,25 +28,46 @@ Piece_set::Piece_set(std::vector<Piece> pieces)
 //     return temp_piece;
 // }
 
-Piece* Piece_set::get_piece_ptr(Position posn)
+// Piece* Piece_set::get_piece_ptr(Position posn)
+// {
+//     //I really want to use a reference for this so that
+//     //we can modify the member data within pieces_ with this
+//     //pointer
+//
+//     // for (Piece& piece : pieces_) {
+//     for (Piece& piece : pieces_) {
+//
+//         //if the position of this piece matches the position
+//         //passed as input, return a reference to it
+//         if (piece.get_posn() == posn && piece.is_active()) {
+//             return &piece;
+//         }
+//     }
+//
+//     //if we didn't find anything, return a piece that doesn't
+//     //represent anything
+//     return nullptr;
+// }
+
+Piece Piece_set::get_piece_from_set(Position posn) const
 {
     //I really want to use a reference for this so that
     //we can modify the member data within pieces_ with this
     //pointer
 
     // for (Piece& piece : pieces_) {
-    for (Piece& piece : pieces_) {
+    for (Piece piece : pieces_) {
 
         //if the position of this piece matches the position
         //passed as input, return a reference to it
         if (piece.get_posn() == posn && piece.is_active()) {
-            return &piece;
+            return piece;
         }
     }
 
     //if we didn't find anything, return a piece that doesn't
     //represent anything
-    return nullptr;
+    return Piece(Piece_type::null, Player::black, Position {0,0});
 }
 
 
@@ -57,7 +78,24 @@ size_t Piece_set::size() {
 
 //takes in a piece and a position, and modifies the position
 //of that existing piece by reference
-void Piece_set::set_posn(Piece* piece_ptr, Position posn) {
+// void Piece_set::set_posn(Piece* piece_ptr, Position posn) {
+//
+//     //maybe do bounds checking on this?
+//
+//     //iterate through the piece set and see if we have a match
+//     //between the desired piece and a piece in the set. if so,
+//     //change the position of that piece
+//     for (Piece& piece : pieces_) {
+//
+//         if (piece == *piece_ptr) {
+//             piece.set_posn(posn);
+//             return;
+//         }
+//     }
+//
+// }
+
+void Piece_set::set_posn(Piece apiece, Position posn) {
 
     //maybe do bounds checking on this?
 
@@ -66,13 +104,14 @@ void Piece_set::set_posn(Piece* piece_ptr, Position posn) {
     //change the position of that piece
     for (Piece& piece : pieces_) {
 
-        if (piece == *piece_ptr) {
+        if (piece == apiece) {
             piece.set_posn(posn);
             return;
         }
     }
 
 }
+
 
 //takes in a position, gets the piece that corresponds to that
 //position on the board, and modifies the position of the piece
@@ -81,9 +120,9 @@ void Piece_set::change_posn(Position start, Position end) {
 
     //get a pointer to piece
     // Piece& piece = get(start);
-    Piece* piece_ptr = get_piece_ptr(start);
+    Piece piece = get_piece_from_set(start);
 
-    set_posn(piece_ptr, end);
+    set_posn(piece, end);
 }
 
 //"Removes" a piece from the piece set by setting the

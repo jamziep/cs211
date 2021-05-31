@@ -340,16 +340,16 @@ Board::get_piece_(Position pos) const
     //figure this shit out, bc it's really a necessary step
     //in order to get pieces out of board
 
-    Piece* white_piece_ptr = white_.get_piece_ptr(pos);
-    Piece* black_piece_ptr = black_.get_piece_ptr(pos);
+    Piece white_piece = white_.get_piece_from_set(pos);
+    Piece black_piece = black_.get_piece_from_set(pos);
 
     //if there's a white piece at the given position, return that
     //piece. if there's a black piece, same. else, return a piece that
     //doesn't mean anything
-    if (white_piece_ptr) {
-        return *white_piece_ptr;
-    } else if (black_piece_ptr) {
-        return *black_piece_ptr;
+    if (white_piece.get_piece_type() != Piece_type::null) {
+        return white_piece;
+    } else if (black_piece.get_piece_type() != Piece_type::null) {
+        return black_piece;
     } else {
         return Piece{Piece_type::null, Player::black, Position{0, 0}};
     }
