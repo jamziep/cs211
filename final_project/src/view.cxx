@@ -1,5 +1,5 @@
 #include "view.hxx"
-#include "model.hxx"
+//#include "model.hxx"
 
 using namespace ge211;
 using Color = ge211::Color;
@@ -18,7 +18,7 @@ static Color dark_grey = Color(145,145,145);
 static Color light_grey = Color(200,200,200);
 
 
-View::View(Model& model)
+View::View(Model const& model)
         : model_(model),
         // board sprites
           board_sprite({8*grid_size, 8*grid_size}, board_color),

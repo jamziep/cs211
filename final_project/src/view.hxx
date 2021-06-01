@@ -16,7 +16,7 @@ public:
     using Rectangle = ge211::Rect<int>;
 
     /// Constructs a view that knows about the given model.
-    explicit View(Model&);
+    explicit View(Model const&);
     // You will probably want to add arguments here so that the
     // controller can communicate UI state (such as a mouse or
     // cursor position):
@@ -49,18 +49,18 @@ public:
     ge211::Rectangle_sprite const white_matte;
 
     // for all of your fun sprites
-    ge211::Image_sprite const white_pawn;
-    ge211::Image_sprite const white_rook;
-    ge211::Image_sprite const white_knight;
-    ge211::Image_sprite const white_bishop;
-    ge211::Image_sprite const white_king;
-    ge211::Image_sprite const white_queen;
-    ge211::Image_sprite const black_pawn;
-    ge211::Image_sprite const black_rook;
-    ge211::Image_sprite const black_knight;
-    ge211::Image_sprite const black_bishop;
-    ge211::Image_sprite const black_king;
-    ge211::Image_sprite const black_queen;
+    ge211::Image_sprite white_pawn;
+    ge211::Image_sprite white_rook;
+    ge211::Image_sprite white_knight;
+    ge211::Image_sprite white_bishop;
+    ge211::Image_sprite white_king;
+    ge211::Image_sprite white_queen;
+    ge211::Image_sprite black_pawn;
+    ge211::Image_sprite black_rook;
+    ge211::Image_sprite black_knight;
+    ge211::Image_sprite black_bishop;
+    ge211::Image_sprite black_king;
+    ge211::Image_sprite black_queen;
 
     // for clocks. not const, as the time changes
     ge211::Text_sprite black_time_text;
