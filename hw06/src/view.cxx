@@ -97,6 +97,7 @@ void View::draw(Sprite_set& set)
         set.add_sprite(View::text_sprite, {0, 0},4);
     }
 
+
     //if the player is previewing a move, take the full list of tiles
     //overturned by that move, and draw all those tiles in gray to preview
     if (!move_preview.empty()){

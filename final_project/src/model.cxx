@@ -119,7 +119,9 @@ void Model::play_move(Position start, Position end)
             //case where current turn is player "neither"
         }
 
-        //check to see if we're at an end state
+
+        //check to see if we're at an end state (Commented out for debug)
+        /*
         if (is_checkmate(Player::black)) {
             winner_ = Player::white;
             set_game_over_();
@@ -127,6 +129,8 @@ void Model::play_move(Position start, Position end)
             winner_ = Player::black;
             set_game_over_();
         }
+         */
+
 
         //advance the turn. using function from player.cxx
         Model::turn_ = other_player(Model::turn_);
@@ -553,6 +557,8 @@ bool Model::Rrook_castle (Player plr)
             return false;
         }
     }
+    case Player::neither:
+    {}
     }
     return false; // default case
 }
@@ -590,6 +596,8 @@ bool Model::Lrook_castle (Player plr)
             return false;
         }
     }
+    case Player::neither:
+    {}
     }
     return false; // default case
 }

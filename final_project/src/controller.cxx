@@ -43,6 +43,7 @@ void Controller::on_key(ge211::Key key) {
 
 bool selected = false;
 ge211::Posn<int> selected_posn{0, 0};
+Position_set starts {};
 void Controller::on_mouse_down(ge211::Mouse_button btn,
                                ge211::Posn<int> mouse_posn)
 {
@@ -55,23 +56,24 @@ void Controller::on_mouse_down(ge211::Mouse_button btn,
                 // gives you selected coordinates
                 ge211::Posn<int> square_coords{col_ind, row_ind};
 
-
-
                 if (!selected &&
                 Controller::model_.find_move(square_coords)) {
                     selected = true;
                     selected_posn = square_coords;
+                    starts[selected_posn] = true;
+                    view_.set_selected_piece(starts);
                     return;
-                    // deselect by clicking any square that is invalid. (Not
-                    // implemented yet)
-
-
                     // otherwise check for valid move. if valid, play move to
                     // the newly selected square.
-                } else {
-                    model_.play_move(selected_posn, square_coords);
-                    std::cout << "valid move found" << "\n"; // DEBUG
+                } else if(selected) {
+                    Move const* movep = model_.find_move(selected_posn);
+                    Position_set possible_moves = movep -> second;
+                    if (possible_moves[square_coords]) {
+                        model_.play_move(selected_posn, square_coords);
+                    }
                     selected = false;
+                    starts.clear();
+                    view_.set_selected_piece(starts);
                     return;
                 }
             }
