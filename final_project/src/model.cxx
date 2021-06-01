@@ -282,19 +282,27 @@ Position_set Model::spaces_ltd(Piece p)
                        && board_[posn].get_player() == p.get_player()) {
                 continue;
             } else {
-                // first check if pawn is in first rank.
-                if (what_player == Player::white
-                && what_posn.y != 6 && posn.y + 2 == what_posn.y){
-                    possible_moves[posn] = false;
-                } else if(what_player == Player::black
-                          && what_posn.y != 1 && posn.y - 2 == what_posn.y) {
-                    possible_moves[posn] = false;
+                // first check if pawn is not blocked and in first rank
+                if (what_player == Player::white && what_posn.y == 6 && posn
+                .y + 2 == what_posn.y) {
+                    if(operator[]({posn.x,posn.y + 1}).get_piece_type() ==
+                    Piece_type::null) {
+                        possible_moves[posn] = true;
+                    }
+
+                } else if (what_player == Player::black && what_posn.y == 1 &&
+                posn.y - 2 == what_posn.y) {
+                    if(operator[]({posn.x,posn.y - 1}).get_piece_type() ==
+                       Piece_type::null) {
+                        possible_moves[posn] = true;
+                    }
 
                     // check to see if posn is diagonal and detects a piece
                 } else if (posn.x-1 == what_posn.x || posn.x+1 == what_posn.x){
                     if (operator[](posn).get_piece_type() != Piece_type::null) {
                         possible_moves[posn] = true;
                     }
+                    // check to see if the posn is blocked.
                 }else if(operator[](posn).get_piece_type() != Piece_type::null){
                     possible_moves[posn] = false;
                 } else {
