@@ -62,9 +62,14 @@ public:
     ge211::Image_sprite const black_king;
     ge211::Image_sprite const black_queen;
 
-    //for clocks. not const, as the time changes
+    // for clocks. not const, as the time changes
     ge211::Text_sprite black_time_text;
     ge211::Text_sprite white_time_text;
+
+    // for showing valid moves.
+    ge211::Circle_sprite const valid_squares;
+    ge211::Circle_sprite const valid_pieces;
+    Position_set move_preview;
 
     //helper functions
     void draw_board(ge211::Sprite_set& set);

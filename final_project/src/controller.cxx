@@ -59,19 +59,18 @@ void Controller::on_mouse_down(ge211::Mouse_button btn,
                 std::cout << square_coords << "\n";
                 std::cout << "selected?: " << selected << "\n";
 
-                if (!selected) {
+                if (!selected &&
+                Controller::model_.find_move(square_coords)) {
                     selected = true;
                     selected_posn = square_coords;
                     return;
+                    // deselect by clicking any square that is invalid.
+
 
                     // otherwise check for valid move. if valid, play move.
                 } else {
-                    if (Controller::model_.find_move(square_coords))
-                    {
-                        Controller::model_.play_move(selected_posn,
-                                                     square_coords);
-                        std::cout << "valid move found" << "\n";
-                    }
+                    Controller::model_.play_move(selected_posn, square_coords);
+                    std::cout << "valid move found" << "\n";
                     selected = false;
                     return;
                 }
@@ -124,18 +123,16 @@ void Controller::on_mouse_move(ge211::Posn<int> mouse_posn) {
 
             if (Controller::mouse_is_within_square_(mouse_posn, col_ind,
                                                     row_ind)) {
-
-                //check to see if this move is one of the next moves possible
-                // Move const* movep = model_.find_move(square_coords);
-                // if (movep) {
-                //     //if so, send this position set to view and tell them
-                //     //to add sprites to the board for these flips
-                //     view_.set_move_preview(movep -> second);
-                // } else {
-                //     //give an empty posn set so as to clear out the sprites
-                //     view_.set_move_preview({{}});
-                // }
-
+                // check to see if this move is possible
+                Move const* movep = model_.find_move(square_coords);
+                if (movep) {
+                    //if so, send this position set to view and tell them
+                    //to add sprites to the board for these flips
+                    view_.set_move_preview(movep -> second);
+                } else {
+                    //give an empty posn set so as to clear out the sprites
+                    view_.set_move_preview({{}});
+                }
             }
         }
     }
