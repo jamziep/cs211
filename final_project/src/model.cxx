@@ -136,7 +136,7 @@ Position_set Model::moves_in_dir_(Position current, Dimensions dir) {
     // positions up to and including that one to the set of moves_in_dir.
     if (board_[current + n * dir].get_player() == other_player(turn_))
     {
-        for(std::size_t ii = 1; ii < n; ii++){
+        for(std::size_t ii = 1; ii <= n; ii++){
             moves_in_dir[{current + ii * dir}] = true;
         }
 
@@ -144,7 +144,7 @@ Position_set Model::moves_in_dir_(Position current, Dimensions dir) {
     //but subtract 1 from n
     } else {
         n--;
-        for(std::size_t ii = 1; ii < n; ii++){
+        for(std::size_t ii = 1; ii <= n; ii++){
             moves_in_dir[{current + ii * dir}] = true;
         }
 
