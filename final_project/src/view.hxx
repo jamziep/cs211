@@ -30,7 +30,7 @@ public:
 
     //Lets controller update what exists in the text box based on the
     //state of the board.
-    void update_text_box(std::string);
+    void update_text_box(Player, std::string);
 
     //Works with controller.cxx. If the user is hovering over a square
     //they can play in, set_move_preview() lets controller add positions
@@ -74,7 +74,7 @@ public:
     //helper functions
     void draw_board(ge211::Sprite_set& set);
     void draw_background(ge211::Sprite_set& set);
-    void update_text_box(Player p, std::string text);
+    // void update_text_box(Player p, std::string text);
 };
 
 

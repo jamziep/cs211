@@ -310,9 +310,10 @@ Board::modify_pawn_dirs(Piece p, std::vector<Dimensions>& dirs_travel)
         dirs_travel.erase(dirs_travel.begin() + 3);
 
     //then, check the condition for this given square
-    } else if (operator[](temp_posn).get_piece_type() == Piece_type::null) {
+    } else if (operator[](temp_posn).get_piece_type() == Piece_type::null){
         dirs_travel.erase(dirs_travel.begin() + 3);
     }
+
 
     temp_posn = p.get_posn() + dirs_travel[2];
     if (temp_posn.x < 0 || temp_posn.x >= dimensions().width

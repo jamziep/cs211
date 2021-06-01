@@ -225,7 +225,8 @@ Position_set Model::spaces_ltd(Piece p)
         }
         //pawn has special directions of travel depending on what's around
         //it, so account for there. do using a reference to dirs_travel
-        board_.modify_pawn_dirs(p, dirs_travel);
+        // COMMENTED OUT FOR NOW
+        // board_.modify_pawn_dirs(p, dirs_travel);
         break;
     case Piece_type::knight:
         dirs_travel = board_.knight_directions();
@@ -244,25 +245,62 @@ Position_set Model::spaces_ltd(Piece p)
     // - move as many free spaces as possible in that direction
     // - if there's a piece at the end of the line, check if it's an enemy
     // - piece, in which case we'd be able to take that piece
-    for (Dimensions dir : dirs_travel ) {
+    if(p.get_piece_type() != Piece_type::pawn) {
+        for (Dimensions dir : dirs_travel) {
 
-        //find the first position in the direction where we're looking
-        //if it's out of bounds, skip
-        Position posn = p.get_posn() + dir;
-        if (posn.x < 0 || posn.x >= Model::board_.dimensions().width
-            || posn.y < 0 || posn.y >= Model::board_.dimensions().height) {
-            continue;
+            //find the first position in the direction where we're looking
+            //if it's out of bounds, skip
+            Position posn = p.get_posn() + dir;
+            if (posn.x < 0 || posn.x >= Model::board_.dimensions().width
+                || posn.y < 0 || posn.y >= Model::board_.dimensions().height) {
+                continue;
 
-        //if the square in that direction is occupied by a piece of the
-        //same color as this piece, skip
-        } else if (board_[posn].get_piece_type() != Piece_type::null
-            && board_[posn].get_player() == p.get_player() ){
-            continue;
+                //if the square in that direction is occupied by a piece of the
+                //same color as this piece, skip
+            } else if (board_[posn].get_piece_type() != Piece_type::null
+                       && board_[posn].get_player() == p.get_player()) {
+                continue;
 
-        //else: the position is either free or occupied by the opposite
-        //player
-        } else {
-            possible_moves[posn] = true;
+                //else: the position is either free or occupied by the opposite
+                //player
+            } else {
+                possible_moves[posn] = true;
+            }
+        }
+    } else {
+        // custom pawns since the helper in board didnt work quite right
+        // will do the check for diagonal takes and moving past the first rank
+        auto what_player = p.get_player();
+        auto what_posn = p.get_posn();
+        for (Dimensions dir : dirs_travel) {
+            // normal bound checks and what not.
+            Position posn = p.get_posn() + dir;
+            if (posn.x < 0 || posn.x >= Model::board_.dimensions().width
+                || posn.y < 0 || posn.y >= Model::board_.dimensions().height) {
+                continue;
+            } else if (board_[posn].get_piece_type() != Piece_type::null
+                       && board_[posn].get_player() == p.get_player()) {
+                continue;
+            } else {
+                // first check if pawn is in first rank.
+                if (what_player == Player::white
+                && what_posn.y != 6 && posn.y + 2 == what_posn.y){
+                    possible_moves[posn] = false;
+                } else if(what_player == Player::black
+                          && what_posn.y != 1 && posn.y - 2 == what_posn.y) {
+                    possible_moves[posn] = false;
+
+                    // check to see if posn is diagonal and detects a piece
+                } else if (posn.x-1 == what_posn.x || posn.x+1 == what_posn.x){
+                    if (operator[](posn).get_piece_type() != Piece_type::null) {
+                        possible_moves[posn] = true;
+                    }
+                }else if(operator[](posn).get_piece_type() != Piece_type::null){
+                    possible_moves[posn] = false;
+                } else {
+                    possible_moves[posn] = true;
+                }
+            }
         }
     }
 

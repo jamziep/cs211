@@ -34,7 +34,9 @@ protected:
     void on_mouse_move(ge211::Posn<int>) override;
 
     //specifically for the clock:
+
     void on_frame(double dt) override;
+
 
     // These three delegate to the view:
     void draw(ge211::Sprite_set&) override;

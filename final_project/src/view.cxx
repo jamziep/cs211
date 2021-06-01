@@ -18,6 +18,8 @@ static Color dark_grey = Color(145,145,145);
 static Color light_grey = Color(200,200,200);
 
 
+// changed from Model& model to cont
+
 View::View(Model& model)
         : model_(model),
         // board sprites
@@ -26,7 +28,6 @@ View::View(Model& model)
           background({1080, 761}, background_color),
           black_matte({240,75}, black_color),
           white_matte({240,75}, white_color),
-          // these are arbitrary values for size and color (for now)
 
           //white sprites:
           white_pawn("white_pawn.png"),
@@ -107,6 +108,7 @@ void View::draw(Sprite_set& set)
                 break;
             case Piece_type::knight:
                 set.add_sprite(white_knight, screen_posn, 5);
+                std::cout << posn << "\nwhite knight is here \n";
                 break;
             case Piece_type::bishop:
                 set.add_sprite(white_bishop, screen_posn, 5);
@@ -124,10 +126,12 @@ void View::draw(Sprite_set& set)
             //like the "default" case
         }
 
-        // shows you which pieces can be moved.
+        // shows you which pieces can be moved. COMMENTED OUT FOR NOW
+        /*
         if (model_.find_move(posn)){
             set.add_sprite(valid_pieces,screen_posn, 4);
         }
+         */
 
         //if the player is previewing a move, take the full list of tiles
         //overturned by that move, and draw all those tiles in gray to preview
@@ -192,6 +196,7 @@ View::initial_window_title() const
     return "Chess";
 }
 
+
 void View::update_text_box(Player p, std::string text)
 {
     //make a new builder for text
@@ -213,6 +218,7 @@ void View::update_text_box(Player p, std::string text)
                                  "the text box of player 'neither'");
     }
 }
+
 
 void View::set_move_preview(Position_set pset)
 {
