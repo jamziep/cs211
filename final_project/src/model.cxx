@@ -39,6 +39,12 @@ Move const* Model::find_move(Position pos) const
         return &*i;
 }
 
+bool BRcast = false;
+bool BLcast = false;
+bool WRcast = false;
+bool WLcast = false;
+bool Wcastle = false;
+bool Bcastle = false;
 void Model::play_move(Position start, Position end)
 {
     // if (is_game_over())
@@ -68,8 +74,38 @@ void Model::play_move(Position start, Position end)
             board_.remove_by_posn(end);
         }
 
+
+
+        // Castle check. This has been done fairly poorly but we are running
+        // out of time so it's not the biggest concern.
+
+        if (board_[start].get_piece_type() == Piece_type::king)
+        {
+            if(BRcast && !Bcastle){
+                if (end.x == 6 && end.y ==0) {
+                    set_new_posn({7, 0}, {5, 0});
+                }
+                Bcastle = true;
+            } else if(BLcast && !Bcastle){
+                if (end.x == 2 && end.y == 0) {
+                    set_new_posn({0, 0}, {3, 0});
+                }
+                Bcastle = true;
+            }else if(WRcast && !Wcastle){
+                if (end.x == 6 && end.y == 7) {
+                    set_new_posn({7, 7}, {5, 7});
+                }
+                Wcastle = true;
+            }else if(WLcast && !Wcastle){
+                if (end.x == 2 && end.y == 7) {
+                    set_new_posn({0, 7}, {3, 7});
+                }
+                Wcastle = true;
+            }
+        }
         //set the new position of the piece
         set_new_posn(start, end);
+
 
         //pause the timer for the current player, start the timer
         //for the other timer
@@ -83,7 +119,9 @@ void Model::play_move(Position start, Position end)
             //case where current turn is player "neither"
         }
 
-        //check to see if we're at an end state
+
+        //check to see if we're at an end state (Commented out for debug)
+        /*
         if (is_checkmate(Player::black)) {
             winner_ = Player::white;
             set_game_over_();
@@ -91,6 +129,8 @@ void Model::play_move(Position start, Position end)
             winner_ = Player::black;
             set_game_over_();
         }
+         */
+
 
         //advance the turn. using function from player.cxx
         Model::turn_ = other_player(Model::turn_);
@@ -355,6 +395,24 @@ void Model::compute_next_moves_()
 
                 //for the pieces that have limited movement
                 Position_set curr_moves = spaces_ltd(piece);
+                // check for castling. Adds the move to the moves of the king.
+                if (piece.get_piece_type() == Piece_type::king) {
+                    if (auto castling = Rrook_castle(piece.get_player())) {
+                        if (piece.get_player() == Player::white) {
+                            curr_moves[{6, 7}] = true;
+                        } else {
+                            curr_moves[{6, 0}] = true;
+                        }
+                    }
+                    if (auto castling = Lrook_castle(piece.get_player())) {
+                        if (piece.get_player() == Player::white) {
+                            curr_moves[{2, 7}] = true;
+                        } else {
+                            curr_moves[{2, 0}] = true;
+                        }
+                    }
+                }
+
                 next_moves_[pos] = curr_moves;
             }
         }
@@ -465,28 +523,83 @@ bool Model::is_checkmate(Player p)
     return true;
 }
 // two helpers for determining if castling is a valid move. Separated into
-// black and white castling. Adds moves to next_moves within
+// right and left rooks. Adds moves to next_moves within
 // compute_next_moves if the piece is a king.
-void Model::white_castle()
+bool Model::Rrook_castle (Player plr)
 {
-    // initialize the white king and rooks.
-    Piece Kking = board_[{4,7}];
-    Piece Rrook = board_[{7,7}];
-    Piece Lrook = board_[{7,7}];
-
-    if (Kking.get_piece_type() == Piece_type::king)
-    {
-        if(Rrook.get_piece_type() == Piece_type::rook){
-
-        } else if(Lrook.get_piece_type() == Piece_type::rook){
-
+    switch(plr) {
+    case Player::white: {
+        Piece WKing = board_[{4, 7}];
+        Piece Wrook = board_[{7, 7}];
+        if (WKing.get_piece_type() == Piece_type::king &&
+            Wrook.get_piece_type() == Piece_type::rook &&
+            board_[{6, 7}].get_piece_type() == Piece_type::null &&
+            board_[{5, 7}].get_piece_type() == Piece_type::null &&
+            !Wcastle) {
+            WRcast = true;
+            std::cout << "we got here";
+            return true;
+        } else {
+            return false;
         }
     }
+    case Player::black: {
+        Piece BKing = board_[{4, 0}];
+        Piece Brook = board_[{7, 0}];
+        if (BKing.get_piece_type() == Piece_type::king &&
+            Brook.get_piece_type() == Piece_type::rook &&
+            board_[{6, 0}].get_piece_type() == Piece_type::null &&
+            board_[{5, 0}].get_piece_type() == Piece_type::null &&
+            !Bcastle) {
+            BRcast = true;
+            return true;
+        } else {
+            return false;
+        }
+    }
+    case Player::neither:
+    {}
+    }
+    return false; // default case
 }
 
-void Model::black_castle()
+bool Model::Lrook_castle (Player plr)
 {
-
+    switch(plr) {
+    case Player::white: {
+        Piece WKing = board_[{4, 7}];
+        Piece Wrook = board_[{0, 7}];
+        if (WKing.get_piece_type() == Piece_type::king &&
+            Wrook.get_piece_type() == Piece_type::rook &&
+            board_[{1, 7}].get_piece_type() == Piece_type::null &&
+            board_[{2, 7}].get_piece_type() == Piece_type::null &&
+            board_[{3, 7}].get_piece_type() == Piece_type::null &&
+            !Wcastle) {
+            WLcast = true;
+            return true;
+        } else {
+            return false;
+        }
+    }
+    case Player::black: {
+        Piece BKing = board_[{4, 0}];
+        Piece Brook = board_[{0, 0}];
+        if (BKing.get_piece_type() == Piece_type::king &&
+            Brook.get_piece_type() == Piece_type::rook &&
+            board_[{1, 0}].get_piece_type() == Piece_type::null &&
+            board_[{2, 0}].get_piece_type() == Piece_type::null &&
+            board_[{3, 0}].get_piece_type() == Piece_type::null &&
+            !Bcastle) {
+            BLcast = true;
+            return true;
+        } else {
+            return false;
+        }
+    }
+    case Player::neither:
+    {}
+    }
+    return false; // default case
 }
 
 

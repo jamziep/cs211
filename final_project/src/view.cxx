@@ -53,7 +53,8 @@ View::View(Model const& model)
           //valid moves:
           valid_pieces(grid_size/2, dark_grey),
           valid_squares(20, light_grey),
-          move_preview({{}})
+          move_preview({{}}),
+          selected_move({{}})
 // sprite initialization
 {}
 
@@ -141,6 +142,13 @@ void View::draw(Sprite_set& set)
             set.add_sprite(valid_squares,screen_posn,4);
         }
     }
+    // if the player has selected a move, draw a gray square over the piece.
+    if (!selected_move.empty()){
+        for (Position posn : selected_move){
+            Position screen_posn{posn.x * grid_size, posn.y*grid_size};
+            set.add_sprite(valid_pieces, screen_posn, 4);
+        }
+    }
 }
 
 
@@ -219,4 +227,9 @@ void View::update_text_box(Player p, std::string text)
 void View::set_move_preview(Position_set pset)
 {
     View::move_preview = pset;
+}
+
+void View::set_selected_piece(Position_set pset)
+{
+    View::selected_move = pset;
 }

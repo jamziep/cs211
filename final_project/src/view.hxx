@@ -37,6 +37,10 @@ public:
     //which view can create as sprites on the board.
     void set_move_preview(Position_set);
 
+    //Works with controller.cxx. Shows a selected piece with a grey highlight
+    // on the piece.
+    void set_selected_piece(Position_set);
+
 private:
     Model const& model_;
 
@@ -70,6 +74,7 @@ public:
     ge211::Circle_sprite const valid_squares;
     ge211::Circle_sprite const valid_pieces;
     Position_set move_preview;
+    Position_set selected_move;
 
     //helper functions
     void draw_board(ge211::Sprite_set& set);
