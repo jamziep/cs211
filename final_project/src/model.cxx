@@ -8,7 +8,9 @@ using namespace ge211;
 
 Model::Model()
         : board_({8,8}),
-          next_moves_()
+          next_moves_(),
+          black_timer(true),
+          white_timer (true)
           //pieces_taken_()
 {
     // throw down some pieces for testing
@@ -390,9 +392,7 @@ bool Model::is_checkmate(Player p)
 
                 //if player p is not in check after a move, then success--
                 //player is not in checkmate
-
-                //TODO
-
+                return false;
             }
         }
 

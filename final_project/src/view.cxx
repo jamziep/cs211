@@ -55,6 +55,10 @@ void View::draw(Sprite_set& set)
     draw_board(set);
     draw_background(set);
 
+    //add the text sprites
+    set.add_sprite(black_time_text, {800,125},4);
+    set.add_sprite(white_time_text, {800,200},4);
+
     // next, iterate through all the squares and draw each piece.
     for (Position posn : View::model_.board()) {
         Piece curr_piece = View::model_[posn];
@@ -187,6 +191,5 @@ void View::update_text_box(Player p, std::string text)
         throw Client_logic_error("View::update_text_box: can't update"
                                  "the text box of player 'neither'");
     }
-
 
 }
