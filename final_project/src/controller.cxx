@@ -147,10 +147,10 @@ void Controller::on_frame(double dt) {
     double black_total_seconds = model_.elapsed_time_black().seconds();
     double white_total_seconds = model_.elapsed_time_white().seconds();
 
-    int black_minutes = (int)black_total_seconds/60;
-    int white_minutes = (int)white_total_seconds/60;
-    int black_seconds = black_total_seconds;
-    int white_seconds = white_total_seconds;
+    int black_minutes = (int)black_total_seconds / 60;
+    int white_minutes = (int)white_total_seconds / 60;
+    int black_seconds = (int)black_total_seconds % 60;
+    int white_seconds = (int)white_total_seconds % 60;
 
     //turn these times into strings
     std::string black_text = "";
