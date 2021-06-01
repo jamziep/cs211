@@ -13,12 +13,10 @@ Model::Model()
           white_timer (true)
           //pieces_taken_()
 {
-    // throw down some pieces for testing
-
 
     //initialize next_moves_ to turn_'s possible next moves,
     //using the compute_next_moves helper
-    //Model::compute_next_moves_();
+    Model::compute_next_moves_();
 }
 
 
@@ -171,10 +169,13 @@ Position_set Model::spaces_ult(Piece p)
 
     case Piece_type::rook:
         dirs_travel = board_.rook_directions();
+        break;
     case Piece_type::bishop:
         dirs_travel = board_.bishop_directions();
+        break;
     case Piece_type::queen:
         dirs_travel = board_.all_directions();
+        break;
     default:
         throw Client_logic_error("Model::spaces_ult: piece must be r/b/q");
     }
@@ -217,11 +218,13 @@ Position_set Model::spaces_ltd(Piece p)
         //pawn has special directions of travel depending on what's around
         //it, so account for there. do using a reference to dirs_travel
         board_.modify_pawn_dirs(p, dirs_travel);
-
+        break;
     case Piece_type::knight:
         dirs_travel = board_.knight_directions();
+        break;
     case Piece_type::king:
         dirs_travel = board_.all_directions();
+        break;
     default:
         throw Client_logic_error("Model::spaces_ult: piece must be kn/ki/p");
     }

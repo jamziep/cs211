@@ -303,12 +303,23 @@ Board::modify_pawn_dirs(Piece p, std::vector<Dimensions>& dirs_travel)
     //if there isn't a piece in front of the pawn in the diagonal directions,
     //assume the pawn can't move there. this could be modified for en passant
     Position temp_posn = p.get_posn() + dirs_travel[3];
-    if (operator[](temp_posn).get_piece_type() == Piece_type::null) {
+
+    //need to do manual bounds check before calling operator[]
+    if (temp_posn.x < 0 || temp_posn.x >= dimensions().width
+           || temp_posn.y < 0 || temp_posn.y >= dimensions().height) {
+        dirs_travel.erase(dirs_travel.begin() + 3);
+
+    //then, check the condition for this given square
+    } else if (operator[](temp_posn).get_piece_type() == Piece_type::null) {
         dirs_travel.erase(dirs_travel.begin() + 3);
     }
 
     temp_posn = p.get_posn() + dirs_travel[2];
-    if (operator[](temp_posn).get_piece_type() == Piece_type::null) {
+    if (temp_posn.x < 0 || temp_posn.x >= dimensions().width
+        || temp_posn.y < 0 || temp_posn.y >= dimensions().height) {
+        dirs_travel.erase(dirs_travel.begin() + 2);
+
+    } else if (operator[](temp_posn).get_piece_type() == Piece_type::null) {
         dirs_travel.erase(dirs_travel.begin() + 2);
     }
 
@@ -323,7 +334,11 @@ Board::modify_pawn_dirs(Piece p, std::vector<Dimensions>& dirs_travel)
     //if there IS a piece in front of the pawn, can't move forward,
     //so remove the first element from vector
     temp_posn = p.get_posn() + dirs_travel[0];
-    if (operator[](temp_posn).get_piece_type() != Piece_type::null) {
+    if (temp_posn.x < 0 || temp_posn.x >= dimensions().width
+        || temp_posn.y < 0 || temp_posn.y >= dimensions().height) {
+        dirs_travel.erase(dirs_travel.begin());
+
+    } else if (operator[](temp_posn).get_piece_type() != Piece_type::null) {
         dirs_travel.erase(dirs_travel.begin());
     }
 }
