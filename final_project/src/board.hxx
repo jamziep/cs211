@@ -69,7 +69,7 @@ public:
     ///
     ///  - throws `ge211::Client_logic_error` if `!good_position(pos)`.
     //Player operator[](Position pos) const;
-    Piece operator[](Position pos);
+    Piece operator[](Position pos) const;
 
     //Piece operator[](Position pos) const;
 

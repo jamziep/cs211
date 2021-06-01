@@ -1,6 +1,8 @@
 #include "view.hxx"
 //#include "model.hxx"
 
+// edits: changed Model model_ to Model const&
+
 using namespace ge211;
 using Color = ge211::Color;
 using Sprite_set = ge211::Sprite_set;
@@ -67,7 +69,7 @@ void View::draw(Sprite_set& set)
 
     // next, iterate through all the squares and draw each piece.
     for (Position posn : View::model_.board()) {
-        Piece curr_piece = View::model_[posn];
+        auto curr_piece = View::model_[posn];
 
         Position screen_posn = {posn.x * grid_size, posn.y * grid_size};
 

@@ -67,7 +67,7 @@ public:
     ///
     ///  - Throws `ge211::Client_logic_error` if the position is out of
     ///    bounds.
-    Piece operator[](Position);
+    Piece operator[](Position) const;
 
     /// Returns a pointer to the move that will result if the current
     /// player plays at the given position. If the current player cannot
@@ -181,6 +181,9 @@ public:
     void resume_white()
     {white_timer.resume();}
 
+    // helpers for castling
+    void white_castle();
+    void black_castle();
 };
 
 #endif //chess_model_hxx

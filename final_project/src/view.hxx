@@ -38,7 +38,7 @@ public:
     void set_move_preview(Position_set);
 
 private:
-    Model model_;
+    Model const& model_;
 
 public:
     // board

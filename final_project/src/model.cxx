@@ -24,7 +24,7 @@ Model::Rectangle Model::board() const
     return board_.all_positions();
 }
 
-Piece Model::operator[](Position pos)
+Piece Model::operator[](Position pos) const
 {
     return board_[pos];
 }
@@ -464,6 +464,33 @@ bool Model::is_checkmate(Player p)
     //none of the possible moves can get the player out of checkmate
     return true;
 }
+// two helpers for determining if castling is a valid move. Separated into
+// black and white castling. Adds moves to next_moves within
+// compute_next_moves if the piece is a king.
+void Model::white_castle()
+{
+    // initialize the white king and rooks.
+    Piece Kking = board_[{4,7}];
+    Piece Rrook = board_[{7,7}];
+    Piece Lrook = board_[{7,7}];
+
+    if (Kking.get_piece_type() == Piece_type::king)
+    {
+        if(Rrook.get_piece_type() == Piece_type::rook){
+
+        } else if(Lrook.get_piece_type() == Piece_type::rook){
+
+        }
+    }
+}
+
+void Model::black_castle()
+{
+
+}
+
+
+
 
 void Model::set_game_over_()
 {

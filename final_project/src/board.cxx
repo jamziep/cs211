@@ -91,7 +91,7 @@ Board::good_position(Position pos) const
 // }
 
 Piece
-Board::operator[](Position pos)
+Board::operator[](Position pos) const
 {
     bounds_check_(pos);
     return get_piece_(pos);
