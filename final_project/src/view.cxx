@@ -14,6 +14,8 @@ static Color dark_color = Color(217, 171, 128);
 static Color background_color = Color(107,16, 49);
 static Color black_color = Color(0,0,0);
 static Color white_color = Color(255, 255, 255);
+static Color dark_grey = Color(145,145,145);
+static Color light_grey = Color(200,200,200);
 
 
 View::View(Model& model)
@@ -44,8 +46,12 @@ View::View(Model& model)
 
           //clock sprites
           black_time_text(),
-          white_time_text()
+          white_time_text(),
 
+          //valid moves:
+          valid_pieces(grid_size/2, dark_grey),
+          valid_squares(20, light_grey),
+          move_preview({{}})
 // sprite initialization
 {}
 
@@ -116,6 +122,21 @@ void View::draw(Sprite_set& set)
             }
         } else {
             //like the "default" case
+        }
+
+        // shows you which pieces can be moved.
+        if (model_.find_move(posn)){
+            set.add_sprite(valid_pieces,screen_posn, 4);
+        }
+
+        //if the player is previewing a move, take the full list of tiles
+        //overturned by that move, and draw all those tiles in gray to preview
+    }
+    if (!move_preview.empty()){
+        for (Position posn : move_preview) {
+            Position screen_posn{posn.x * grid_size + 28, posn.y*grid_size +
+            28};
+            set.add_sprite(valid_squares,screen_posn,4);
         }
     }
 }
@@ -191,5 +212,9 @@ void View::update_text_box(Player p, std::string text)
         throw Client_logic_error("View::update_text_box: can't update"
                                  "the text box of player 'neither'");
     }
+}
 
+void View::set_move_preview(Position_set pset)
+{
+    View::move_preview = pset;
 }
