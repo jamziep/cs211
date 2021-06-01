@@ -283,34 +283,34 @@ Position_set Model::spaces_ltd(Piece p)
                 continue;
             } else {
                 // first check if pawn is not blocked and in first rank
-                if (what_player == Player::white && what_posn.y == 6 && posn
-                .y + 2 == what_posn.y) {
-                    if(operator[]({posn.x,posn.y + 1}).get_piece_type() ==
-                    Piece_type::null) {
-                        possible_moves[posn] = true;
-                    }
+                if (what_player==Player::white && what_posn.y!=6 && posn
+                .y+2==what_posn.y) {
+                        possible_moves[posn] = false;
 
-                } else if (what_player == Player::black && what_posn.y == 1 &&
-                posn.y - 2 == what_posn.y) {
-                    if(operator[]({posn.x,posn.y - 1}).get_piece_type() ==
-                       Piece_type::null) {
-                        possible_moves[posn] = true;
-                    }
+                } else if (what_player==Player::black && what_posn.y!=1 &&
+                posn.y-2 == what_posn.y) {
+                        possible_moves[posn] = false;
 
                     // check to see if posn is diagonal and detects a piece
                 } else if (posn.x-1 == what_posn.x || posn.x+1 == what_posn.x){
                     if (operator[](posn).get_piece_type() != Piece_type::null) {
                         possible_moves[posn] = true;
                     }
-                    // check to see if the posn is blocked.
-                }else if(operator[](posn).get_piece_type() != Piece_type::null){
-                    possible_moves[posn] = false;
-                } else {
+                    // check to see if the posn in front of piece is blocked.
+                }else if(operator[]({what_posn.x,what_posn.y-1})
+                .get_piece_type() == Piece_type::null && what_player
+                ==Player::white){
+                    possible_moves[posn] = true;
+
+                }else if(operator[]({what_posn.x,what_posn.y+1})
+                .get_piece_type() == Piece_type::null && what_player ==
+                Player::black){
                     possible_moves[posn] = true;
                 }
             }
         }
     }
+
 
     //return all unoccupied or enemy-occupied spaces
     return possible_moves;
