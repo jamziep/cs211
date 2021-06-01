@@ -1,4 +1,5 @@
 #include "controller.hxx"
+#include "model.hxx"
 
 static int const grid_size = 95;
 
@@ -181,3 +182,4 @@ void Controller::on_frame(double dt) {
 
 
 }
+

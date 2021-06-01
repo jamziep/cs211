@@ -182,8 +182,8 @@ public:
     {white_timer.resume();}
 
     // helpers for castling
-    void white_castle();
-    void black_castle();
+    bool Rrook_castle (Player plr);
+    bool Lrook_castle (Player plr);
 };
 
 #endif //chess_model_hxx
