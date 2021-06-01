@@ -64,13 +64,6 @@ void Controller::on_mouse_down(ge211::Mouse_button btn,
                     selected_posn = square_coords;
                     return;
 
-                    // if selected is true but square_coords is the same as
-                    // the same place you clicked, then you deselected the
-                    // spot.
-                }else if (selected && square_coords == selected_posn){
-                    selected = false;
-                    selected_posn = {0,0};
-
                     // otherwise check for valid move. if valid, play move.
                 } else {
                     if (Controller::model_.find_move(square_coords))
@@ -80,12 +73,12 @@ void Controller::on_mouse_down(ge211::Mouse_button btn,
                         std::cout << "valid move found" << "\n";
                     }
                     selected = false;
-                    selected_posn = {0,0};
                     return;
                 }
             }
         }
     }
+
     //if we got here, mouse click was not associated with any square
     return;
 }
