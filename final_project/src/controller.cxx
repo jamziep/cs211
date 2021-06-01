@@ -141,3 +141,46 @@ void Controller::on_mouse_move(ge211::Posn<int> mouse_posn) {
     }
 }
 
+void Controller::on_frame(double dt) {
+
+    //update the time shown on the board for black and white. this may
+    //eventually be better suited for an on_frame() function
+
+    //cast doubles to ints b/c that's all we need to show
+    double black_total_seconds = model_.elapsed_time_black().seconds();
+    double white_total_seconds = model_.elapsed_time_white().seconds();
+
+    int black_minutes = (int)black_total_seconds/60;
+    int white_minutes = (int)white_total_seconds/60;
+    int black_seconds = black_total_seconds;
+    int white_seconds = white_total_seconds;
+
+    //turn these times into strings
+    std::string black_text = "";
+    if (black_minutes < 10) {
+        black_text += "0";
+    }
+    black_text += std::to_string(black_minutes);
+    black_text += ":";
+    if (black_seconds < 10) {
+        black_text += "0";
+    }
+    black_text += std::to_string(black_seconds);
+
+    std::string white_text = "";
+    if (white_minutes < 10) {
+        white_text += "0";
+    }
+    white_text += std::to_string(white_minutes);
+    white_text += ":";
+    if (white_seconds < 10) {
+        white_text += "0";
+    }
+    white_text += std::to_string(white_seconds);
+
+    //update the text sprites
+    view_.update_text_box(Player::black, black_text);
+    view_.update_text_box(Player::white, white_text);
+
+
+}

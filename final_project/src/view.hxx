@@ -41,7 +41,7 @@ private:
     Model model_;
 
 public:
-    // board shit
+    // board
     ge211::Rectangle_sprite const board_sprite;
     ge211::Rectangle_sprite const dark_squares;
     ge211::Rectangle_sprite const background;
@@ -62,10 +62,14 @@ public:
     ge211::Image_sprite const black_king;
     ge211::Image_sprite const black_queen;
 
-    // decleration of helper function draw_board
+    //for clocks. not const, as the time changes
+    ge211::Text_sprite black_time_text;
+    ge211::Text_sprite white_time_text;
+
+    //helper functions
     void draw_board(ge211::Sprite_set& set);
-    void
-    draw_background(ge211::Sprite_set& set);
+    void draw_background(ge211::Sprite_set& set);
+    void update_text_box(Player p, std::string text);
 };
 
 

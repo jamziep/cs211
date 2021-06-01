@@ -40,17 +40,24 @@ View::View(Model& model)
           black_knight("black_knight.png"),
           black_bishop("black_bishop.png"),
           black_king("black_king.png"),
-          black_queen("black_queen.png")
+          black_queen("black_queen.png"),
+
+          //clock sprites
+          black_time_text(),
+          white_time_text()
 
 // sprite initialization
 {}
 
 void View::draw(Sprite_set& set)
 {
-
     //draw the background and the board
     draw_board(set);
     draw_background(set);
+
+    //add the text sprites
+    set.add_sprite(black_time_text, {800,125},4);
+    set.add_sprite(white_time_text, {800,200},4);
 
     // next, iterate through all the squares and draw each piece.
     for (Position posn : View::model_.board()) {
@@ -108,7 +115,7 @@ void View::draw(Sprite_set& set)
                 break;
             }
         } else {
-            std::cout << "nothing \n";
+            //like the "default" case
         }
     }
 }
@@ -164,3 +171,25 @@ View::initial_window_title() const
     return "Chess";
 }
 
+void View::update_text_box(Player p, std::string text)
+{
+    //make a new builder for text
+    ge211::Font sans30{"sans.ttf", 30};
+    ge211::Text_sprite::Builder text_builder(sans30);
+
+    //add the text to our builder and reconfigure
+    text_builder.message(text);
+
+    //different colors and sprites for black and white
+    if (p == Player::black) {
+        text_builder.color(ge211::Color(255,255,255));
+        black_time_text.reconfigure(text_builder);
+    } else if (p == Player:: white) {
+        text_builder.color(ge211::Color(0,0,0));
+        white_time_text.reconfigure(text_builder);
+    } else {
+        throw Client_logic_error("View::update_text_box: can't update"
+                                 "the text box of player 'neither'");
+    }
+
+}

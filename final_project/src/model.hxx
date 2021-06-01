@@ -103,6 +103,8 @@ public:
     bool is_checkmate(Player p);
 
 
+
+
 #ifdef CS211_TESTING
     // When this class is compiled for testing, members of a struct named
     // Test_access will be allowed to access private members of this class.
@@ -120,7 +122,11 @@ private:
     Board board_;
 
     Move_map next_moves_;
-    std::vector<Piece> pieces_taken_;
+    //std::vector<Piece> pieces_taken_;
+
+    //for timing in view.cxx
+    ge211::Pausable_timer black_timer;
+    ge211::Pausable_timer white_timer;
 
     // INVARIANT:
     //  - `next_moves_` is always current for the state of the game.
@@ -152,6 +158,28 @@ private:
     ///
     /// (Helper for `really_play_move_`.)
     void set_game_over_();
+
+public:
+
+    //get data out of the timers
+    ge211::Duration elapsed_time_black()
+    {return black_timer.elapsed_time();}
+
+    ge211::Duration elapsed_time_white()
+    {return white_timer.elapsed_time();}
+
+    //pause or start clock
+    void pause_black()
+    {black_timer.pause();}
+
+    void pause_white()
+    {white_timer.pause();}
+
+    void resume_black()
+    {black_timer.resume();}
+
+    void resume_white()
+    {white_timer.resume();}
 
 };
 

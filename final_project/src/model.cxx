@@ -9,14 +9,14 @@ using namespace ge211;
 Model::Model()
         : board_({8,8}),
           next_moves_(),
-          pieces_taken_()
+          black_timer(true),
+          white_timer (true)
+          //pieces_taken_()
 {
-    // throw down some pieces for testing
-
 
     //initialize next_moves_ to turn_'s possible next moves,
     //using the compute_next_moves helper
-    //Model::compute_next_moves_();
+    Model::compute_next_moves_();
 }
 
 
@@ -71,6 +71,18 @@ void Model::play_move(Position start, Position end)
 
         //set the new position of the piece
         set_new_posn(start, end);
+
+        //pause the timer for the current player, start the timer
+        //for the other timer
+        if (turn() == Player::black) {
+            pause_black();
+            resume_white();
+        } else if (turn() == Player::white) {
+            pause_white();
+            resume_black();
+        } else {
+            //case where current turn is player "neither"
+        }
 
         //advance the turn. using function from player.cxx
         Model::turn_ = other_player(Model::turn_);
@@ -157,10 +169,13 @@ Position_set Model::spaces_ult(Piece p)
 
     case Piece_type::rook:
         dirs_travel = board_.rook_directions();
+        break;
     case Piece_type::bishop:
         dirs_travel = board_.bishop_directions();
+        break;
     case Piece_type::queen:
         dirs_travel = board_.all_directions();
+        break;
     default:
         throw Client_logic_error("Model::spaces_ult: piece must be r/b/q");
     }
@@ -203,11 +218,13 @@ Position_set Model::spaces_ltd(Piece p)
         //pawn has special directions of travel depending on what's around
         //it, so account for there. do using a reference to dirs_travel
         board_.modify_pawn_dirs(p, dirs_travel);
-
+        break;
     case Piece_type::knight:
         dirs_travel = board_.knight_directions();
+        break;
     case Piece_type::king:
         dirs_travel = board_.all_directions();
+        break;
     default:
         throw Client_logic_error("Model::spaces_ult: piece must be kn/ki/p");
     }
@@ -378,9 +395,7 @@ bool Model::is_checkmate(Player p)
 
                 //if player p is not in check after a move, then success--
                 //player is not in checkmate
-
-                //TODO
-
+                return false;
             }
         }
 
