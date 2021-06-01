@@ -169,9 +169,11 @@ void Board::remove_by_posn(Position posn) {
     Piece piece = operator[](posn);
 
     if (piece.get_player() == Player::white) {
-        black_.remove(piece);
-    } else if (piece.get_player() == Player::black) {
+        //black_.remove(piece);
         white_.remove(piece);
+    } else if (piece.get_player() == Player::black) {
+        //white_.remove(piece)
+        black_.remove(piece);
     } else {
         throw Client_logic_error("Board::remove_by_posn: can't remove"
                                  "a player of type 'neither'");
@@ -354,17 +356,12 @@ Board::all_positions() const
 Piece
 Board::get_piece_(Position pos) const
 {
-    //figure this shit out, bc it's really a necessary step
-    //in order to get pieces out of board
-
     Piece white_piece = white_.get_piece_from_set(pos);
     Piece black_piece = black_.get_piece_from_set(pos);
 
     //if there's a white piece at the given position, return that
     //piece. if there's a black piece, same. else, return a piece that
     //doesn't mean anything
-
-
     if (white_piece.get_piece_type() != Piece_type::null) {
         return white_piece;
     } else if (black_piece.get_piece_type() != Piece_type::null) {
@@ -379,8 +376,6 @@ Board::set_(Position pos, Player player)
 {
 
 }
-
-
 
 
 void

@@ -60,8 +60,7 @@ Piece Piece_set::get_piece_from_set(Position posn) const
 
         //if the position of this piece matches the position
         //passed as input, return a reference to it
-        // former:piece.get_posn() == posn && piece.is_active()
-        if (piece.get_posn() == posn) {
+        if (piece.get_posn() == posn && piece.is_active()) {
             return piece;
         }
     }
@@ -161,7 +160,8 @@ void Piece_set::remove(Piece apiece) {
 bool Piece_set::operator[](Position posn) const{
 
     for (Piece piece : pieces_) {
-        if (piece.get_posn() == posn) {
+
+        if (piece.get_posn() == posn && piece.is_active()) {
             return true;
         }
     }

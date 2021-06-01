@@ -54,8 +54,6 @@ void Controller::on_mouse_down(ge211::Mouse_button btn,
                 // gives you selected coordinates
                 ge211::Posn<int> square_coords{col_ind, row_ind};
 
-
-
                 if (!selected &&
                 Controller::model_.find_move(square_coords)) {
                     selected = true;
@@ -63,7 +61,6 @@ void Controller::on_mouse_down(ge211::Mouse_button btn,
                     return;
                     // deselect by clicking any square that is invalid. (Not
                     // implemented yet)
-
 
                     // otherwise check for valid move. if valid, play move to
                     // the newly selected square.
