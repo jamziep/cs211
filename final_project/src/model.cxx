@@ -121,7 +121,7 @@ void Model::play_move(Position start, Position end)
 
 
         //check to see if we're at an end state (Commented out for debug)
-        /*
+
         if (is_checkmate(Player::black)) {
             winner_ = Player::white;
             set_game_over_();
@@ -129,7 +129,7 @@ void Model::play_move(Position start, Position end)
             winner_ = Player::black;
             set_game_over_();
         }
-         */
+
 
 
         //advance the turn. using function from player.cxx
