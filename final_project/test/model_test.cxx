@@ -23,7 +23,13 @@ TEST_CASE("Model::play_move")
     CHECK(m.turn() == Player::white);
     CHECK(m.winner() == Player::neither);
 
+    //check that moves exist for a pawn, but that moves don't exist for
+    //a random position in space
+    CHECK(m.find_move({2,6}));
+    CHECK_FALSE(m.find_move({4,4}));
 
+    //bishops, rooks, and 
+    CHECK_FALSE(m.find_move({2,7}));
 
 }
 
