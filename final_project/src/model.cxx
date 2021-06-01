@@ -5,7 +5,6 @@
 
 using namespace ge211;
 
-
 Model::Model()
         : board_({8,8}),
           next_moves_(),
@@ -42,9 +41,9 @@ Move const* Model::find_move(Position pos) const
 
 void Model::play_move(Position start, Position end)
 {
-    if (is_game_over())
-        //rather than throw an error, run our own game over function
-        set_game_over_();
+    // if (is_game_over())
+    //     //rather than throw an error, run our own game over function
+    //     set_game_over_();
 
     //see if there is a piece at the position where player wants to play
     Move const* movep = find_move(start);
@@ -82,6 +81,15 @@ void Model::play_move(Position start, Position end)
             resume_black();
         } else {
             //case where current turn is player "neither"
+        }
+
+        //check to see if we're at an end state
+        if (is_checkmate(Player::black)) {
+            winner_ = Player::white;
+            set_game_over_();
+        } else if (is_checkmate(Player::white)) {
+            winner_ = Player::black;
+            set_game_over_();
         }
 
         //advance the turn. using function from player.cxx

@@ -100,16 +100,16 @@ void Piece_set::set_posn(Piece apiece, Position posn) {
 
     //maybe do bounds checking on this?
 
-    //iterate through the piece set and see if we have a match
-    //between the desired piece and a piece in the set. if so,
-    //change the position of that piece
-    for (Piece& piece : pieces_) {
-
-        if (piece == apiece) {
-            piece.set_posn(posn);
-            return;
-        }
-    }
+    // //iterate through the piece set and see if we have a match
+    // //between the desired piece and a piece in the set. if so,
+    // //change the position of that piece
+    // for (Piece& piece : pieces_) {
+    //
+    //     if (piece == apiece) {
+    //         piece.set_posn(posn);
+    //         return;
+    //     }
+    // }
 
 }
 
@@ -121,9 +121,19 @@ void Piece_set::change_posn(Position start, Position end) {
 
     //get a pointer to piece
     // Piece& piece = get(start);
-    Piece piece = get_piece_from_set(start);
+    Piece apiece = get_piece_from_set(start);
 
-    set_posn(piece, end);
+    // set_posn(piece, end);
+    //iterate through the piece set and see if we have a match
+    //between the desired piece and a piece in the set. if so,
+    //change the position of that piece
+    for (Piece& piece : pieces_) {
+
+        if (piece == apiece) {
+            piece.set_posn(end);
+            return;
+        }
+    }
 }
 
 //"Removes" a piece from the piece set by setting the
