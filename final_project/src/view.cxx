@@ -40,8 +40,8 @@ View::View(Model const& model)
           // indicators
           capture_text(),
           monitor(),
-          black_capture_text(),
-          white_capture_text(),
+          // black_capture_text(),
+          // white_capture_text(),
 
           //valid moves:
           valid_squares(20, config.light_grey),
@@ -154,29 +154,6 @@ void View::draw(Sprite_set& set)
         set.add_sprite(king_check, screen_posn, 4);
     }
 
-    //TODO: visually show game over
-
-    if (model_.turn() == Player::neither) {
-        if (model_.winner() == Player::black) {
-            update_capture_text2(Player::black, "Checkmate. Black wins");
-            update_capture_text2(Player::white, "");
-        } else if (model_.winner() == Player::white) {
-            update_capture_text2(Player::white, "Checkmate. White wins");
-            update_capture_text2(Player::black, "");
-        }
-    } else {
-        update_capture_text2(Player::black, "");
-        update_capture_text2(Player::white, "");
-    }
-
-    if (black_capture_text) {
-        set.add_sprite(black_capture_text, config.black_whose_turn_location, 6);
-    }
-
-    if (white_capture_text) {
-        set.add_sprite(white_capture_text, config.white_whose_turn_location, 6);
-    }
-
 }
 
 
@@ -273,9 +250,9 @@ void View::update_capture_text(Piece a, Piece b)
 
     if (a.get_player() == Player::white){
         aplayer = "White ";
-        bplayer = "Black ";
+        bplayer = "black ";
     } else if(a.get_player() == Player::black) {
-        aplayer = "black ";
+        aplayer = "Black ";
         bplayer = "white ";
     }
     // Piece a type:
@@ -353,38 +330,15 @@ void View::monitor_update(Sprite_set& set)
     } else if (model_.turn() == Player::black){
         monitors = "It is black's turn.";
     } else if (model_.winner() == Player::black){
-        monitors = "Checkmate. White wins.";
-    }else if (model_.winner() == Player::black){
         monitors = "Checkmate. Black wins.";
+    }else if (model_.winner() == Player::black){
+        monitors = "Checkmate. White wins.";
     }
     text_builder.message(monitors);
     text_builder.color(Color(10,10,10));
     monitor.reconfigure(text_builder);
-    set.add_sprite(monitor,{805, 570}, 3);
+    set.add_sprite(monitor,{805, 570}, 6);
 
-}
-
-void View::update_capture_text2(Player p, std::string text)
-{
-    ge211::Font sans_small{"open_sans.ttf", 21};
-    ge211::Text_sprite::Builder text_builder(sans_small);
-    text_builder.color(config.black_color);
-    text_builder.message(text);
-
-    switch(p) {
-        case Player::white: {
-            white_capture_text.reconfigure(text_builder);
-            break;
-        }
-        case Player::black: {
-            black_capture_text.reconfigure(text_builder);
-            break;
-        }
-        default: {
-            throw Client_logic_error("View:: can't update capture"
-                                     " text for non-b/w player");
-        }
-    }
 }
 
 void View::set_move_preview(Position_set pset)
