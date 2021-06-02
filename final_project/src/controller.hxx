@@ -8,7 +8,7 @@ class Controller : public ge211::Abstract_game
 public:
 
     // Constructs a game controller.
-    Controller();
+    Controller(bool use_stalemate);
 
     // `protected` means that GE211 (via base class `ge211::Abstract_game`)
     // can access these members, but arbitrary other code cannot:

@@ -16,7 +16,7 @@ TEST_CASE("example test (TODO: replace this)")
 TEST_CASE("Model::play_move")
 {
     //initialize a model
-    Model m = Model();
+    Model m = Model(false);
 
     //check the possible moves. current player is white
     CHECK(m.turn() == Player::white);
@@ -67,7 +67,7 @@ TEST_CASE("Model::play_move")
 TEST_CASE("Pawn moves") {
 
     //initialize a model
-    Model m = Model();
+    Model m = Model(false);
 
     //check that model initialized properly
     CHECK(m.turn() == Player::white);
@@ -93,7 +93,7 @@ TEST_CASE("Pawn promotion"){
     // reaches the back rank of the opponent. It also tests pawn, knight, and
     // queen movement and special pawn movement like starting with a
     // two-square move and capturing pieces diagonally.
-    Model m = Model();
+    Model m = Model(false);
 
     //check that model initialized properly
     CHECK(m.turn() == Player::white);
@@ -141,7 +141,7 @@ TEST_CASE("castling king-side on white")
     // movement. This will test king and rook movement, as well as special
     // exception rules in chess.
     // initialize model
-    Model m = Model();
+    Model m = Model(false);
 
     //check that model initialized properly
     CHECK(m.turn() == Player::white);
@@ -175,7 +175,7 @@ TEST_CASE("Scholar's Mate: White")
     // this test will walk through an entire game of chess, testing pawn,
     // knight, bishop, and queen movement as well as checkmate.
     // initialize model
-    Model m = Model();
+    Model m = Model(false);
 
     //check that model initialized properly
     CHECK(m.turn() == Player::white);

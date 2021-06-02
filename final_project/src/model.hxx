@@ -25,7 +25,7 @@ public:
     ///
     ///  - Throws `ge211::Client_logic_error` if `size` is less than 2
     ///    or greater than 8.
-    explicit Model();
+    explicit Model(bool use_stalemate);
 
     /// Constructs a model with the given width and height.
     ///
@@ -136,6 +136,9 @@ private:
     //for timing in view.cxx
     ge211::Pausable_timer black_timer;
     ge211::Pausable_timer white_timer;
+
+    //for deciding if board should calculate for stalemate
+    bool use_stalemate;
 
     // INVARIANT:
     //  - `next_moves_` is always current for the state of the game.
