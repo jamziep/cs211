@@ -53,6 +53,9 @@ View::View(Model const& model)
           black_time_text(),
           white_time_text(),
 
+          // indicators
+          capture_text(),
+
           //valid moves:
           valid_pieces(grid_size/2, dark_grey),
           valid_squares(20, light_grey),
@@ -201,6 +204,10 @@ void View::draw_background(Sprite_set& set)
     // clock:
     set.add_sprite(black_matte, {800,125}, 3);
     set.add_sprite(white_matte, {800,200}, 3);
+
+    // capture and turn indicator:
+    set.add_sprite(whos_turn, {800, 500}, 3);
+    set.add_sprite(whos_turn, {800, 560}, 3);
 }
 
 View::Dimensions
@@ -238,6 +245,13 @@ void View::update_text_box(Player p, std::string text)
         throw Client_logic_error("View::update_text_box: can't update"
                                  "the text box of player 'neither'");
     }
+}
+
+void View::update_capture_text(Piece a, Piece b)
+{
+    ge211::Font sans30{"sans.tff", 30};
+    ge211::Text_sprite::Builder text_builder(sans30);
+
 }
 
 void View::set_move_preview(Position_set pset)

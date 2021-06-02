@@ -71,6 +71,9 @@ public:
     ge211::Text_sprite black_time_text;
     ge211::Text_sprite white_time_text;
 
+    // for indicators. Changes when pieces are taken.
+    ge211::Text_sprite capture_text;
+
     // for showing valid moves.
     ge211::Circle_sprite const valid_squares;
     ge211::Circle_sprite const valid_pieces;
@@ -81,7 +84,7 @@ public:
     //helper functions
     void draw_board(ge211::Sprite_set& set);
     void draw_background(ge211::Sprite_set& set);
-    // void update_text_box(Player p, std::string text);
+    void update_capture_text(Piece a, Piece b);
 };
 
 
