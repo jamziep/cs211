@@ -31,12 +31,15 @@ struct Game_config {
     ge211::Color light_grey;
     ge211::Color bright_red;
     ge211::Color parchment;
+    ge211::Color capture_color;
 
     //locations of text boxes
     Position black_timer_location;
     Position white_timer_location;
-    Position black_whose_turn_location;
-    Position white_whose_turn_location;
+    Position capture_location;
+    Position monitor_location;
+    Position capture_text_location;
+    Position monitor_text_location;
 
     //sizes of things
     Dimensions board_size;

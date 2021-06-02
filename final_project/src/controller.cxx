@@ -39,6 +39,7 @@ void Controller::on_key(ge211::Key key) {
 bool selected = false;
 ge211::Posn<int> selected_posn{0, 0};
 Position_set starts {};
+
 void Controller::on_mouse_down(ge211::Mouse_button btn,
                                ge211::Posn<int> mouse_posn)
 {
@@ -58,22 +59,24 @@ void Controller::on_mouse_down(ge211::Mouse_button btn,
                     starts[selected_posn] = true;
                     view_.set_selected_piece(starts);
                     return;
+
                     // otherwise check for valid move. if valid, play move to
                     // the newly selected square.
                 } else if(selected) {
+
                     Move const* movep = model_.find_move(selected_posn);
                     Position_set possible_moves = movep -> second;
+
                     if (possible_moves[square_coords]) {
                         auto selected_piece = model_[selected_posn];
                         auto to_piece = model_[square_coords];
+
                         if(to_piece.get_piece_type() != Piece_type::null) {
                             view_.update_capture_text(selected_piece, to_piece);
                         }
                         model_.play_move(selected_posn, square_coords, true);
                     }
                     // printing potential captures:
-
-
                     selected = false;
                     starts.clear();
                     view_.set_selected_piece(starts);
@@ -127,7 +130,6 @@ void Controller::on_mouse_move(ge211::Posn<int> mouse_posn) {
                 if (movep) {
                     view_.set_move_preview(movep -> second);
                 } else {
-                    //give an empty posn set so as to clear out the sprites
                     view_.set_move_preview({{}});
                 }
             }

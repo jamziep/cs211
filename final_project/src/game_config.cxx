@@ -15,12 +15,15 @@ Game_config::Game_config()
         light_grey(ge211::Color(200,200,200)),
         bright_red(ge211::Color(190,0,0)),
         parchment(ge211::Color(201,192,141)),
+        capture_color(ge211::Color(10,10,10)),
 
         //locations of text boxes
         black_timer_location{800,125},
         white_timer_location{800,200},
-        black_whose_turn_location{800, 500},
-        white_whose_turn_location{800, 560},
+        capture_location{800, 500},
+        monitor_location{800, 560},
+        capture_text_location{805, 510},
+        monitor_text_location{805, 570},
 
         //sizes of things
         board_size{1080, 761},

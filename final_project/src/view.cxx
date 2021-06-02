@@ -58,10 +58,10 @@ void View::draw(Sprite_set& set)
     draw_background(set);
 
     //add the text sprites
-    set.add_sprite(black_time_text, {800,125},4);
-    set.add_sprite(white_time_text, {800,200},4);
+    set.add_sprite(black_time_text, config.black_timer_location,4);
+    set.add_sprite(white_time_text, config.white_timer_location,4);
     if(!capture_text.empty()) {
-        set.add_sprite(capture_text, {805, 510}, 4);
+        set.add_sprite(capture_text, config.capture_text_location, 4);
     }
     monitor_update(set);
 
@@ -192,8 +192,8 @@ void View::draw_background(Sprite_set& set)
     set.add_sprite(white_matte, config.white_timer_location, 3);
 
     // capture and turn indicator:
-    set.add_sprite(whos_turn, config.black_whose_turn_location, 3);
-    set.add_sprite(whos_turn, config.white_whose_turn_location, 3);
+    set.add_sprite(whos_turn, config.capture_location, 3);
+    set.add_sprite(whos_turn, config.monitor_location, 3);
 }
 
 View::Dimensions
@@ -316,7 +316,7 @@ void View::update_capture_text(Piece a, Piece b)
     // final string:
     takes = aplayer + atype + takes + bplayer + btype;
     text_builder.message(takes);
-    text_builder.color(Color(10,10,10));
+    text_builder.color(config.capture_color);
     capture_text.reconfigure(text_builder);
 }
 
@@ -335,9 +335,9 @@ void View::monitor_update(Sprite_set& set)
         monitors = "Checkmate. White wins.";
     }
     text_builder.message(monitors);
-    text_builder.color(Color(10,10,10));
+    text_builder.color(config.capture_color);
     monitor.reconfigure(text_builder);
-    set.add_sprite(monitor,{805, 570}, 6);
+    set.add_sprite(monitor,config.monitor_text_location, 6);
 
 }
 
