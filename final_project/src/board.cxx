@@ -83,6 +83,13 @@ Board::good_position(Position pos) const
            0 <= pos.y && pos.y < dims_.height;
 }
 
+// Player
+// Board::operator[](Position pos) const
+// {
+//     bounds_check_(pos);
+//     return get_(pos);
+// }
+
 Piece
 Board::operator[](Position pos) const
 {
@@ -152,7 +159,7 @@ Position Board::find_king_location(Player p) const
 
     } else {
         throw Client_logic_error("Board::find_king_location: can't find"
-                                 " a king for a non black/white player");
+                                 "a king for a non black/white player");
     }
 }
 
@@ -172,6 +179,13 @@ void Board::remove_by_posn(Position posn) {
                                  "a player of type 'neither'");
     }
 }
+
+// Board::reference
+// Board::operator[](Position pos)
+// {
+//     bounds_check_(pos);
+//     return reference(*this, pos);
+// }
 
 static std::vector<Board::Dimensions>
 build_directions()
@@ -256,6 +270,8 @@ Board::pawn_directions_light()
 {
     static std::vector<Board::Dimensions> result;
 
+    //ses just the forward positions
+    //and the two diagonal captures as directions of travel
     result.push_back({0,-1});
     result.push_back({0,-2});
     result.push_back({1,-1});
@@ -269,6 +285,8 @@ Board::pawn_directions_dark()
 {
     static std::vector<Board::Dimensions> result;
 
+    //uses just the forward direction
+    //and the two diagonal captures as directions of travel
     result.push_back({0, 1});
     result.push_back({0, 2});
     result.push_back({1, 1});
@@ -278,9 +296,12 @@ Board::pawn_directions_dark()
 }
 
 //takes in a vector of directions of travel, and modifies them based
-//on the current state of the board. returns a new vector.
+//on the current state of the board. modifies in place based on reference
 // - if the pawn is in its initial row, adds {0,2} or {0,-2} to list
 // - if pawn is near a piece that it can take, add diagonal to list
+// void
+// Board::modify_pawn_dirs(Piece p, std::vector<Dimensions>& possible_moves)
+// {
 
 std::vector<Board::Dimensions>
 Board::modify_pawn_dirs(Piece p, std::vector<Dimensions> dirs_travel)
@@ -293,22 +314,21 @@ Board::modify_pawn_dirs(Piece p, std::vector<Dimensions> dirs_travel)
     Position temp_posn = p.get_posn() + dirs_travel[0];
     if (!(temp_posn.x < 0 || temp_posn.x >= dimensions().width
         || temp_posn.y < 0 || temp_posn.y >= dimensions().height)) {
+        // dirs_travel.erase(dirs_travel.begin());
 
         if (operator[](temp_posn).get_piece_type() == Piece_type::null) {
+            // dirs_travel.erase(dirs_travel.begin());
             result.push_back(dirs_travel[0]);
 
             //if there is not a piece in front of piece: we are here
 
             // if the piece is in its starting row, add the second thing of
-            // dirs_travel to result. need to also check if the space 2 in front
-            // is occupied
-            temp_posn = p.get_posn() + dirs_travel[1];
+            // dirs_travel to result. spaces_ltd will check if there's
+            // already any piece in this space so ignore for now
             int curr_y = p.get_posn().y;
-
-            if ( ((p.get_player() == Player::black && curr_y == 1)
-                   || (p.get_player() == Player::white && curr_y == 6))
-                   && operator[](temp_posn).get_piece_type() == Piece_type::null
-                   ){
+            if ( (p.get_player() == Player::black && curr_y == 1)
+                   || (p.get_player() == Player::white && curr_y == 6) ){
+                //dirs_travel.erase(dirs_travel.begin() + 1);
                 result.push_back(dirs_travel[1]);
             }
         }
@@ -320,9 +340,11 @@ Board::modify_pawn_dirs(Piece p, std::vector<Dimensions> dirs_travel)
     //if the position is not out of bounds
     if (!(temp_posn.x < 0 || temp_posn.x >= dimensions().width
         || temp_posn.y < 0 || temp_posn.y >= dimensions().height)) {
+        // dirs_travel.erase(dirs_travel.begin() + 2);
 
         //if there's something there, we can move there
         if (operator[](temp_posn).get_piece_type() != Piece_type::null) {
+            // dirs_travel.erase(dirs_travel.begin() + 2);
             result.push_back(dirs_travel[2]);
         }
     }
@@ -336,6 +358,7 @@ Board::modify_pawn_dirs(Piece p, std::vector<Dimensions> dirs_travel)
            || temp_posn.y < 0 || temp_posn.y >= dimensions().height)) {
 
         if (operator[](temp_posn).get_piece_type() != Piece_type::null){
+            //dirs_travel.erase(dirs_travel.begin() + 3);
             result.push_back(dirs_travel[3]);
         }
     }
@@ -351,23 +374,30 @@ Board::all_positions() const
     return Rectangle::from_top_left(the_origin, dims_);
 }
 
-//if there's a white piece at the given position, return that
-//piece. if there's a black piece, same. else, return a piece that
-//doesn't mean anything
 Piece
 Board::get_piece_(Position pos) const
 {
     Piece white_piece = white_.get_piece_from_set(pos);
     Piece black_piece = black_.get_piece_from_set(pos);
 
+    //if there's a white piece at the given position, return that
+    //piece. if there's a black piece, same. else, return a piece that
+    //doesn't mean anything
     if (white_piece.get_piece_type() != Piece_type::null) {
         return white_piece;
     } else if (black_piece.get_piece_type() != Piece_type::null) {
         return black_piece;
     } else {
+        //return Piece{Piece_type::null, Player::black, Position{0, 0}};
         return Piece{Piece_type::null, Player::null, Position{0, 0}};
 
     }
+}
+
+void
+Board::set_(Position pos, Player player)
+{
+
 }
 
 
@@ -391,6 +421,12 @@ bool
 operator!=(Board const& b1, Board const& b2)
 {
     return !(b1 == b2);
+}
+
+Board::multi_reference
+Board::at_set(Position_set pos_set)
+{
+    return multi_reference(*this, pos_set);
 }
 
 Board::multi_reference::multi_reference(
