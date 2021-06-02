@@ -48,89 +48,36 @@ bool WLcast = false;
 bool Wcastle = false;
 bool Bcastle = false;
 
+
 void Model::play_move(Position start, Position end, bool check4check)
 {
-    // if (is_game_over())
-    //     //rather than throw an error, run our own game over function
-    //     set_game_over_();
-
-    //see if there is a piece at the position where player wants to play
     Move const* movep = find_move(start);
     if (!movep) {
-        //now that we've implemented checks for this in controller, we actually
-        //do want this error to throw if we get here, b/c it means we did some-
-        //thing wrong
         throw Client_logic_error("Model::play_move: no such move");
     } else {
 
-        //check to see that the position the player wants to move their
-        //piece to exists. i.e. check that "end" is in movep -> second
         Position_set possible_moves = movep -> second;
         if (!possible_moves[end]) {
             throw Client_logic_error("Model::play_move: position to move"
                                      "to not found");
         }
 
-        //if there was already a piece at the place where the
-        //move was going to be made, remove piece from board
         if (board_[end].get_piece_type() != Piece_type::null) {
             board_.remove_by_posn(end);
         }
 
-        // Castle check. This has been done fairly poorly but we are running
-        // out of time so it's not the biggest concern.
-
-        Piece c_king = board_[start];
-        if (c_king.get_piece_type() == Piece_type::king)
-        {
-            if(BRcast && !Bcastle){
-                if (end.x == 6 && end.y ==0) {
-                    set_new_posn({7, 0}, {5, 0});
-                }
-                Bcastle = true;
-            } else if(BLcast && !Bcastle){
-                if (end.x == 2 && end.y == 0) {
-                    set_new_posn({0, 0}, {3, 0});
-                }
-                Bcastle = true;
-            }else if(WRcast && !Wcastle){
-                if (end.x == 6 && end.y == 7) {
-                    set_new_posn({7, 7}, {5, 7});
-                }
-                Wcastle = true;
-            }else if(WLcast && !Wcastle){
-                if (end.x == 2 && end.y == 7) {
-                    set_new_posn({0, 7}, {3, 7});
-                }
-                Wcastle = true;
-            }else if(c_king.get_player() == Player::white){
-                Wcastle = true;
-            } else {
-                Bcastle = false;
-            }
-        }
-
-        //set the new position of the piece
+        //castle_check(start, end);
         set_new_posn(start, end);
-
-        // Pawn promotion check. Auto-promotes to queen if the pawn is moved
-        // to an end position in the opponent's back rank.
         p_promo(end);
 
-
-        //pause the timer for the current player, start the timer
-        //for the other timer
         if (turn() == Player::black) {
             pause_black();
             resume_white();
         } else if (turn() == Player::white) {
             pause_white();
             resume_black();
-        } else {
-            //case where current turn is player "neither"
         }
 
-        //check to see if we're at an end state (Commented out for debug)
         if (check4check) {
             if (is_in_check(Player::black)
                 || is_in_check(Player::white)) {
@@ -154,6 +101,9 @@ void Model::play_move(Position start, Position end, bool check4check)
 
         Model::turn_ = other_player(Model::turn_);
         Model::compute_next_moves_();
+
+        //trying this out
+        castle_check(start, end);
 
         //if we're looking to prevent the player from making moves,
         //modify next_moves to check for that
@@ -471,6 +421,43 @@ bool Model::is_checkmated(Player p) const
    //if we got here, no valid moves found
     return true;
 }
+
+void Model::castle_check(Position start, Position end) {
+    Piece c_king = board_[start];
+    if (c_king.get_piece_type() == Piece_type::king)
+    {
+        if(BRcast && !Bcastle){
+            if (end.x == 6 && end.y ==0) {
+                set_new_posn({7, 0}, {5, 0});
+            }
+            Bcastle = true;
+        } else if(BLcast && !Bcastle){
+            if (end.x == 2 && end.y == 0) {
+                set_new_posn({0, 0}, {3, 0});
+            }
+            Bcastle = true;
+        }else if(WRcast && !Wcastle){
+            if (end.x == 6 && end.y == 7) {
+                set_new_posn({7, 7}, {5, 7});
+            }
+            Wcastle = true;
+        }else if(WLcast && !Wcastle){
+            if (end.x == 2 && end.y == 7) {
+                set_new_posn({0, 7}, {3, 7});
+            }
+            Wcastle = true;
+        }else if(c_king.get_player() == Player::white){
+            Wcastle = true;
+        } else {
+            Bcastle = false;
+        }
+    }
+
+
+}
+
+
+
 // two helpers for determining if castling is a valid move. Separated into
 // right and left rooks. Adds moves to next_moves within
 // compute_next_moves if the piece is a king.
@@ -485,7 +472,7 @@ bool Model::Rrook_castle (Player plr)
                 board_[{6, 7}].get_piece_type() == Piece_type::null &&
                 board_[{5, 7}].get_piece_type() == Piece_type::null &&
                 !Wcastle) {
-                //WRcast = true;
+                WRcast = true;
                 return true;
             } else {
                 return false;
@@ -498,7 +485,7 @@ bool Model::Rrook_castle (Player plr)
                 board_[{6, 0}].get_piece_type() == Piece_type::null &&
                 board_[{5, 0}].get_piece_type() == Piece_type::null &&
                 !Bcastle) {
-                //BRcast = true;
+                BRcast = true;
                 return true;
             } else {
                 return false;
@@ -521,7 +508,7 @@ bool Model::Lrook_castle (Player plr)
                 board_[{2, 7}].get_piece_type() == Piece_type::null &&
                 board_[{3, 7}].get_piece_type() == Piece_type::null &&
                 !Wcastle) {
-                //WLcast = true;
+                WLcast = true;
                 return true;
             } else {
                 return false;
@@ -535,7 +522,7 @@ bool Model::Lrook_castle (Player plr)
                 board_[{2, 0}].get_piece_type() == Piece_type::null &&
                 board_[{3, 0}].get_piece_type() == Piece_type::null &&
                 !Bcastle) {
-                //BLcast = true;
+                BLcast = true;
                 return true;
             } else {
                 return false;

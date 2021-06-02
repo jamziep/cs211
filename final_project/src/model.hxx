@@ -73,13 +73,27 @@ public:
     ///
     Move const* find_move(Position) const;
 
-    /// Attempts to play a move at the given position for the current
-    /// player. If successful, advances the state of the game to the
-    /// correct player or game over.
+    /// Sees if there is a piece at the position where player wants to play, and
+    /// checks to see that the position the player wants to move their piece to
+    /// exists. i.e. check that "end" is in movep -> second, then sets the piece
     ///
+    /// If there was already a piece at the place where the
+    /// move was going to be made, other piece is removed from board.
+    ///
+    /// Other special game logic:
+    /// - Check if the next player can castle
+    /// - Pawn promotion check. Pawn auto-promotes to queen if the pawn is moved
+    ///      to an end position in the opponent's back rank.
+    /// - Pause the timer for the current player, and start the timer
+    ///      for the other player
+    ///
+    /// Checks to see if we're at check or checkmate
+    /// Changes the turn to opposite player and refills next_moves_
+
     /// ## Errors
     ///
-    ///  - Throws `ge211::Client_logic_error` if the game is over.
+    ///  - Throws `ge211::Client_logic_error` if the position the player
+    ///     selected is invalid.
     ///
     ///  - Throws `ge211::Client_logic_error` if the move is not currently
     ///    allowed for the current player.
@@ -176,6 +190,7 @@ public:
     {white_timer.resume();}
 
     // helpers for castling
+    void castle_check(Position, Position);
     bool Rrook_castle (Player plr);
     bool Lrook_castle (Player plr);
 
