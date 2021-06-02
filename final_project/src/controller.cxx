@@ -186,10 +186,8 @@ void Controller::on_frame(double dt) {
     }
     white_text += std::to_string(white_seconds);
 
-    //update the text sprites
     view_.update_text_box(Player::black, black_text);
     view_.update_text_box(Player::white, white_text);
-
 
 }
 

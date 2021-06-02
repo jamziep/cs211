@@ -138,14 +138,6 @@ void View::draw(Sprite_set& set)
         } else {
             //like the "default" case
         }
-
-        // shows you which pieces can be moved.
-        //if (model_.find_move(posn)){
-        //    set.add_sprite(valid_pieces,screen_posn, 4);
-        //}
-
-        //if the player is previewing a move, take the full list of tiles
-        //overturned by that move, and draw all those tiles in gray to preview
     }
     if (!move_preview.empty()){
         for (Position posn : move_preview) {
