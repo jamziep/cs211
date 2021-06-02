@@ -69,8 +69,16 @@ void Controller::on_mouse_down(ge211::Mouse_button btn,
                     Move const* movep = model_.find_move(selected_posn);
                     Position_set possible_moves = movep -> second;
                     if (possible_moves[square_coords]) {
+                        auto selected_piece = model_[selected_posn];
+                        auto to_piece = model_[square_coords];
+                        if(to_piece.get_piece_type() != Piece_type::null) {
+                            view_.update_capture_text(selected_piece, to_piece);
+                        }
                         model_.play_move(selected_posn, square_coords, true);
                     }
+                    // printing potential captures:
+
+
                     selected = false;
                     starts.clear();
                     view_.set_selected_piece(starts);

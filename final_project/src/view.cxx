@@ -55,6 +55,7 @@ View::View(Model const& model)
 
           // indicators
           capture_text(),
+          monitor(),
 
           //valid moves:
           valid_pieces(grid_size/2, dark_grey),
@@ -74,6 +75,10 @@ void View::draw(Sprite_set& set)
     //add the text sprites
     set.add_sprite(black_time_text, {800,125},4);
     set.add_sprite(white_time_text, {800,200},4);
+    if(!capture_text.empty()) {
+        set.add_sprite(capture_text, {805, 510}, 4);
+    }
+    monitor_update(set);
 
     // next, iterate through all the squares and draw each piece.
     for (Position posn : View::model_.board()) {
@@ -249,8 +254,106 @@ void View::update_text_box(Player p, std::string text)
 
 void View::update_capture_text(Piece a, Piece b)
 {
-    ge211::Font sans30{"sans.tff", 30};
-    ge211::Text_sprite::Builder text_builder(sans30);
+    // new builder for text:
+    ge211::Font sans20{"sans.ttf", 17};
+    ge211::Text_sprite::Builder text_builder(sans20);
+    std::string atype = " ";
+    std::string btype = " ";
+    std::string takes = "takes ";
+    std::string aplayer = " ";
+    std::string bplayer = " ";
+    // text for players.
+
+    if (a.get_player() == Player::white){
+        aplayer = "White ";
+        bplayer = "Black ";
+    } else if(a.get_player() == Player::black) {
+        aplayer = "black ";
+        bplayer = "white ";
+    }
+    // Piece a type:
+    switch(a.get_piece_type()) {
+        case Piece_type::pawn: {
+           atype = "pawn ";
+           break;
+        }
+        case Piece_type::rook: {
+           atype = "rook ";
+           break;
+        }
+        case Piece_type::knight: {
+            atype = "knight ";
+            break;
+        }
+        case Piece_type::bishop: {
+            atype = "bishop ";
+            break;
+        }
+        case Piece_type::queen: {
+            atype = "queen ";
+            break;
+        }
+        case Piece_type::king: {
+            atype = "king ";
+            break;
+        }
+        default: {
+            atype = "null?";
+            break;
+        }
+    }
+    // Piece b type:
+    switch(b.get_piece_type()) {
+        case Piece_type::pawn: {
+            btype = "pawn.";
+            break;
+        }
+        case Piece_type::rook: {
+            btype = "rook.";
+            break;
+        }
+        case Piece_type::knight: {
+            btype = "knight.";
+            break;
+        }
+        case Piece_type::bishop: {
+            btype = "bishop.";
+            break;
+        }
+        case Piece_type::queen: {
+            btype = "queen.";
+            break;
+        }
+        default:{
+            btype = "null.";
+            break;
+        }
+    }
+    // final string:
+    takes = aplayer + atype + takes + bplayer + btype;
+    text_builder.message(takes);
+    text_builder.color(Color(10,10,10));
+    capture_text.reconfigure(text_builder);
+}
+
+void View::monitor_update(Sprite_set& set)
+{
+    ge211::Font sans20{"sans.ttf", 17};
+    ge211::Text_sprite::Builder text_builder(sans20);
+    std::string monitors = " ";
+    if (model_.turn() == Player::white){
+        monitors = "It is white's turn.";
+    } else if (model_.turn() == Player::black){
+        monitors = "It is black's turn.";
+    } else if (model_.winner() == Player::black){
+        monitors = "Checkmate. White wins.";
+    }else if (model_.winner() == Player::black){
+        monitors = "Checkmate. Black wins.";
+    }
+    text_builder.message(monitors);
+    text_builder.color(Color(10,10,10));
+    monitor.reconfigure(text_builder);
+    set.add_sprite(monitor,{805, 570}, 3);
 
 }
 

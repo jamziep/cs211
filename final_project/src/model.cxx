@@ -155,10 +155,11 @@ void Model::play_move(Position start, Position end, bool check4check)
         //doesn't account for stalemate or moves that put your player
         //in check
 
-        // if (check4check) {
-        if (is_in_check(turn_, false) && check4check) {
-            Model::modify_next_moves_();
-        }
+        //if (check4check) {
+            if (is_in_check(turn_, false) && check4check) {
+                Model::modify_next_moves_();
+            }
+        //}
     }
 }
 
