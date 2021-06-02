@@ -144,6 +144,37 @@ void Controller::on_frame(double dt) {
     double black_total_seconds = model_.elapsed_time_black().seconds();
     double white_total_seconds = model_.elapsed_time_white().seconds();
 
+    int black_minutes = (int)black_total_seconds / 60;
+    int white_minutes = (int)white_total_seconds / 60;
+    int black_seconds = (int)black_total_seconds % 60;
+    int white_seconds = (int)white_total_seconds % 60;
+
+    //turn these times into strings
+    std::string black_text = "";
+    if (black_minutes < 10) {
+        black_text += "0";
+    }
+    black_text += std::to_string(black_minutes);
+    black_text += ":";
+    if (black_seconds < 10) {
+        black_text += "0";
+    }
+    black_text += std::to_string(black_seconds);
+
+    std::string white_text = "";
+    if (white_minutes < 10) {
+        white_text += "0";
+    }
+    white_text += std::to_string(white_minutes);
+    white_text += ":";
+    if (white_seconds < 10) {
+        white_text += "0";
+    }
+    white_text += std::to_string(white_seconds);
+
+    view_.update_text_box(Player::black, black_text);
+    view_.update_text_box(Player::white, white_text);
+
     std::string black_text = view_.config.seconds_to_text(black_total_seconds);
     std::string white_text = view_.config.seconds_to_text(white_total_seconds);
 
