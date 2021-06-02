@@ -171,27 +171,11 @@ Position_set Model::moves_in_dir_(Position current, Dimensions dir) {
         }
     }
 
-    // if the final tile is the opposite player, then we add the
-    // positions up to and including that one to the set of moves_in_dir.
-    if (board_[current + n * dir].get_player() == other_player(turn_)) {
-        for (std::size_t ii = 1; ii <= n; ii++) {
-            moves_in_dir[{current + ii * dir}] = true;
-        }
+    //if last tile in this direction is same as current player, can't move there
+    if (board_[current + n * dir].get_player() == turn_) {n--;}
 
-        //else, if the final tile is the same player, do the same as above
-        //but subtract 1 from n
-    } else if (board_[current + n * dir].get_player() == turn_) {
-        n--;
-        for(std::size_t ii = 1; ii <= n; ii++){
-            moves_in_dir[{current + ii * dir}] = true;
-    }
-        //else, if the final tile is neither player, do n--
-    } else {
-        //n--;
-        for(std::size_t ii = 1; ii <= n; ii++){
-            moves_in_dir[{current + ii * dir}] = true;
-        }
-
+    for(std::size_t ii = 1; ii <= n; ii++){
+        moves_in_dir[{current + ii * dir}] = true;
     }
 
     //return all the valid moves for a piece in this dir
@@ -374,17 +358,10 @@ void Model::compute_next_moves_()
         //get the piece at this position, if any
         Piece piece = board_[pos];
 
-        //conditions: the piece must exist and the piece must be of
-        //the current player, given by move)
-
-        //other condition that hasn't been checked for: that the piece
-        //at this position is active. piece_set may take care of this
         if (piece.get_piece_type() != Piece_type::null
                 && piece.get_player() == turn_) {
 
-            //get the possible positions of motion for this turn;
-            //add a Move containing {position of curr piece, all possible
-            //places to move} to next_moves_
+            //get the possible positions of motion for this turn; add Move
             if (piece.get_piece_type() == Piece_type::bishop
                     || piece.get_piece_type() == Piece_type::rook
                     || piece.get_piece_type() == Piece_type:: queen) {
