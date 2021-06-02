@@ -289,7 +289,7 @@ Position_set Model::spaces_ltd(Piece p, bool check4check)
     }
 
     //get current position of player
-    Position current = p.get_posn();
+    //Position current = p.get_posn();
 
     size_t counter = 0;
     for (Dimensions dir : dirs_travel) {
@@ -353,14 +353,14 @@ void Model::compute_next_moves_(bool check4check)
                 Position_set curr_moves = spaces_ltd(piece, check4check);
                 // check for castling. Adds the move to the moves of the king.
                 if (piece.get_piece_type() == Piece_type::king) {
-                    if (bool castling = Rrook_castle(piece.get_player())) {
+                    if (Rrook_castle(piece.get_player())) {
                         if (piece.get_player() == Player::white) {
                             curr_moves[{6, 7}] = true;
                         } else {
                             curr_moves[{6, 0}] = true;
                         }
                     }
-                    if (bool castling = Lrook_castle(piece.get_player())) {
+                    if (Lrook_castle(piece.get_player())) {
                         if (piece.get_player() == Player::white) {
                             curr_moves[{2, 7}] = true;
                         } else {
@@ -575,9 +575,11 @@ bool Model::Rrook_castle (Player plr)
             } else {
                 return false;
             }
-        } default: {}
+        } default: {
+            return false;
+        }
     }
-    return false; // default case
+    //return false; // default case
 }
 
 bool Model::Lrook_castle (Player plr)
@@ -611,9 +613,11 @@ bool Model::Lrook_castle (Player plr)
             } else {
                 return false;
             }
-        } default: {}
+        } default: {
+            return false;
+        }
     }
-    return false; // default case
+    //return false;
 }
 
 // Pawn promotion. If the given position is identified to be in the back rank

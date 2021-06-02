@@ -1,6 +1,8 @@
 #pragma once
 
 #include "model.hxx"
+#include "game_config.hxx"
+
 #include <string>
 
 class View
@@ -45,6 +47,10 @@ private:
     Model const& model_;
 
 public:
+
+    //game config for locations, sizes, colors
+    Game_config config;
+
     // board
     ge211::Rectangle_sprite const board_sprite;
     ge211::Rectangle_sprite const dark_squares;

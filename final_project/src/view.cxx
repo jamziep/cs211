@@ -4,34 +4,22 @@
 // edits: changed Model model_ to Model const&
 
 using namespace ge211;
-using Color = ge211::Color;
 using Sprite_set = ge211::Sprite_set;
 
 // change this to whatever we need it to be
 static int const grid_size = 95;
 
-//default declarations:
-static Color board_color = Color(97,53,13);
-static Color dark_color = Color(217, 171, 128);
-static Color background_color = Color(107,16, 49);
-static Color black_color = Color(0,0,0);
-static Color white_color = Color(255, 255, 255);
-static Color dark_grey = Color(145,145,145);
-static Color light_grey = Color(200,200,200);
-static Color bright_red = Color(190,0,0);
-static Color parchment = Color(201,192,141);
-
-
 View::View(Model const& model)
         : model_(model),
-        // board sprites
-          board_sprite({8*grid_size, 8*grid_size}, board_color),
-          dark_squares({grid_size, grid_size}, dark_color),
-          background({1080, 761}, background_color),
-          black_matte({240,75}, black_color),
-          white_matte({240,75}, white_color),
-          whos_turn({240,50}, parchment),
-          // these are arbitrary values for size and color (for now)
+          config(),
+
+          // board sprites
+          board_sprite({8*grid_size, 8*grid_size}, config.board_color),
+          dark_squares({grid_size, grid_size}, config.dark_color),
+          background(config.board_size, config.background_color),
+          black_matte(config.timer_size, config.black_color),
+          white_matte(config.timer_size, config.white_color),
+          whos_turn(config.turn_tracker_size, config.parchment),
 
           //white sprites:
           white_pawn("white_pawn.png"),
@@ -57,12 +45,11 @@ View::View(Model const& model)
           capture_text(),
 
           //valid moves:
-          valid_pieces(grid_size/2, dark_grey),
-          valid_squares(20, light_grey),
+          valid_squares(20, config.light_grey),
+          valid_pieces(grid_size/2, config.dark_grey),
+          king_check(grid_size/2, config.bright_red),
           move_preview({{}}),
-          selected_move({{}}),
-          king_check(grid_size/2, bright_red)
-// sprite initialization
+          selected_move({{}})
 {}
 
 void View::draw(Sprite_set& set)
@@ -72,8 +59,8 @@ void View::draw(Sprite_set& set)
     draw_background(set);
 
     //add the text sprites
-    set.add_sprite(black_time_text, {800,125},4);
-    set.add_sprite(white_time_text, {800,200},4);
+    set.add_sprite(black_time_text, config.black_timer_location,4);
+    set.add_sprite(white_time_text, config.white_timer_location,4);
 
     // next, iterate through all the squares and draw each piece.
     for (Position posn : View::model_.board()) {
@@ -202,12 +189,12 @@ void View::draw_background(Sprite_set& set)
     set.add_sprite(background, {0,0}, 0);
 
     // clock:
-    set.add_sprite(black_matte, {800,125}, 3);
-    set.add_sprite(white_matte, {800,200}, 3);
+    set.add_sprite(black_matte, config.black_timer_location, 3);
+    set.add_sprite(white_matte, config.white_timer_location, 3);
 
     // capture and turn indicator:
-    set.add_sprite(whos_turn, {800, 500}, 3);
-    set.add_sprite(whos_turn, {800, 560}, 3);
+    set.add_sprite(whos_turn, config.black_whose_turn_location, 3);
+    set.add_sprite(whos_turn, config.white_whose_turn_location, 3);
 }
 
 View::Dimensions
@@ -215,7 +202,7 @@ View::initial_window_dimensions() const
 {
     // always return this default window size since we will keep the board
     // and UI constant.
-    return Dimensions(1080, 761);
+    return config.board_size;
 }
 
 std::string
@@ -236,10 +223,10 @@ void View::update_text_box(Player p, std::string text)
 
     //different colors and sprites for black and white
     if (p == Player::black) {
-        text_builder.color(ge211::Color(255,255,255));
+        text_builder.color(config.white_color);
         black_time_text.reconfigure(text_builder);
     } else if (p == Player:: white) {
-        text_builder.color(ge211::Color(0,0,0));
+        text_builder.color(config.black_color);
         white_time_text.reconfigure(text_builder);
     } else {
         throw Client_logic_error("View::update_text_box: can't update"

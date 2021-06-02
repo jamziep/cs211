@@ -14,6 +14,7 @@ set(MODEL_SRC
         src/piece_set.cxx
         src/position_set.cxx
         src/move.cxx
+        src/game_config.cxx
         )
 
 # TODO: PUT ADDITIONAL NON-MODEL (UI) .cxx FILES IN THIS LIST:
