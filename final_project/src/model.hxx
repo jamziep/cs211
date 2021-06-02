@@ -156,6 +156,10 @@ private:
     /// (Helper for `advance_turn_` and `Model(int, int)`.)
     void compute_next_moves_(bool check4check);
 
+    //Further updates next_moves_ to remove any moves that would
+    //put the king in check (these are invalid moves)
+    void modify_next_moves_();
+
     /// Sets the turn to neither and determines the winner, if any.
     ///
     /// (Helper for `really_play_move_`.)

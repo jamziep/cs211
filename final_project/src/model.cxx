@@ -142,12 +142,23 @@ void Model::play_move(Position start, Position end, bool check4check)
         // }
 
 
-
         //advance the turn. using function from player.cxx
         Model::turn_ = other_player(Model::turn_);
 
         //refill next_moves_ for the current player
         Model::compute_next_moves_(check4check);
+
+        //if we're looking to prevent the player from making moves,
+        //modify next_moves to check for that
+
+        //this version is to make the code a bit faster, though it
+        //doesn't account for stalemate or moves that put your player
+        //in check
+
+        // if (check4check) {
+        if (is_in_check(turn_, false) && check4check) {
+            Model::modify_next_moves_();
+        }
     }
 }
 
@@ -187,33 +198,10 @@ Position_set Model::moves_in_dir_(Position current, Dimensions dir,
     //if last tile in this direction is same as current player, can't move there
     if (board_[current + n * dir].get_player() == turn_) {n--;}
 
-    if (check4check) {
-        // Model m = *this;
-
-        for(std::size_t ii = 1; ii <= n; ii++){
-
-            // //Find the position where a player will move
-            // Position temp = current + n * dir;
-            //
-            // //If playing this position (start, end) causes the copy of the model
-            // //to be in check after this turn, it's not valid
-            // if (m.find_move(current) && m.find_move(current)->second[temp]) {
-            //     m.play_move(current, temp, false);
-            // }
-            // if (m.is_in_check(turn_, false)) {
-            //     //revert the model
-            //     m = *this;
-            //     continue;
-            // }
-            moves_in_dir[{current + ii * dir}] = true;
-        }
-
-    //if we're not checking for check
-    } else {
-        for (std::size_t ii = 1; ii <= n; ii++) {
-            moves_in_dir[{current + ii * dir}] = true;
-        }
+    for (std::size_t ii = 1; ii <= n; ii++) {
+        moves_in_dir[{current + ii * dir}] = true;
     }
+
     //return all the valid moves for a piece in this dir
     return moves_in_dir;
 }
@@ -254,7 +242,6 @@ Position_set Model::spaces_ult(Piece p, bool check4check)
     for (Dimensions dir : dirs_travel) {
 
         //add the moves possible in this direction to the total list
-        //of possible moves for this piece using union |=
         Position_set moves_in_dir = moves_in_dir_(p.get_posn(), dir,
                                                   check4check);
         possible_moves.operator|=(moves_in_dir);
@@ -304,67 +291,29 @@ Position_set Model::spaces_ltd(Piece p, bool check4check)
     //get current position of player
     Position current = p.get_posn();
 
-    //implemented to prevent infinite recursion
-    if (check4check) {
+    size_t counter = 0;
+    for (Dimensions dir : dirs_travel) {
 
-        // make a copy of model and see if possible moves will cause check
-        // Model m = *this;
+        ++counter;
+        if (counter > 8)
+        { break; }
 
-        for (Dimensions dir : dirs_travel) {
+        //if it's out of bounds, skip
+        Position posn = p.get_posn() + dir;
+        if (posn.x < 0 || posn.x >= Model::board_.dimensions().width
+            || posn.y < 0 || posn.y >= Model::board_.dimensions().height) {
+            continue;
 
-            //if it's out of bounds, skip
-            Position posn = p.get_posn() + dir;
-            if (posn.x < 0 || posn.x >= Model::board_.dimensions().width
-                || posn.y < 0 || posn.y >= Model::board_.dimensions().height) {
-                continue;
+            //if occupied by same color, skip
+        } else if (board_[posn].get_piece_type() != Piece_type::null
+                   && board_[posn].get_player() == p.get_player()) {
+            continue;
 
-                //if occupied by same color, skip
-            } else if (board_[posn].get_piece_type() != Piece_type::null
-                       && board_[posn].get_player() == p.get_player()) {
-                continue;
-
-                //else: posn is either free or occupied by enemy
-            } else {
-
-                // //If playing this position (start, end) causes the copy of the model
-                // //to be in check after this turn, it's not valid
-                // if (m.find_move(current) && m.find_move(current)->second[posn]) {
-                //     m.play_move(current, posn, false);
-                // }
-                // if (m.is_in_check(turn_, false)) {
-                //     //revert the model
-                //     m = *this;
-                //     continue;
-                // }
-
-                possible_moves[posn] = true;
-            }
-        }
-
-
-
-    } else {
-        for (Dimensions dir : dirs_travel) {
-
-            //if it's out of bounds, skip
-            Position posn = p.get_posn() + dir;
-            if (posn.x < 0 || posn.x >= Model::board_.dimensions().width
-                || posn.y < 0 || posn.y >= Model::board_.dimensions().height) {
-                continue;
-
-                //if occupied by same color, skip
-            } else if (board_[posn].get_piece_type() != Piece_type::null
-                       && board_[posn].get_player() == p.get_player()) {
-                continue;
-
-                //else: posn is either free or occupied by enemy
-            } else {
-                possible_moves[posn] = true;
-            }
+            //else: posn is either free or occupied by enemy
+        } else {
+            possible_moves[posn] = true;
         }
     }
-
-
 
     //return all unoccupied or enemy-occupied spaces
     return possible_moves;
@@ -422,6 +371,35 @@ void Model::compute_next_moves_(bool check4check)
 
                 next_moves_[pos] = curr_moves;
             }
+        }
+    }
+}
+
+//takes in next_moves_ and removes any moves from the position
+void Model::modify_next_moves_()
+{
+    //make a copy of model
+    Model m = *this;
+    Player p = m.turn_;
+
+    //iterate through every move in the move map
+    for (Move& move : next_moves_) {
+        Position start = move.first;
+        //iterate through every possible place where the position at that
+        // place can move
+        for (Position end : move.second) {
+
+            //try playing this move in the model
+            m.play_move(start, end, false);
+
+            //if model is now in check, this isn't a valid move, so set it
+            //to false in the position set
+            if (m.is_in_check(p, false)) {
+                move.second[end] = false;
+            }
+
+            //reset the model
+            m = *this;
         }
     }
 }
@@ -571,35 +549,33 @@ bool Model::is_checkmate(Player p) const
 bool Model::Rrook_castle (Player plr)
 {
     switch(plr) {
-    case Player::white: {
-        Piece WKing = board_[{4, 7}];
-        Piece Wrook = board_[{7, 7}];
-        if (WKing.get_piece_type() == Piece_type::king &&
-            Wrook.get_piece_type() == Piece_type::rook &&
-            board_[{6, 7}].get_piece_type() == Piece_type::null &&
-            board_[{5, 7}].get_piece_type() == Piece_type::null &&
-            !Wcastle) {
-            WRcast = true;
-            return true;
-        } else {
-            return false;
-        }
-    }
-    case Player::black: {
-        Piece BKing = board_[{4, 0}];
-        Piece Brook = board_[{7, 0}];
-        if (BKing.get_piece_type() == Piece_type::king &&
-            Brook.get_piece_type() == Piece_type::rook &&
-            board_[{6, 0}].get_piece_type() == Piece_type::null &&
-            board_[{5, 0}].get_piece_type() == Piece_type::null &&
-            !Bcastle) {
-            BRcast = true;
-            return true;
-        } else {
-            return false;
-        }
-    }
-    default:    {}
+        case Player::white: {
+            Piece WKing = board_[{4, 7}];
+            Piece Wrook = board_[{7, 7}];
+            if (WKing.get_piece_type() == Piece_type::king &&
+                Wrook.get_piece_type() == Piece_type::rook &&
+                board_[{6, 7}].get_piece_type() == Piece_type::null &&
+                board_[{5, 7}].get_piece_type() == Piece_type::null &&
+                !Wcastle) {
+                WRcast = true;
+                return true;
+            } else {
+                return false;
+            }
+        } case Player::black: {
+            Piece BKing = board_[{4, 0}];
+            Piece Brook = board_[{7, 0}];
+            if (BKing.get_piece_type() == Piece_type::king &&
+                Brook.get_piece_type() == Piece_type::rook &&
+                board_[{6, 0}].get_piece_type() == Piece_type::null &&
+                board_[{5, 0}].get_piece_type() == Piece_type::null &&
+                !Bcastle) {
+                BRcast = true;
+                return true;
+            } else {
+                return false;
+            }
+        } default: {}
     }
     return false; // default case
 }
@@ -607,38 +583,35 @@ bool Model::Rrook_castle (Player plr)
 bool Model::Lrook_castle (Player plr)
 {
     switch(plr) {
-    case Player::white: {
-        Piece WKing = board_[{4, 7}];
-        Piece Wrook = board_[{0, 7}];
-        if (WKing.get_piece_type() == Piece_type::king &&
-            Wrook.get_piece_type() == Piece_type::rook &&
-            board_[{1, 7}].get_piece_type() == Piece_type::null &&
-            board_[{2, 7}].get_piece_type() == Piece_type::null &&
-            board_[{3, 7}].get_piece_type() == Piece_type::null &&
-            !Wcastle) {
-            WLcast = true;
-            return true;
-        } else {
-            return false;
-        }
-    }
-    case Player::black: {
-        Piece BKing = board_[{4, 0}];
-        Piece Brook = board_[{0, 0}];
-        if (BKing.get_piece_type() == Piece_type::king &&
-            Brook.get_piece_type() == Piece_type::rook &&
-            board_[{1, 0}].get_piece_type() == Piece_type::null &&
-            board_[{2, 0}].get_piece_type() == Piece_type::null &&
-            board_[{3, 0}].get_piece_type() == Piece_type::null &&
-            !Bcastle) {
-            BLcast = true;
-            return true;
-        } else {
-            return false;
-        }
-    }
-    default:
-    {}
+        case Player::white: {
+            Piece WKing = board_[{4, 7}];
+            Piece Wrook = board_[{0, 7}];
+            if (WKing.get_piece_type() == Piece_type::king &&
+                Wrook.get_piece_type() == Piece_type::rook &&
+                board_[{1, 7}].get_piece_type() == Piece_type::null &&
+                board_[{2, 7}].get_piece_type() == Piece_type::null &&
+                board_[{3, 7}].get_piece_type() == Piece_type::null &&
+                !Wcastle) {
+                WLcast = true;
+                return true;
+            } else {
+                return false;
+            }
+        } case Player::black: {
+            Piece BKing = board_[{4, 0}];
+            Piece Brook = board_[{0, 0}];
+            if (BKing.get_piece_type() == Piece_type::king &&
+                Brook.get_piece_type() == Piece_type::rook &&
+                board_[{1, 0}].get_piece_type() == Piece_type::null &&
+                board_[{2, 0}].get_piece_type() == Piece_type::null &&
+                board_[{3, 0}].get_piece_type() == Piece_type::null &&
+                !Bcastle) {
+                BLcast = true;
+                return true;
+            } else {
+                return false;
+            }
+        } default: {}
     }
     return false; // default case
 }
@@ -662,6 +635,7 @@ void Model::p_promo(Position pos)
     }
 
 }
+
 
 void Model::set_game_over_()
 {
