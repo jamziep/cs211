@@ -90,7 +90,7 @@ public:
     ///  - Throws `ge211::Client_logic_error` if the move is not currently
     ///    allowed for the current player.
     ///
-    void play_move(Position, Position);
+    void play_move(Position, Position, bool check4check);
 
     //determines whether or not the model is currently at a state of check.
     //applies to any theoretical model so that we can look at the status of
@@ -135,16 +135,16 @@ private:
 
     //helper function for compute_next_moves: finds spaces of travel
     //for pieces that can move an unlimited # of spaces: rook, bishop, queen
-    Position_set spaces_ult(Piece);
+    Position_set spaces_ult(Piece, bool check4check);
 
     //helper function for compute_next_moves: finds spaces of travel
     //for pieces that only move a limited # of pieces: pawn, knight, king
-    Position_set spaces_ltd(Piece);
+    Position_set spaces_ltd(Piece, bool check4check);
 
     //adapted from reversi. takes in a position of a piece and a direction
     //of travel, and finds all the moves where the piece can go
     //in that direction, including positions where an enemy piece exists
-    Position_set moves_in_dir_(Position, Dimensions);
+    Position_set moves_in_dir_(Position, Dimensions, bool check4check);
 
     //takes in a position where the piece starts, a piece where it ends, and
     //changes the position of that piece
@@ -154,7 +154,7 @@ private:
     /// player.
     ///
     /// (Helper for `advance_turn_` and `Model(int, int)`.)
-    void compute_next_moves_();
+    void compute_next_moves_(bool check4check);
 
     /// Sets the turn to neither and determines the winner, if any.
     ///
