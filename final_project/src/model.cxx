@@ -102,8 +102,13 @@ void Model::play_move(Position start, Position end, bool check4check)
                 Wcastle = true;
             }
         }
+
         //set the new position of the piece
         set_new_posn(start, end);
+
+        // Pawn promotion check. Auto-promotes to queen if the pawn is moved
+        // to an end position in the opponent's back rank.
+        p_promo(end);
 
 
         //pause the timer for the current player, start the timer
@@ -684,6 +689,26 @@ bool Model::Lrook_castle (Player plr)
     {}
     }
     return false; // default case
+}
+
+// Pawn promotion. If the given position is identified to be in the back rank
+// of the opponent, then we promote the piece.
+void Model::p_promo(Position pos)
+{
+    Piece p = board_[pos];
+    Player plr = p.get_player();
+    Piece_type type = p.get_piece_type();
+    if (p.get_piece_type() == Piece_type::null) {
+        throw Client_logic_error("Model::p_promo: no piece at "
+                                 "This posn");
+    }
+
+    if (plr==Player::white && type==Piece_type::pawn && pos.y==0){
+        board_.set_piece_as(p);
+    } else if(plr==Player::black && type==Piece_type::pawn && pos.y==7){
+        board_.set_piece_as(p);
+    }
+
 }
 
 

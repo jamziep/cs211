@@ -214,4 +214,21 @@ bool operator!=(Piece_set a, Piece_set b){
     return !(a == b);
 }
 
+// Change a piece in a piece_set at a given position to a different type
+void Piece_set::change_piece_as(Position posn)
+{
+
+    //get a pointer to piece
+    // Piece& piece = get(start);
+    Piece apiece = get_piece_from_set(posn);
+
+    for (Piece& piece : pieces_) {
+
+        if (piece == apiece) {
+            piece.promote_piece();
+            return;
+        }
+    }
+}
+
 

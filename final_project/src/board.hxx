@@ -43,6 +43,7 @@ private:
 
     // INVARIANT: (light_ & dark_) at initial board state
 
+
 public:
     //
     // PUBLIC CONSTRUCTOR & FUNCTION MEMBERS
@@ -72,6 +73,8 @@ public:
     Piece operator[](Position pos) const;
 
     //Piece operator[](Position pos) const;
+
+    void set_piece_as(Piece piece);
 
     //
     // PUBLIC CONSTRUCTOR & FUNCTION MEMBERS

@@ -19,6 +19,7 @@ static Color white_color = Color(255, 255, 255);
 static Color dark_grey = Color(145,145,145);
 static Color light_grey = Color(200,200,200);
 static Color bright_red = Color(190,0,0);
+static Color parchment = Color(201,192,141);
 
 
 View::View(Model const& model)
@@ -29,6 +30,7 @@ View::View(Model const& model)
           background({1080, 761}, background_color),
           black_matte({240,75}, black_color),
           white_matte({240,75}, white_color),
+          whos_turn({240,50}, parchment),
           // these are arbitrary values for size and color (for now)
 
           //white sprites:

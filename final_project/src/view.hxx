@@ -51,6 +51,7 @@ public:
     ge211::Rectangle_sprite const background;
     ge211::Rectangle_sprite const black_matte;
     ge211::Rectangle_sprite const white_matte;
+    ge211::Rectangle_sprite const whos_turn;
 
     // for all of your fun sprites
     ge211::Image_sprite white_pawn;
