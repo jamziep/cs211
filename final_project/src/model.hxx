@@ -189,6 +189,8 @@ public:
 
     // for pawn promotion
     void p_promo(Position pos);
+    Piece_type
+    return_piece_type(Position posn);
 };
 
 #endif //chess_model_hxx

@@ -39,13 +39,14 @@ Move const* Model::find_move(Position pos) const
         return &*i;
 }
 
+
+// necessary bools for multiple piece movement in case of a castle.
 bool BRcast = false;
 bool BLcast = false;
 bool WRcast = false;
 bool WLcast = false;
 bool Wcastle = false;
 bool Bcastle = false;
-
 void Model::play_move(Position start, Position end)
 {
     // if (is_game_over())
@@ -78,7 +79,8 @@ void Model::play_move(Position start, Position end)
         // Castle check. This has been done fairly poorly but we are running
         // out of time so it's not the biggest concern.
 
-        if (board_[start].get_piece_type() == Piece_type::king)
+        Piece c_king = board_[start];
+        if (c_king.get_piece_type() == Piece_type::king)
         {
             if(BRcast && !Bcastle){
                 if (end.x == 6 && end.y ==0) {
@@ -100,6 +102,10 @@ void Model::play_move(Position start, Position end)
                     set_new_posn({0, 7}, {3, 7});
                 }
                 Wcastle = true;
+            }else if(c_king.get_player() == Player::white){
+                Wcastle = true;
+            } else {
+                Bcastle = false;
             }
         }
 
@@ -559,7 +565,6 @@ bool Model::Rrook_castle (Player plr)
             board_[{5, 7}].get_piece_type() == Piece_type::null &&
             !Wcastle) {
             WRcast = true;
-            std::cout << "we got here";
             return true;
         } else {
             return false;
@@ -644,12 +649,18 @@ void Model::p_promo(Position pos)
 
 }
 
-
-
-
 void Model::set_game_over_()
 {
     Model::turn_ = Player::neither;
+}
+
+// Helpers for testing.
+
+// returns piece type at a given position
+Piece_type Model::return_piece_type(Position posn)
+{
+    Piece piece = board_[posn];
+    return piece.get_piece_type();
 }
 
 

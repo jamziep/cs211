@@ -86,6 +86,118 @@ TEST_CASE("Pawn moves") {
 
 }
 
+// special case tests:
+TEST_CASE("Pawn promotion"){
+    // initialize model
+    // this case tests pawn promotion, a special pawn condition when the pawn
+    // reaches the back rank of the opponent. It also tests pawn, knight, and
+    // queen movement and special pawn movement like starting with a
+    // two-square move and capturing pieces diagonally.
+    Model m = Model();
+
+    //check that model initialized properly
+    CHECK(m.turn() == Player::white);
+    CHECK(m.winner() == Player::neither);
+
+    // check moves that exist for the white pawn to be promoted.
+    Move const* white_pawn_moves = m.find_move({5,6});
+    CHECK(white_pawn_moves);
+    CHECK(white_pawn_moves -> second[{5,4}]);
+    // play the move. (pawn to f4)
+    m.play_move({5,6},{5,4});
+
+    // check moves for the black pawn to be taken.
+    Move const* black_pawn_moves = m.find_move({6,1});
+    CHECK(black_pawn_moves);
+    CHECK(black_pawn_moves -> second[{6,3}]);
+    // play move. (black pawn to g5)
+    m.play_move({6,1},{6,3});
+
+    // sequence:
+    // white pawn takes black pawn on g5.
+    white_pawn_moves = m.find_move({5,4});
+    CHECK(white_pawn_moves -> second[{6,3}]);
+    m.play_move({5,4},{6,3});
+    // repeat knight to h6 over and over as pawn moves towards back rank.
+    m.play_move({6,0},{7,2}); //knight
+    m.play_move({6,3},{6,2}); //pawn
+    m.play_move({7,2},{6,0}); //knight
+    m.play_move({6,2},{6,1}); //pawn
+    m.play_move({6,0},{7,2}); //knight
+    m.play_move({6,1},{6,0}); //pawn ----> queen
+    // move a random black pawn to switch sides back to white.
+    m.play_move({1,1},{1,2}); // b7 -> b6
+    // check to see if the pawn has properly promoted to queen.
+    Move const* promoted = m.find_move({6,0});
+    // these should all be valid if the pawn was promoted properly.
+    CHECK(promoted -> second[{6,5}]);
+    CHECK(promoted -> second[{6,4}]);
+    CHECK(promoted -> second[{5,1}]);
+}
+
+TEST_CASE("castling king-side on white")
+{
+    // this case will test castling, which is a special type of king-rook
+    // movement. This will test king and rook movement, as well as special
+    // exception rules in chess.
+    // initialize model
+    Model m = Model();
+
+    //check that model initialized properly
+    CHECK(m.turn() == Player::white);
+    CHECK(m.winner() == Player::neither);
+
+    // white moves (black does knight repeats)
+    // e2 -> e4
+    // Bf1 -> c4
+    // Kg1 -> f3
+    // Castle 0-0
+    Move const* white_moves = m.find_move({4,6});
+    CHECK(white_moves -> second[{4,4}]);
+    m.play_move({4,6},{4,4}); // e2 -> e4
+    m.play_move({6,0},{7,2}); //black knight repeats
+    // check bishop
+    white_moves = m.find_move({5,7});
+    CHECK(white_moves -> second[{2,4}]);
+    m.play_move({5,7}, {2,4}); //Bf1 -> c4
+    m.play_move({7,2},{6,0}); //knight repeats
+    m.play_move({6,7}, {5,5}); //Kg1 -> f3
+    m.play_move({6,0},{7,2}); //knight repeats
+    // castle kingside:
+    m.play_move({4,7},{6,7});
+    // check if castling was completed properly:
+    CHECK(m.return_piece_type({6,7}) == Piece_type::king);
+    CHECK(m.return_piece_type({5,7}) == Piece_type::rook);
+}
+
+TEST_CASE("Scholar's Mate: White")
+{
+    // this test will walk through an entire game of chess, testing pawn,
+    // knight, bishop, and queen movement as well as checkmate.
+    // initialize model
+    Model m = Model();
+
+    //check that model initialized properly
+    CHECK(m.turn() == Player::white);
+    CHECK(m.winner() == Player::neither);
+
+    // scholar's mate:
+    // 1. e4 - e5
+    // 2. Bc4 - Nc6
+    // 3. Qh5 - Nf6
+    // 4. Qxf7 - MATE
+    m.play_move({4,6},{4,4}); // e4
+    m.play_move({4,1},{4,3}); // e5
+    m.play_move({5,7},{2,4}); // Bc4
+    m.play_move({1,0},{2,2}); // Nc6
+    m.play_move({3,7},{7,3}); // Qh5
+    m.play_move({6,0},{5,2}); // Nf6
+    m.play_move({7,3},{5,1}); // Qxf7 and mate
+
+    // this should be white with checkmate.
+    CHECK(m.winner() == Player::white);
+}
+
 TEST_CASE("Bishop moves")
 {
 
