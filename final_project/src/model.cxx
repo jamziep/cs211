@@ -45,6 +45,7 @@ bool WRcast = false;
 bool WLcast = false;
 bool Wcastle = false;
 bool Bcastle = false;
+
 void Model::play_move(Position start, Position end)
 {
     // if (is_game_over())
@@ -73,8 +74,6 @@ void Model::play_move(Position start, Position end)
         if (board_[end].get_piece_type() != Piece_type::null) {
             board_.remove_by_posn(end);
         }
-
-
 
         // Castle check. This has been done fairly poorly but we are running
         // out of time so it's not the biggest concern.
@@ -122,13 +121,13 @@ void Model::play_move(Position start, Position end)
 
         //check to see if we're at an end state (Commented out for debug)
 
-        if (is_checkmate(Player::black)) {
-            winner_ = Player::white;
-            set_game_over_();
-        } else if (is_checkmate(Player::white)) {
-            winner_ = Player::black;
-            set_game_over_();
-        }
+        // if (is_checkmate(Player::black)) {
+        //     winner_ = Player::white;
+        //     set_game_over_();
+        // } else if (is_checkmate(Player::white)) {
+        //     winner_ = Player::black;
+        //     set_game_over_();
+        // }
 
 
 
@@ -174,16 +173,21 @@ Position_set Model::moves_in_dir_(Position current, Dimensions dir) {
 
     // if the final tile is the opposite player, then we add the
     // positions up to and including that one to the set of moves_in_dir.
-    if (board_[current + n * dir].get_player() == other_player(turn_))
-    {
-        for(std::size_t ii = 1; ii <= n; ii++){
+    if (board_[current + n * dir].get_player() == other_player(turn_)) {
+        for (std::size_t ii = 1; ii <= n; ii++) {
             moves_in_dir[{current + ii * dir}] = true;
         }
 
-    //else, if the final tile is the same player, do the same as above
-    //but subtract 1 from n
-    } else {
+        //else, if the final tile is the same player, do the same as above
+        //but subtract 1 from n
+    } else if (board_[current + n * dir].get_player() == turn_) {
         n--;
+        for(std::size_t ii = 1; ii <= n; ii++){
+            moves_in_dir[{current + ii * dir}] = true;
+    }
+        //else, if the final tile is neither player, do n--
+    } else {
+        //n--;
         for(std::size_t ii = 1; ii <= n; ii++){
             moves_in_dir[{current + ii * dir}] = true;
         }
@@ -310,8 +314,8 @@ Position_set Model::spaces_ltd(Piece p)
     } else {
         // custom pawns since the helper in board didnt work quite right
         // will do the check for diagonal takes and moving past the first rank
-        auto what_player = p.get_player();
-        auto what_posn = p.get_posn();
+        Player what_player = p.get_player();
+        Position what_posn = p.get_posn();
         for (Dimensions dir : dirs_travel) {
             // normal bound checks and what not.
             Position posn = p.get_posn() + dir;
@@ -397,14 +401,14 @@ void Model::compute_next_moves_()
                 Position_set curr_moves = spaces_ltd(piece);
                 // check for castling. Adds the move to the moves of the king.
                 if (piece.get_piece_type() == Piece_type::king) {
-                    if (auto castling = Rrook_castle(piece.get_player())) {
+                    if (bool castling = Rrook_castle(piece.get_player())) {
                         if (piece.get_player() == Player::white) {
                             curr_moves[{6, 7}] = true;
                         } else {
                             curr_moves[{6, 0}] = true;
                         }
                     }
-                    if (auto castling = Lrook_castle(piece.get_player())) {
+                    if (bool castling = Lrook_castle(piece.get_player())) {
                         if (piece.get_player() == Player::white) {
                             curr_moves[{2, 7}] = true;
                         } else {
@@ -436,24 +440,59 @@ void Model::set_new_posn(Position start, Position end) {
     board_.change_piece_posn(p, end);
 }
 
-//checks if a a model "m" (NOT the current model used in model.is_in_check()
-//uses) has a player in check
-bool Model::is_in_check(Player p){
+// //checks if a a model "m" (NOT the current model used in model.is_in_check()
+// //uses) has a player in check
+// bool Model::is_in_check(Player p) const{
+//
+//     //ensure next_moves_ is calculated for the opposite player as p
+//     Player temp = turn();
+//     turn_ = other_player(p);
+//
+//     //find the location of the king in this player's piece_set
+//     // Position king_posn = board_.find_king_location(p);
+//     Position king_posn = board_.find_king_location(p);
+//
+//     //compute next moves for the other player of the piece we're checking
+//     compute_next_moves_();
+//
+//     //if the opposite player has a move that could threaten the
+//     //king, the current player is in check
+//     for (Move move : next_moves_) {
+//
+//         //iterate through all the places where this piece can move and
+//         //see if player p's king is at one of those pieces
+//         for (Position posn : move.second) {
+//             if (posn == king_posn) {
+//
+//                 //reset the turn of this model and revert next_moves_
+//                 //to what it was before
+//                 turn_ = temp;
+//                 compute_next_moves_();
+//                 return true;
+//             }
+//         }
+//     }
+//
+//     //ensure the turn gets set back to what it was before this function
+//     turn_ = temp;
+//     compute_next_moves_();
+//
+//     //if none of the moves of the other player
+//     //could put the king in danger, curr player is not in check
+//     return false;
+// }
 
-    //ensure next_moves_ is calculated for the opposite player as p
-    Player temp = turn();
-    turn_ = other_player(p);
+bool Model::is_in_check(Player p) const{
 
-    //find the location of the king in this player's piece_set
-    // Position king_posn = board_.find_king_location(p);
-    Position king_posn = board_.find_king_location(p);
-
-    //compute next moves for the other player of the piece we're checking
-    compute_next_moves_();
+    //make a copy of the board so this can be const
+    Model m = *this;
+    m.turn_ = other_player(p);
+    Position king_posn = m.board_.find_king_location(p);
+    m.compute_next_moves_();
 
     //if the opposite player has a move that could threaten the
     //king, the current player is in check
-    for (Move move : next_moves_) {
+    for (Move move : m.next_moves_) {
 
         //iterate through all the places where this piece can move and
         //see if player p's king is at one of those pieces
@@ -462,64 +501,65 @@ bool Model::is_in_check(Player p){
 
                 //reset the turn of this model and revert next_moves_
                 //to what it was before
-                turn_ = temp;
-                compute_next_moves_();
+                // turn_ = temp;
+                // compute_next_moves_();
                 return true;
             }
         }
     }
 
     //ensure the turn gets set back to what it was before this function
-    turn_ = temp;
-    compute_next_moves_();
+    // turn_ = temp;
+    // compute_next_moves_();
 
     //if none of the moves of the other player
     //could put the king in danger, curr player is not in check
     return false;
 }
 
-bool Model::is_checkmate(Player p)
+
+bool Model::is_checkmate(Player p) const
 {
-    //first, check if the current player is in check
-    if (!is_in_check(p)) {
-        return false;
-    }
-
-    //set the current player to piece p. revert after function is over
-    Player temp = turn_;
-    turn_ = p;
-    compute_next_moves_();
-
-    //make a copy of the model and analyze all possible moves
-    Model other = *this;
-
-    //player is in check. let's see if there are any moves the
-    //player could make that get the king out of check
-    for (Move move : next_moves_) {
-
-        //see if moving this piece to any of its possible positions
-        //gets the king out of check
-        Position start = move.first;
-        for (Position end : move.second) {
-            other.turn_ = p;
-            other.play_move(start, end);
-            if (!other.is_in_check(p)) {
-
-                //if player p is not in check after a move, then success--
-                //player is not in checkmate
-                return false;
-            }
-        }
-
-
-    }
-
-    //revert the changes we made to the turn and moves
-    turn_ = temp;
-    compute_next_moves_();
-
-    //if we've gotten here, means the player IS in checkmate--
-    //none of the possible moves can get the player out of checkmate
+    // //first, check if the current player is in check
+    // if (!is_in_check(p)) {
+    //     return false;
+    // }
+    //
+    // //set the current player to piece p. revert after function is over
+    // Player temp = turn_;
+    // turn_ = p;
+    // compute_next_moves_();
+    //
+    // //make a copy of the model and analyze all possible moves
+    // Model other = *this;
+    //
+    // //player is in check. let's see if there are any moves the
+    // //player could make that get the king out of check
+    // for (Move move : next_moves_) {
+    //
+    //     //see if moving this piece to any of its possible positions
+    //     //gets the king out of check
+    //     Position start = move.first;
+    //     for (Position end : move.second) {
+    //         other.turn_ = p;
+    //         other.play_move(start, end);
+    //         if (!other.is_in_check(p)) {
+    //
+    //             //if player p is not in check after a move, then success--
+    //             //player is not in checkmate
+    //             return false;
+    //         }
+    //     }
+    //
+    //
+    // }
+    //
+    // //revert the changes we made to the turn and moves
+    // turn_ = temp;
+    // compute_next_moves_();
+    //
+    // //if we've gotten here, means the player IS in checkmate--
+    // //none of the possible moves can get the player out of checkmate
     return true;
 }
 // two helpers for determining if castling is a valid move. Separated into

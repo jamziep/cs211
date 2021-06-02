@@ -18,6 +18,7 @@ static Color black_color = Color(0,0,0);
 static Color white_color = Color(255, 255, 255);
 static Color dark_grey = Color(145,145,145);
 static Color light_grey = Color(200,200,200);
+static Color bright_red = Color(190,0,0);
 
 
 View::View(Model const& model)
@@ -54,7 +55,8 @@ View::View(Model const& model)
           valid_pieces(grid_size/2, dark_grey),
           valid_squares(20, light_grey),
           move_preview({{}}),
-          selected_move({{}})
+          selected_move({{}}),
+          king_check(grid_size/2, bright_red)
 // sprite initialization
 {}
 
@@ -148,6 +150,17 @@ void View::draw(Sprite_set& set)
             Position screen_posn{posn.x * grid_size, posn.y*grid_size};
             set.add_sprite(valid_pieces, screen_posn, 4);
         }
+    }
+
+    //if either of the kings are in check, draw a red tile behind them
+    if (model_.is_in_check(Player::black)){
+        Position king_posn = model_.find_king(Player::black);
+        Position screen_posn{king_posn.x * grid_size, king_posn.y * grid_size};
+        set.add_sprite(king_check, screen_posn, 4);
+    } else if (model_.is_in_check(Player::white)) {
+        Position king_posn = model_.find_king(Player::white);
+        Position screen_posn{king_posn.x * grid_size, king_posn.y * grid_size};
+        set.add_sprite(king_check, screen_posn, 4);
     }
 }
 

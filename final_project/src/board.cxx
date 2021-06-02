@@ -122,7 +122,7 @@ void Board::change_piece_posn(Piece p, Position end) {
 //find the king in either of the piece_sets, and return its location
 //commented out for now, but KEEP WORKING on it
 
-Position Board::find_king_location(Player p)
+Position Board::find_king_location(Player p) const
 {
     //decide which piece_set to iterate through
     if (p == Player::black) {
@@ -367,7 +367,9 @@ Board::get_piece_(Position pos) const
     } else if (black_piece.get_piece_type() != Piece_type::null) {
         return black_piece;
     } else {
-        return Piece{Piece_type::null, Player::black, Position{0, 0}};
+        //return Piece{Piece_type::null, Player::black, Position{0, 0}};
+        return Piece{Piece_type::null, Player::null, Position{0, 0}};
+
     }
 }
 
