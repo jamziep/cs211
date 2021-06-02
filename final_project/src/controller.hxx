@@ -1,5 +1,6 @@
 #pragma once
 
+//#include "model.hxx"
 #include "view.hxx"
 
 // The main game class for Reversi.
@@ -7,7 +8,18 @@ class Controller : public ge211::Abstract_game
 {
 public:
 
-    // Constructs a game controller.
+    // Constructs a game with `size` as both its width and height.
+    //
+    // ERRORS:
+    //  - Throws `ge211::Client_logic_error` if `size` is less than 2
+    //    or greater than 8.
+    ///explicit Controller(int size = 8);
+
+    // Constructs a game with the given width and height.
+    //
+    // ERRORS:
+    //  - Throws `ge211::Client_logic_error` if either dimension is less
+    //    than 2 or greater than 8.
     Controller();
 
     // `protected` means that GE211 (via base class `ge211::Abstract_game`)
@@ -22,7 +34,9 @@ protected:
     void on_mouse_move(ge211::Posn<int>) override;
 
     //specifically for the clock:
+
     void on_frame(double dt) override;
+
 
     // These three delegate to the view:
     void draw(ge211::Sprite_set&) override;
@@ -33,8 +47,10 @@ private:
     Model            model_;
     View             view_;
 
-    //Helper function for on_mouse_down and on_mouse_move. Takes in the
-    //position of a mouse click and determines whether the position is
-    //within the current square given by (row,col).
+    // TODO: Add any UI state you need, e.g.:
+    //  - the position of the mouse, or
+    //  - the position of a keyboard-controller cursor.
+
+    //for determining if a mouse click is within a square
     bool mouse_is_within_square_(ge211::Posn<int>, int, int);
 };
