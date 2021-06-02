@@ -13,7 +13,13 @@ struct Game_config {
     /// Board rectangles will use `int` coordinates.
     using Rectangle = ge211::Rect<int>;
 
+    ///Constructor for all values.
     Game_config();
+
+    ///Converts a double value of seconds into printable text.
+    ///Used to print out the time to the board in view
+    std::string seconds_to_text(double);
+
 
     //colors for things
     ge211::Color board_color;

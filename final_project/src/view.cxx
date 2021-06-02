@@ -1,12 +1,8 @@
 #include "view.hxx"
-//#include "model.hxx"
-
-// edits: changed Model model_ to Model const&
 
 using namespace ge211;
 using Sprite_set = ge211::Sprite_set;
 
-// change this to whatever we need it to be
 static int const grid_size = 95;
 
 View::View(Model const& model)

@@ -27,3 +27,24 @@ Game_config::Game_config()
         timer_size{240,75},
         turn_tracker_size{240,50}
 {}
+
+//A helper for turning the time of either of the timers from
+//a double (total seconds) to a legible string.
+std::string Game_config::seconds_to_text(double total_seconds)
+{
+    int minutes = (int)total_seconds / 60;
+    int seconds = (int)total_seconds % 60;
+
+    //turn these times into strings
+    std::string text = "";
+    if (minutes < 10) {
+        text += "0";
+    }
+    text += std::to_string(minutes);
+    text += ":";
+    if (seconds < 10) {
+        text += "0";
+    }
+    text += std::to_string(seconds);
+    return text;
+}

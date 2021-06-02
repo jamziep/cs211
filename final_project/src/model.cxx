@@ -141,19 +141,11 @@ void Model::play_move(Position start, Position end, bool check4check)
         //     set_game_over_();
         // }
 
-
-        //advance the turn. using function from player.cxx
         Model::turn_ = other_player(Model::turn_);
-
-        //refill next_moves_ for the current player
         Model::compute_next_moves_(check4check);
 
         //if we're looking to prevent the player from making moves,
         //modify next_moves to check for that
-
-        //this version is to make the code a bit faster, though it
-        //doesn't account for stalemate or moves that put your player
-        //in check
 
         // if (check4check) {
         if (is_in_check(turn_, false) && check4check) {
@@ -241,7 +233,6 @@ Position_set Model::spaces_ult(Piece p, bool check4check)
 
     for (Dimensions dir : dirs_travel) {
 
-        //add the moves possible in this direction to the total list
         Position_set moves_in_dir = moves_in_dir_(p.get_posn(), dir,
                                                   check4check);
         possible_moves.operator|=(moves_in_dir);
@@ -421,48 +412,6 @@ void Model::set_new_posn(Position start, Position end) {
     board_.change_piece_posn(p, end);
 }
 
-// //checks if a a model "m" (NOT the current model used in model.is_in_check()
-// //uses) has a player in check
-// bool Model::is_in_check(Player p) const{
-//
-//     //ensure next_moves_ is calculated for the opposite player as p
-//     Player temp = turn();
-//     turn_ = other_player(p);
-//
-//     //find the location of the king in this player's piece_set
-//     // Position king_posn = board_.find_king_location(p);
-//     Position king_posn = board_.find_king_location(p);
-//
-//     //compute next moves for the other player of the piece we're checking
-//     compute_next_moves_();
-//
-//     //if the opposite player has a move that could threaten the
-//     //king, the current player is in check
-//     for (Move move : next_moves_) {
-//
-//         //iterate through all the places where this piece can move and
-//         //see if player p's king is at one of those pieces
-//         for (Position posn : move.second) {
-//             if (posn == king_posn) {
-//
-//                 //reset the turn of this model and revert next_moves_
-//                 //to what it was before
-//                 turn_ = temp;
-//                 compute_next_moves_();
-//                 return true;
-//             }
-//         }
-//     }
-//
-//     //ensure the turn gets set back to what it was before this function
-//     turn_ = temp;
-//     compute_next_moves_();
-//
-//     //if none of the moves of the other player
-//     //could put the king in danger, curr player is not in check
-//     return false;
-// }
-
 bool Model::is_in_check(Player p, bool check4check) const{
 
     //make a copy of the board so this can be const
@@ -479,19 +428,10 @@ bool Model::is_in_check(Player p, bool check4check) const{
         //see if player p's king is at one of those pieces
         for (Position posn : move.second) {
             if (posn == king_posn) {
-
-                //reset the turn of this model and revert next_moves_
-                //to what it was before
-                // turn_ = temp;
-                // compute_next_moves_();
                 return true;
             }
         }
     }
-
-    //ensure the turn gets set back to what it was before this function
-    // turn_ = temp;
-    // compute_next_moves_();
 
     //if none of the moves of the other player
     //could put the king in danger, curr player is not in check
@@ -501,46 +441,8 @@ bool Model::is_in_check(Player p, bool check4check) const{
 
 bool Model::is_checkmate(Player p) const
 {
-    // //first, check if the current player is in check
-    // if (!is_in_check(p)) {
-    //     return false;
-    // }
-    //
-    // //set the current player to piece p. revert after function is over
-    // Player temp = turn_;
-    // turn_ = p;
-    // compute_next_moves_();
-    //
-    // //make a copy of the model and analyze all possible moves
-    // Model other = *this;
-    //
-    // //player is in check. let's see if there are any moves the
-    // //player could make that get the king out of check
-    // for (Move move : next_moves_) {
-    //
-    //     //see if moving this piece to any of its possible positions
-    //     //gets the king out of check
-    //     Position start = move.first;
-    //     for (Position end : move.second) {
-    //         other.turn_ = p;
-    //         other.play_move(start, end);
-    //         if (!other.is_in_check(p)) {
-    //
-    //             //if player p is not in check after a move, then success--
-    //             //player is not in checkmate
-    //             return false;
-    //         }
-    //     }
-    //
-    //
-    // }
-    //
-    // //revert the changes we made to the turn and moves
-    // turn_ = temp;
-    // compute_next_moves_();
-    //
-    // //if we've gotten here, means the player IS in checkmate--
-    // //none of the possible moves can get the player out of checkmate
+   //TODO: change this to checking if next_moves_ is empty for a player
+
     return true;
 }
 // two helpers for determining if castling is a valid move. Separated into
@@ -579,7 +481,6 @@ bool Model::Rrook_castle (Player plr)
             return false;
         }
     }
-    //return false; // default case
 }
 
 bool Model::Lrook_castle (Player plr)
@@ -617,7 +518,6 @@ bool Model::Lrook_castle (Player plr)
             return false;
         }
     }
-    //return false;
 }
 
 // Pawn promotion. If the given position is identified to be in the back rank
@@ -646,9 +546,7 @@ void Model::set_game_over_()
     Model::turn_ = Player::neither;
 }
 
-// Helpers for testing.
-
-// returns piece type at a given position
+// Returns piece type at a given position.
 Piece_type Model::return_piece_type(Position posn)
 {
     Piece piece = board_[posn];
