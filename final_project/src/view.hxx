@@ -91,6 +91,7 @@ public:
     void draw_board(ge211::Sprite_set& set);
     void draw_background(ge211::Sprite_set& set);
     void update_capture_text(Piece a, Piece b);
+    void show_checkmate(Player p);
 };
 
 

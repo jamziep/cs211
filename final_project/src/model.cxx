@@ -130,16 +130,14 @@ void Model::play_move(Position start, Position end, bool check4check)
             //case where current turn is player "neither"
         }
 
-
         //check to see if we're at an end state (Commented out for debug)
 
-        // if (is_checkmate(Player::black)) {
-        //     winner_ = Player::white;
-        //     set_game_over_();
-        // } else if (is_checkmate(Player::white)) {
-        //     winner_ = Player::black;
-        //     set_game_over_();
-        // }
+        if ((is_in_check(Player::black, true) && is_checkmated(Player::black))
+            || (is_in_check(Player::white, true) && is_checkmated
+            (Player::white)))
+        {
+            set_game_over_();
+        }
 
         Model::turn_ = other_player(Model::turn_);
         Model::compute_next_moves_(check4check);
@@ -439,10 +437,26 @@ bool Model::is_in_check(Player p, bool check4check) const{
 }
 
 
-bool Model::is_checkmate(Player p) const
+bool Model::is_checkmated(Player p) const
 {
    //TODO: change this to checking if next_moves_ is empty for a player
 
+   //iterate through next_moves_
+   Model m = *this;
+   m.turn_ = p;
+   m.compute_next_moves_(false);
+
+   for (Move move : m.next_moves_) {
+
+       //if there is anything in the position set given by
+       //move.second for any of these moves, there are possible
+       // moves for this player. as such it's not game over
+       if (!move.second.empty()) {
+           return false;
+       }
+   }
+
+   //if we got here, no valid moves found
     return true;
 }
 // two helpers for determining if castling is a valid move. Separated into
@@ -459,7 +473,7 @@ bool Model::Rrook_castle (Player plr)
                 board_[{6, 7}].get_piece_type() == Piece_type::null &&
                 board_[{5, 7}].get_piece_type() == Piece_type::null &&
                 !Wcastle) {
-                WRcast = true;
+                //WRcast = true;
                 return true;
             } else {
                 return false;
@@ -472,7 +486,7 @@ bool Model::Rrook_castle (Player plr)
                 board_[{6, 0}].get_piece_type() == Piece_type::null &&
                 board_[{5, 0}].get_piece_type() == Piece_type::null &&
                 !Bcastle) {
-                BRcast = true;
+                //BRcast = true;
                 return true;
             } else {
                 return false;
@@ -495,7 +509,7 @@ bool Model::Lrook_castle (Player plr)
                 board_[{2, 7}].get_piece_type() == Piece_type::null &&
                 board_[{3, 7}].get_piece_type() == Piece_type::null &&
                 !Wcastle) {
-                WLcast = true;
+                //WLcast = true;
                 return true;
             } else {
                 return false;
@@ -509,7 +523,7 @@ bool Model::Lrook_castle (Player plr)
                 board_[{2, 0}].get_piece_type() == Piece_type::null &&
                 board_[{3, 0}].get_piece_type() == Piece_type::null &&
                 !Bcastle) {
-                BLcast = true;
+                //BLcast = true;
                 return true;
             } else {
                 return false;
@@ -544,6 +558,12 @@ void Model::p_promo(Position pos)
 void Model::set_game_over_()
 {
     Model::turn_ = Player::neither;
+
+    if (is_checkmated(Player::black)) {
+        winner_ = Player::white;
+    } else if (is_checkmated(Player::white)) {
+        winner_ = Player::black;
+    }
 }
 
 // Returns piece type at a given position.

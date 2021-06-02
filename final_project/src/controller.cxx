@@ -69,6 +69,9 @@ void Controller::on_mouse_down(ge211::Mouse_button btn,
                     selected = false;
                     starts.clear();
                     view_.set_selected_piece(starts);
+
+
+
                     return;
                 }
             }
@@ -78,10 +81,6 @@ void Controller::on_mouse_down(ge211::Mouse_button btn,
     //if we got here, mouse click was not associated with any square
     return;
 }
-
-//Helper function for on_mouse_down and on_mouse_move. Takes in the
-//position of a mouse click and determines whether the position is
-//within the current square given by (row,col).
 
 //Ways a mouse posn could be outside the bounding
 //box of this square: left of square_left, right of square_right,

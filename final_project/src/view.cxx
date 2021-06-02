@@ -116,15 +116,10 @@ void View::draw(Sprite_set& set)
         } else {
             //like the "default" case
         }
-
-        // shows you which pieces can be moved.
-        //if (model_.find_move(posn)){
-        //    set.add_sprite(valid_pieces,screen_posn, 4);
-        //}
-
-        //if the player is previewing a move, take the full list of tiles
-        //overturned by that move, and draw all those tiles in gray to preview
     }
+
+    //if the player is previewing a move, take the full list of tiles
+    //overturned by that move, and draw all those tiles in gray to preview
     if (!move_preview.empty()){
         for (Position posn : move_preview) {
             Position screen_posn{posn.x * grid_size + 28, posn.y*grid_size +
@@ -151,6 +146,18 @@ void View::draw(Sprite_set& set)
         Position screen_posn{king_posn.x * grid_size, king_posn.y * grid_size};
         set.add_sprite(king_check, screen_posn, 4);
     }
+
+    //TODO: visually show game over
+
+    if (model_.turn() == Player::neither) {
+
+        if (model_.winner() == Player::black) {
+
+        } else if (model_.winner() == Player::white) {
+
+        }
+    }
+
 }
 
 
@@ -230,11 +237,35 @@ void View::update_text_box(Player p, std::string text)
     }
 }
 
+//let piece A be the piece that's capturing and B is the piece
+//that's being captured. This function will update the appropriate
+//text box
 void View::update_capture_text(Piece a, Piece b)
 {
     ge211::Font sans30{"sans.tff", 30};
     ge211::Text_sprite::Builder text_builder(sans30);
 
+}
+
+void View::show_checkmate(Player p)
+{
+    ge211::Font sans30{"sans.tff", 30};
+    ge211::Text_sprite::Builder text_builder(sans30);
+
+    switch(p) {
+
+        case Player::black: {
+            //text_builder.color(ge211::Color(57,255,255));
+            //text_builder.message(text);
+            //View::text_sprite.reconfigure(text_builder);
+        }
+        case Player::white: {
+            //text_builder.color(ge211::Color(57,255,255));
+            // text_builder.message(text);
+            // View::text_sprite.reconfigure(text_builder);
+        }
+        default: {}
+    }
 }
 
 void View::set_move_preview(Position_set pset)

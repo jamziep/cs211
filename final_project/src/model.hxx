@@ -3,13 +3,7 @@
 #ifndef CHESS_MODEL_HXX
   #define CHESS_MODEL_HXX
 
-//#include "piece.hxx"
 #include "board.hxx"
-
-//#include <ge211.hxx>
-
-//#include <iostream>
-//#include <vector>
 
 // Represents the state of the game.
 class Model
@@ -97,10 +91,10 @@ public:
     // either the current board or another board after a move has been made
     bool is_in_check(Player p, bool check4check) const;
 
-    //determines whether the model is at a state of checkmate.
+    //determines whether this player is at a state of checkmate.
     //takes in a player, then carries out is_in_check for all possible
     //future states of the board after a move is made
-    bool is_checkmate(Player p) const;
+    bool is_checkmated(Player p) const;
 
     //finds the king for a player within its board member
     Position find_king(Player p) const
@@ -124,7 +118,6 @@ private:
     Board board_;
 
     Move_map next_moves_;
-    //std::vector<Piece> pieces_taken_;
 
     //for timing in view.cxx
     ge211::Pausable_timer black_timer;
