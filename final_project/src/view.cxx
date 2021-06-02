@@ -1,37 +1,21 @@
 #include "view.hxx"
-//#include "model.hxx"
-
-// edits: changed Model model_ to Model const&
 
 using namespace ge211;
-using Color = ge211::Color;
 using Sprite_set = ge211::Sprite_set;
 
-// change this to whatever we need it to be
 static int const grid_size = 95;
-
-//default declarations:
-static Color board_color = Color(97,53,13);
-static Color dark_color = Color(217, 171, 128);
-static Color background_color = Color(107,16, 49);
-static Color black_color = Color(0,0,0);
-static Color white_color = Color(255, 255, 255);
-static Color dark_grey = Color(145,145,145);
-static Color light_grey = Color(200,200,200);
-static Color bright_red = Color(190,0,0);
-static Color parchment = Color(201,192,141);
-
 
 View::View(Model const& model)
         : model_(model),
-        // board sprites
-          board_sprite({8*grid_size, 8*grid_size}, board_color),
-          dark_squares({grid_size, grid_size}, dark_color),
-          background({1080, 761}, background_color),
-          black_matte({240,75}, black_color),
-          white_matte({240,75}, white_color),
-          whos_turn({240,50}, parchment),
-          // these are arbitrary values for size and color (for now)
+          config(),
+
+          // board sprites
+          board_sprite({8*grid_size, 8*grid_size}, config.board_color),
+          dark_squares({grid_size, grid_size}, config.dark_color),
+          background(config.board_size, config.background_color),
+          black_matte(config.timer_size, config.black_color),
+          white_matte(config.timer_size, config.white_color),
+          whos_turn(config.turn_tracker_size, config.parchment),
 
           //white sprites:
           white_pawn("white_pawn.png"),
@@ -56,14 +40,15 @@ View::View(Model const& model)
           // indicators
           capture_text(),
           monitor(),
+          black_capture_text(),
+          white_capture_text(),
 
           //valid moves:
-          valid_pieces(grid_size/2, dark_grey),
-          valid_squares(20, light_grey),
+          valid_squares(20, config.light_grey),
+          valid_pieces(grid_size/2, config.dark_grey),
+          king_check(grid_size/2, config.bright_red),
           move_preview({{}}),
-          selected_move({{}}),
-          king_check(grid_size/2, bright_red)
-// sprite initialization
+          selected_move({{}})
 {}
 
 void View::draw(Sprite_set& set)
@@ -138,15 +123,10 @@ void View::draw(Sprite_set& set)
         } else {
             //like the "default" case
         }
-
-        // shows you which pieces can be moved.
-        //if (model_.find_move(posn)){
-        //    set.add_sprite(valid_pieces,screen_posn, 4);
-        //}
-
-        //if the player is previewing a move, take the full list of tiles
-        //overturned by that move, and draw all those tiles in gray to preview
     }
+
+    //if the player is previewing a move, take the full list of tiles
+    //overturned by that move, and draw all those tiles in gray to preview
     if (!move_preview.empty()){
         for (Position posn : move_preview) {
             Position screen_posn{posn.x * grid_size + 28, posn.y*grid_size +
@@ -163,16 +143,40 @@ void View::draw(Sprite_set& set)
     }
 
     //if either of the kings are in check, draw a red tile behind them
-    if (model_.is_in_check(Player::black, true)){
+    if (model_.is_in_check(Player::black)){
         Position king_posn = model_.find_king(Player::black);
         Position screen_posn{king_posn.x * grid_size, king_posn.y * grid_size};
         set.add_sprite(king_check, screen_posn, 4);
 
-    } else if (model_.is_in_check(Player::white, true)) {
+    } else if (model_.is_in_check(Player::white)) {
         Position king_posn = model_.find_king(Player::white);
         Position screen_posn{king_posn.x * grid_size, king_posn.y * grid_size};
         set.add_sprite(king_check, screen_posn, 4);
     }
+
+    //TODO: visually show game over
+
+    if (model_.turn() == Player::neither) {
+        if (model_.winner() == Player::black) {
+            update_capture_text2(Player::black, "Checkmate. Black wins");
+            update_capture_text2(Player::white, "");
+        } else if (model_.winner() == Player::white) {
+            update_capture_text2(Player::white, "Checkmate. White wins");
+            update_capture_text2(Player::black, "");
+        }
+    } else {
+        update_capture_text2(Player::black, "");
+        update_capture_text2(Player::white, "");
+    }
+
+    if (black_capture_text) {
+        set.add_sprite(black_capture_text, config.black_whose_turn_location, 6);
+    }
+
+    if (white_capture_text) {
+        set.add_sprite(white_capture_text, config.white_whose_turn_location, 6);
+    }
+
 }
 
 
@@ -207,12 +211,12 @@ void View::draw_background(Sprite_set& set)
     set.add_sprite(background, {0,0}, 0);
 
     // clock:
-    set.add_sprite(black_matte, {800,125}, 3);
-    set.add_sprite(white_matte, {800,200}, 3);
+    set.add_sprite(black_matte, config.black_timer_location, 3);
+    set.add_sprite(white_matte, config.white_timer_location, 3);
 
     // capture and turn indicator:
-    set.add_sprite(whos_turn, {800, 500}, 3);
-    set.add_sprite(whos_turn, {800, 560}, 3);
+    set.add_sprite(whos_turn, config.black_whose_turn_location, 3);
+    set.add_sprite(whos_turn, config.white_whose_turn_location, 3);
 }
 
 View::Dimensions
@@ -220,7 +224,7 @@ View::initial_window_dimensions() const
 {
     // always return this default window size since we will keep the board
     // and UI constant.
-    return Dimensions(1080, 761);
+    return config.board_size;
 }
 
 std::string
@@ -230,10 +234,10 @@ View::initial_window_title() const
     return "Chess";
 }
 
-void View::update_text_box(Player p, std::string text)
+void View::update_time_text(Player p, std::string text)
 {
     //make a new builder for text
-    ge211::Font sans30{"sans.ttf", 30};
+    ge211::Font sans30{"open_sans.ttf", 30};
     ge211::Text_sprite::Builder text_builder(sans30);
 
     //add the text to our builder and reconfigure
@@ -241,17 +245,20 @@ void View::update_text_box(Player p, std::string text)
 
     //different colors and sprites for black and white
     if (p == Player::black) {
-        text_builder.color(ge211::Color(255,255,255));
+        text_builder.color(config.white_color);
         black_time_text.reconfigure(text_builder);
     } else if (p == Player:: white) {
-        text_builder.color(ge211::Color(0,0,0));
+        text_builder.color(config.black_color);
         white_time_text.reconfigure(text_builder);
     } else {
-        throw Client_logic_error("View::update_text_box: can't update"
+        throw Client_logic_error("View::update_time_text: can't update"
                                  "the text box of player 'neither'");
     }
 }
 
+//let piece A be the piece that's capturing and B is the piece
+//that's being captured. This function will update the appropriate
+//text box
 void View::update_capture_text(Piece a, Piece b)
 {
     // new builder for text:
@@ -355,6 +362,29 @@ void View::monitor_update(Sprite_set& set)
     monitor.reconfigure(text_builder);
     set.add_sprite(monitor,{805, 570}, 3);
 
+}
+
+void View::update_capture_text2(Player p, std::string text)
+{
+    ge211::Font sans_small{"open_sans.ttf", 21};
+    ge211::Text_sprite::Builder text_builder(sans_small);
+    text_builder.color(config.black_color);
+    text_builder.message(text);
+
+    switch(p) {
+        case Player::white: {
+            white_capture_text.reconfigure(text_builder);
+            break;
+        }
+        case Player::black: {
+            black_capture_text.reconfigure(text_builder);
+            break;
+        }
+        default: {
+            throw Client_logic_error("View:: can't update capture"
+                                     " text for non-b/w player");
+        }
+    }
 }
 
 void View::set_move_preview(Position_set pset)
