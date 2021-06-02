@@ -50,14 +50,20 @@ public:
     void remove_piece()
             {active_ = false;};
 
+    void promote_piece()
+        {type_ = Piece_type::queen;};
+
     //two pieces are equal if their member data is the same
     friend bool operator==(Piece, Piece);
 
     friend bool operator!=(Piece, Piece);
+
+    // for setting a certain piece as a certain.
 
 private:
     Piece_type type_;
     Position posn_;
     Player player_;
     bool active_;
+
 };

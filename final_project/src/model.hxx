@@ -184,6 +184,9 @@ public:
     // helpers for castling
     bool Rrook_castle (Player plr);
     bool Lrook_castle (Player plr);
+
+    // for pawn promotion
+    void p_promo(Position pos);
 };
 
 #endif //chess_model_hxx

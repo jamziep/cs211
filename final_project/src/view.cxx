@@ -18,6 +18,7 @@ static Color black_color = Color(0,0,0);
 static Color white_color = Color(255, 255, 255);
 static Color dark_grey = Color(145,145,145);
 static Color light_grey = Color(200,200,200);
+static Color parchment = Color(201,192,141);
 
 
 View::View(Model const& model)
@@ -28,6 +29,7 @@ View::View(Model const& model)
           background({1080, 761}, background_color),
           black_matte({240,75}, black_color),
           white_matte({240,75}, white_color),
+          whos_turn({240, 50}, parchment),
           // these are arbitrary values for size and color (for now)
 
           //white sprites:
@@ -185,6 +187,10 @@ void View::draw_background(Sprite_set& set)
     // clock:
     set.add_sprite(black_matte, {800,125}, 3);
     set.add_sprite(white_matte, {800,200}, 3);
+
+    // move indicator and piece taken:
+    set.add_sprite(whos_turn, {800, 450}, 3);
+    set.add_sprite(whos_turn, {800, 510}, 3);
 }
 
 View::Dimensions

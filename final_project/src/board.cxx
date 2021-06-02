@@ -413,5 +413,21 @@ Board::multi_reference::multi_reference(
           pos_set_(pos_set)
 { }
 
+// set piece type on board
+void Board::set_piece_as(Piece piece)
+{
+    Position start = piece.get_posn();
+
+    //modify the appropriate Piece_set
+    if (piece.get_player() == Player::white) {
+        white_.change_piece_as(start);
+    } else if (piece.get_player() == Player::black) {
+        black_.change_piece_as(start);
+    } else {
+        throw Client_logic_error("board::set_piece_as: cannot"
+                                 "promote");
+    }
+}
+
 
 

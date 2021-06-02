@@ -86,6 +86,9 @@ public:
     /// Are two position sets unequal?
     friend bool operator!=(Piece_set, Piece_set);
 
+    void
+    change_piece_as(Position pos);
+
 private:
 
     ///Maximum number of possible positions.
@@ -93,6 +96,7 @@ private:
 
     //member data
     std::vector<Piece> pieces_;
+
 };
 
 #endif
