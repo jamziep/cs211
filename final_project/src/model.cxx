@@ -68,6 +68,10 @@ void Model::play_move(Position start, Position end, bool check4check)
 
         //castle_check(start, end);
         set_new_posn(start, end);
+
+        //the current place where I want to put this: after the king
+        //has been placed, but before we change "turn_"
+        castle_check(start, end);
         p_promo(end);
 
         if (turn() == Player::black) {
@@ -422,34 +426,76 @@ bool Model::is_checkmated(Player p) const
     return true;
 }
 
+// void Model::castle_check(Position start, Position end) {
+//     Piece c_king = board_[start];
+//     if (c_king.get_piece_type() == Piece_type::king)
+//     {
+//         if(BRcast && !Bcastle){
+//             if (end.x == 6 && end.y ==0) {
+//                 set_new_posn({7, 0}, {5, 0});
+//             }
+//             Bcastle = true;
+//         } else if(BLcast && !Bcastle){
+//             if (end.x == 2 && end.y == 0) {
+//                 set_new_posn({0, 0}, {3, 0});
+//             }
+//             Bcastle = true;
+//         }else if(WRcast && !Wcastle){
+//             if (end.x == 6 && end.y == 7) {
+//                 set_new_posn({7, 7}, {5, 7});
+//             }
+//             Wcastle = true;
+//         }else if(WLcast && !Wcastle){
+//             if (end.x == 2 && end.y == 7) {
+//                 set_new_posn({0, 7}, {3, 7});
+//             }
+//             Wcastle = true;
+//         }else if(c_king.get_player() == Player::white){
+//             Wcastle = true;
+//         } else {
+//             Bcastle = false;
+//         }
+//     }
+//
+//
+// }
+
 void Model::castle_check(Position start, Position end) {
-    Piece c_king = board_[start];
-    if (c_king.get_piece_type() == Piece_type::king)
-    {
-        if(BRcast && !Bcastle){
-            if (end.x == 6 && end.y ==0) {
-                set_new_posn({7, 0}, {5, 0});
-            }
+
+    //find the location of the king.
+    Position king_xy = board_.find_king_location(turn_);
+
+    //if the location of the king is not in its starting place:
+    //implement the castling check
+
+
+    // if (c_king.get_piece_type() == Piece_type::king)
+    // {
+    if ((turn_ == Player::white && king_xy != Position{4,7})
+            || (turn_ == Player::black && king_xy != Position{4,0})){
+
+        if(BRcast && !Bcastle && king_xy == Position{6,0}){
+            set_new_posn({7, 0}, {5, 0});
             Bcastle = true;
-        } else if(BLcast && !Bcastle){
-            if (end.x == 2 && end.y == 0) {
-                set_new_posn({0, 0}, {3, 0});
-            }
+
+        } else if(BLcast && !Bcastle && king_xy == Position{2,0}){
+            set_new_posn({0, 0}, {3, 0});
             Bcastle = true;
-        }else if(WRcast && !Wcastle){
-            if (end.x == 6 && end.y == 7) {
-                set_new_posn({7, 7}, {5, 7});
-            }
+
+        }else if(WRcast && !Wcastle && king_xy == Position{6,7}){
+            set_new_posn({7, 7}, {5, 7});
             Wcastle = true;
-        }else if(WLcast && !Wcastle){
-            if (end.x == 2 && end.y == 7) {
-                set_new_posn({0, 7}, {3, 7});
-            }
+
+        }else if(WLcast && !Wcastle && king_xy == Position{2,7}){
+            set_new_posn({0, 7}, {3, 7});
             Wcastle = true;
-        }else if(c_king.get_player() == Player::white){
+
+        //else, if the piece we just moved was a king, which we can find using
+        //board[end] at this point after we made the turn, set the flag to true
+        }else if(board_[end].get_player() == Player::white){
             Wcastle = true;
-        } else {
-            Bcastle = false;
+        } else if (board_[end].get_player() == Player::black){
+            Bcastle = true;
         }
     }
 
