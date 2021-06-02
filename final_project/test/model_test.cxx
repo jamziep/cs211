@@ -44,7 +44,7 @@ TEST_CASE("Model::play_move")
                             Position{2,4}));
 
     //try to play a move
-    m.play_move({2,6}, {2,4});
+    m.play_move({2,6}, {2,4}, false);
 
     //check that the piece is now here
     CHECK(m[{2,4}] == Piece(Piece_type::pawn, Player::white,
@@ -56,7 +56,7 @@ TEST_CASE("Model::play_move")
                                   Position{2,3}));
 
     //make a move
-    m.play_move({2,1}, {2,3});
+    m.play_move({2,1}, {2,3}, false);
     CHECK(m[{2,3}] == Piece(Piece_type::pawn, Player::black,
                                   Position{2,3}));
 
@@ -104,29 +104,29 @@ TEST_CASE("Pawn promotion"){
     CHECK(white_pawn_moves);
     CHECK(white_pawn_moves -> second[{5,4}]);
     // play the move. (pawn to f4)
-    m.play_move({5,6},{5,4});
+    m.play_move({5,6},{5,4}, false);
 
     // check moves for the black pawn to be taken.
     Move const* black_pawn_moves = m.find_move({6,1});
     CHECK(black_pawn_moves);
     CHECK(black_pawn_moves -> second[{6,3}]);
     // play move. (black pawn to g5)
-    m.play_move({6,1},{6,3});
+    m.play_move({6,1},{6,3}, false);
 
     // sequence:
     // white pawn takes black pawn on g5.
     white_pawn_moves = m.find_move({5,4});
     CHECK(white_pawn_moves -> second[{6,3}]);
-    m.play_move({5,4},{6,3});
+    m.play_move({5,4},{6,3}, false);
     // repeat knight to h6 over and over as pawn moves towards back rank.
-    m.play_move({6,0},{7,2}); //knight
-    m.play_move({6,3},{6,2}); //pawn
-    m.play_move({7,2},{6,0}); //knight
-    m.play_move({6,2},{6,1}); //pawn
-    m.play_move({6,0},{7,2}); //knight
-    m.play_move({6,1},{6,0}); //pawn ----> queen
+    m.play_move({6,0},{7,2}, false); //knight
+    m.play_move({6,3},{6,2}, false); //pawn
+    m.play_move({7,2},{6,0}, false); //knight
+    m.play_move({6,2},{6,1}, false); //pawn
+    m.play_move({6,0},{7,2}, false); //knight
+    m.play_move({6,1},{6,0}, false); //pawn ----> queen
     // move a random black pawn to switch sides back to white.
-    m.play_move({1,1},{1,2}); // b7 -> b6
+    m.play_move({1,1},{1,2}, false); // b7 -> b6
     // check to see if the pawn has properly promoted to queen.
     Move const* promoted = m.find_move({6,0});
     // these should all be valid if the pawn was promoted properly.
@@ -154,17 +154,17 @@ TEST_CASE("castling king-side on white")
     // Castle 0-0
     Move const* white_moves = m.find_move({4,6});
     CHECK(white_moves -> second[{4,4}]);
-    m.play_move({4,6},{4,4}); // e2 -> e4
-    m.play_move({6,0},{7,2}); //black knight repeats
+    m.play_move({4,6},{4,4}, false); // e2 -> e4
+    m.play_move({6,0},{7,2}, false); //black knight repeats
     // check bishop
     white_moves = m.find_move({5,7});
     CHECK(white_moves -> second[{2,4}]);
-    m.play_move({5,7}, {2,4}); //Bf1 -> c4
-    m.play_move({7,2},{6,0}); //knight repeats
-    m.play_move({6,7}, {5,5}); //Kg1 -> f3
-    m.play_move({6,0},{7,2}); //knight repeats
+    m.play_move({5,7}, {2,4}, false); //Bf1 -> c4
+    m.play_move({7,2},{6,0}, false); //knight repeats
+    m.play_move({6,7}, {5,5}, false); //Kg1 -> f3
+    m.play_move({6,0},{7,2}, false); //knight repeats
     // castle kingside:
-    m.play_move({4,7},{6,7});
+    m.play_move({4,7},{6,7}, false);
     // check if castling was completed properly:
     CHECK(m.return_piece_type({6,7}) == Piece_type::king);
     CHECK(m.return_piece_type({5,7}) == Piece_type::rook);
@@ -186,13 +186,13 @@ TEST_CASE("Scholar's Mate: White")
     // 2. Bc4 - Nc6
     // 3. Qh5 - Nf6
     // 4. Qxf7 - MATE
-    m.play_move({4,6},{4,4}); // e4
-    m.play_move({4,1},{4,3}); // e5
-    m.play_move({5,7},{2,4}); // Bc4
-    m.play_move({1,0},{2,2}); // Nc6
-    m.play_move({3,7},{7,3}); // Qh5
-    m.play_move({6,0},{5,2}); // Nf6
-    m.play_move({7,3},{5,1}); // Qxf7 and mate
+    m.play_move({4,6},{4,4}, false); // e4
+    m.play_move({4,1},{4,3}, false); // e5
+    m.play_move({5,7},{2,4}, false); // Bc4
+    m.play_move({1,0},{2,2}, false); // Nc6
+    m.play_move({3,7},{7,3}, false); // Qh5
+    m.play_move({6,0},{5,2}, false); // Nf6
+    m.play_move({7,3},{5,1}, true); // Qxf7 and mate
 
     // this should be white with checkmate.
     CHECK(m.winner() == Player::white);

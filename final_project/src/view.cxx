@@ -137,12 +137,12 @@ void View::draw(Sprite_set& set)
     }
 
     //if either of the kings are in check, draw a red tile behind them
-    if (model_.is_in_check(Player::black, true)){
+    if (model_.is_in_check(Player::black)){
         Position king_posn = model_.find_king(Player::black);
         Position screen_posn{king_posn.x * grid_size, king_posn.y * grid_size};
         set.add_sprite(king_check, screen_posn, 4);
 
-    } else if (model_.is_in_check(Player::white, true)) {
+    } else if (model_.is_in_check(Player::white)) {
         Position king_posn = model_.find_king(Player::white);
         Position screen_posn{king_posn.x * grid_size, king_posn.y * grid_size};
         set.add_sprite(king_check, screen_posn, 4);

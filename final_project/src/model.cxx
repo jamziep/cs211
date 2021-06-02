@@ -15,7 +15,7 @@ Model::Model()
 
     //initialize next_moves_ to turn_'s possible next moves,
     //using the compute_next_moves helper
-    Model::compute_next_moves_(true);
+    Model::compute_next_moves_();
 }
 
 
@@ -132,8 +132,8 @@ void Model::play_move(Position start, Position end, bool check4check)
 
         //check to see if we're at an end state (Commented out for debug)
         if (check4check) {
-            if (is_in_check(Player::black, true)
-                || is_in_check(Player::white, true)) {
+            if (is_in_check(Player::black)
+                || is_in_check(Player::white)) {
 
                 if (is_checkmated(Player::black)) {
                     Model::turn_ = Player::neither;
@@ -153,20 +153,19 @@ void Model::play_move(Position start, Position end, bool check4check)
         }
 
         Model::turn_ = other_player(Model::turn_);
-        Model::compute_next_moves_(check4check);
+        Model::compute_next_moves_();
 
         //if we're looking to prevent the player from making moves,
         //modify next_moves to check for that
 
         // if (check4check) {
-        if (is_in_check(turn_, false) && check4check) {
+        if (is_in_check(turn_) && check4check) {
             Model::modify_next_moves_();
         }
     }
 }
 
-Position_set Model::moves_in_dir_(Position current, Dimensions dir,
-                                  bool check4check) {
+Position_set Model::moves_in_dir_(Position current, Dimensions dir) {
 
     //taken from reversi. modified to take into account chess logic
     Position_set moves_in_dir {};
@@ -220,7 +219,7 @@ Position_set Model::moves_in_dir_(Position current, Dimensions dir,
 // - move as many free spaces as possible in that direction
 // - if there's a piece at the end of the line, check if it's an enemy
 // - piece, in which case we'd be able to take that piece
-Position_set Model::spaces_ult(Piece p, bool check4check)
+Position_set Model::spaces_ult(Piece p)
 {
     //initialize sets of data of unknown size
     Position_set possible_moves = Position_set();
@@ -244,8 +243,7 @@ Position_set Model::spaces_ult(Piece p, bool check4check)
 
     for (Dimensions dir : dirs_travel) {
 
-        Position_set moves_in_dir = moves_in_dir_(p.get_posn(), dir,
-                                                  check4check);
+        Position_set moves_in_dir = moves_in_dir_(p.get_posn(), dir);
         possible_moves.operator|=(moves_in_dir);
     }
 
@@ -255,7 +253,7 @@ Position_set Model::spaces_ult(Piece p, bool check4check)
 
 //calculate possible moves for pieces that can move a limited # of spaces
 //includes pawn, knight, king
-Position_set Model::spaces_ltd(Piece p, bool check4check)
+Position_set Model::spaces_ltd(Piece p)
 {
     //initialize sets of data of unknown size
     Position_set possible_moves = Position_set();
@@ -322,7 +320,7 @@ Position_set Model::spaces_ltd(Piece p, bool check4check)
 }
 
 
-void Model::compute_next_moves_(bool check4check)
+void Model::compute_next_moves_()
 {
     // iterate through entire board all call eval_position on every spot.
     // Only add non empty position sets  to next_moves_.
@@ -344,7 +342,7 @@ void Model::compute_next_moves_(bool check4check)
                     || piece.get_piece_type() == Piece_type:: queen) {
 
                 //for the pieces that have unlimited movement
-                Position_set curr_moves = spaces_ult(piece, check4check);
+                Position_set curr_moves = spaces_ult(piece);
                 next_moves_[pos] = curr_moves;
 
             } else if (piece.get_piece_type() == Piece_type::pawn
@@ -352,7 +350,7 @@ void Model::compute_next_moves_(bool check4check)
                     || piece.get_piece_type() == Piece_type::king) {
 
                 //for the pieces that have limited movement
-                Position_set curr_moves = spaces_ltd(piece, check4check);
+                Position_set curr_moves = spaces_ltd(piece);
                 // check for castling. Adds the move to the moves of the king.
                 if (piece.get_piece_type() == Piece_type::king) {
                     if (Rrook_castle(piece.get_player())) {
@@ -396,7 +394,7 @@ void Model::modify_next_moves_()
 
             //if model is now in check, this isn't a valid move, so set it
             //to false in the position set
-            if (m.is_in_check(p, false)) {
+            if (m.is_in_check(p)) {
                 move.second[end] = false;
             }
 
@@ -423,13 +421,13 @@ void Model::set_new_posn(Position start, Position end) {
     board_.change_piece_posn(p, end);
 }
 
-bool Model::is_in_check(Player p, bool check4check) const{
+bool Model::is_in_check(Player p) const{
 
     //make a copy of the board so this can be const
     Model m = *this;
     m.turn_ = other_player(p);
     Position king_posn = m.board_.find_king_location(p);
-    m.compute_next_moves_(check4check);
+    m.compute_next_moves_();
 
     //if the opposite player has a move that could threaten the
     //king, the current player is in check
@@ -457,7 +455,7 @@ bool Model::is_checkmated(Player p) const
    //iterate through next_moves_
    Model m = *this;
    m.turn_ = p;
-   m.compute_next_moves_(false);
+   m.compute_next_moves_();
    m.modify_next_moves_();
 
    for (Move move : m.next_moves_) {
