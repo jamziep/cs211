@@ -152,7 +152,7 @@ Position Board::find_king_location(Player p) const
 
     } else {
         throw Client_logic_error("Board::find_king_location: can't find"
-                                 "a king for a non black/white player");
+                                 " a king for a non black/white player");
     }
 }
 
@@ -300,11 +300,15 @@ Board::modify_pawn_dirs(Piece p, std::vector<Dimensions> dirs_travel)
             //if there is not a piece in front of piece: we are here
 
             // if the piece is in its starting row, add the second thing of
-            // dirs_travel to result. spaces_ltd will check if there's
-            // already any piece in this space so ignore for now
+            // dirs_travel to result. need to also check if the space 2 in front
+            // is occupied
+            temp_posn = p.get_posn() + dirs_travel[1];
             int curr_y = p.get_posn().y;
-            if ( (p.get_player() == Player::black && curr_y == 1)
-                   || (p.get_player() == Player::white && curr_y == 6) ){
+
+            if ( ((p.get_player() == Player::black && curr_y == 1)
+                   || (p.get_player() == Player::white && curr_y == 6))
+                   && operator[](temp_posn).get_piece_type() == Piece_type::null
+                   ){
                 result.push_back(dirs_travel[1]);
             }
         }

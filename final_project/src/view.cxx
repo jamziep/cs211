@@ -38,7 +38,8 @@ View::View(Model const& model)
           white_time_text(),
 
           // indicators
-          capture_text(),
+          black_capture_text(),
+          white_capture_text(),
 
           //valid moves:
           valid_squares(20, config.light_grey),
@@ -150,12 +151,24 @@ void View::draw(Sprite_set& set)
     //TODO: visually show game over
 
     if (model_.turn() == Player::neither) {
-
         if (model_.winner() == Player::black) {
-
+            update_capture_text2(Player::black, "Checkmate. Black wins");
+            update_capture_text2(Player::white, "");
         } else if (model_.winner() == Player::white) {
-
+            update_capture_text2(Player::white, "Checkmate. White wins");
+            update_capture_text2(Player::black, "");
         }
+    } else {
+        update_capture_text2(Player::black, "");
+        update_capture_text2(Player::white, "");
+    }
+
+    if (black_capture_text) {
+        set.add_sprite(black_capture_text, config.black_whose_turn_location, 6);
+    }
+
+    if (white_capture_text) {
+        set.add_sprite(white_capture_text, config.white_whose_turn_location, 6);
     }
 
 }
@@ -215,10 +228,10 @@ View::initial_window_title() const
     return "Chess";
 }
 
-void View::update_text_box(Player p, std::string text)
+void View::update_time_text(Player p, std::string text)
 {
     //make a new builder for text
-    ge211::Font sans30{"sans.ttf", 30};
+    ge211::Font sans30{"open_sans.ttf", 30};
     ge211::Text_sprite::Builder text_builder(sans30);
 
     //add the text to our builder and reconfigure
@@ -232,7 +245,7 @@ void View::update_text_box(Player p, std::string text)
         text_builder.color(config.black_color);
         white_time_text.reconfigure(text_builder);
     } else {
-        throw Client_logic_error("View::update_text_box: can't update"
+        throw Client_logic_error("View::update_time_text: can't update"
                                  "the text box of player 'neither'");
     }
 }
@@ -242,29 +255,31 @@ void View::update_text_box(Player p, std::string text)
 //text box
 void View::update_capture_text(Piece a, Piece b)
 {
-    ge211::Font sans30{"sans.tff", 30};
+    ge211::Font sans30{"open_sans.ttf", 30};
     ge211::Text_sprite::Builder text_builder(sans30);
 
 }
 
-void View::show_checkmate(Player p)
+void View::update_capture_text2(Player p, std::string text)
 {
-    ge211::Font sans30{"sans.tff", 30};
-    ge211::Text_sprite::Builder text_builder(sans30);
+    ge211::Font sans_small{"open_sans.ttf", 21};
+    ge211::Text_sprite::Builder text_builder(sans_small);
+    text_builder.color(config.black_color);
+    text_builder.message(text);
 
     switch(p) {
-
-        case Player::black: {
-            //text_builder.color(ge211::Color(57,255,255));
-            //text_builder.message(text);
-            //View::text_sprite.reconfigure(text_builder);
-        }
         case Player::white: {
-            //text_builder.color(ge211::Color(57,255,255));
-            // text_builder.message(text);
-            // View::text_sprite.reconfigure(text_builder);
+            white_capture_text.reconfigure(text_builder);
+            break;
         }
-        default: {}
+        case Player::black: {
+            black_capture_text.reconfigure(text_builder);
+            break;
+        }
+        default: {
+            throw Client_logic_error("View:: can't update capture"
+                                     " text for non-b/w player");
+        }
     }
 }
 

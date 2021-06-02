@@ -153,11 +153,6 @@ private:
     //put the king in check (these are invalid moves)
     void modify_next_moves_();
 
-    /// Sets the turn to neither and determines the winner, if any.
-    ///
-    /// (Helper for `really_play_move_`.)
-    void set_game_over_();
-
 public:
 
     //get data out of the timers

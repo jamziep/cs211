@@ -131,12 +131,25 @@ void Model::play_move(Position start, Position end, bool check4check)
         }
 
         //check to see if we're at an end state (Commented out for debug)
+        if (check4check) {
+            if (is_in_check(Player::black, true)
+                || is_in_check(Player::white, true)) {
 
-        if ((is_in_check(Player::black, true) && is_checkmated(Player::black))
-            || (is_in_check(Player::white, true) && is_checkmated
-            (Player::white)))
-        {
-            set_game_over_();
+                if (is_checkmated(Player::black)) {
+                    Model::turn_ = Player::neither;
+                    winner_ = Player::white;
+                    black_timer.pause();
+                    white_timer.pause();
+                    return;
+
+                } else if (is_checkmated(Player::white)) {
+                    Model::turn_ = Player::neither;
+                    winner_ = Player::black;
+                    black_timer.pause();
+                    white_timer.pause();
+                    return;
+                }
+            }
         }
 
         Model::turn_ = other_player(Model::turn_);
@@ -445,6 +458,7 @@ bool Model::is_checkmated(Player p) const
    Model m = *this;
    m.turn_ = p;
    m.compute_next_moves_(false);
+   m.modify_next_moves_();
 
    for (Move move : m.next_moves_) {
 
@@ -552,18 +566,6 @@ void Model::p_promo(Position pos)
         board_.set_piece_as(p);
     }
 
-}
-
-
-void Model::set_game_over_()
-{
-    Model::turn_ = Player::neither;
-
-    if (is_checkmated(Player::black)) {
-        winner_ = Player::white;
-    } else if (is_checkmated(Player::white)) {
-        winner_ = Player::black;
-    }
 }
 
 // Returns piece type at a given position.

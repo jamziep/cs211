@@ -32,7 +32,7 @@ public:
 
     //Lets controller update what exists in the text box based on the
     //state of the board.
-    void update_text_box(Player, std::string);
+    void update_time_text(Player, std::string);
 
     //Works with controller.cxx. If the user is hovering over a square
     //they can play in, set_move_preview() lets controller add positions
@@ -78,7 +78,8 @@ public:
     ge211::Text_sprite white_time_text;
 
     // for indicators. Changes when pieces are taken.
-    ge211::Text_sprite capture_text;
+    ge211::Text_sprite black_capture_text;
+    ge211::Text_sprite white_capture_text;
 
     // for showing valid moves.
     ge211::Circle_sprite const valid_squares;
@@ -91,7 +92,7 @@ public:
     void draw_board(ge211::Sprite_set& set);
     void draw_background(ge211::Sprite_set& set);
     void update_capture_text(Piece a, Piece b);
-    void show_checkmate(Player p);
+    void update_capture_text2(Player p, std::string text);
 };
 
 
