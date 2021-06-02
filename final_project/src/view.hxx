@@ -1,6 +1,8 @@
 #pragma once
 
 #include "model.hxx"
+#include "game_config.hxx"
+
 #include <string>
 
 class View
@@ -30,7 +32,7 @@ public:
 
     //Lets controller update what exists in the text box based on the
     //state of the board.
-    void update_text_box(Player, std::string);
+    void update_time_text(Player, std::string);
 
     //Works with controller.cxx. If the user is hovering over a square
     //they can play in, set_move_preview() lets controller add positions
@@ -45,6 +47,10 @@ private:
     Model const& model_;
 
 public:
+
+    //game config for locations, sizes, colors
+    Game_config config;
+
     // board
     ge211::Rectangle_sprite const board_sprite;
     ge211::Rectangle_sprite const dark_squares;

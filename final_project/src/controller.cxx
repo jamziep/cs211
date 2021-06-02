@@ -1,11 +1,6 @@
 #include "controller.hxx"
-#include "model.hxx"
 
 static int const grid_size = 95;
-
-//copied this value from view.cxx for finding size of board
-//ideally I'd like to include the entire view.cxx file, since
-//these controls depend on the visual board dims
 
 Controller::Controller()
         : model_(),
@@ -44,6 +39,7 @@ void Controller::on_key(ge211::Key key) {
 bool selected = false;
 ge211::Posn<int> selected_posn{0, 0};
 Position_set starts {};
+
 void Controller::on_mouse_down(ge211::Mouse_button btn,
                                ge211::Posn<int> mouse_posn)
 {
@@ -63,25 +59,28 @@ void Controller::on_mouse_down(ge211::Mouse_button btn,
                     starts[selected_posn] = true;
                     view_.set_selected_piece(starts);
                     return;
+
                     // otherwise check for valid move. if valid, play move to
                     // the newly selected square.
                 } else if(selected) {
+
                     Move const* movep = model_.find_move(selected_posn);
                     Position_set possible_moves = movep -> second;
+
                     if (possible_moves[square_coords]) {
                         auto selected_piece = model_[selected_posn];
                         auto to_piece = model_[square_coords];
+
                         if(to_piece.get_piece_type() != Piece_type::null) {
                             view_.update_capture_text(selected_piece, to_piece);
                         }
                         model_.play_move(selected_posn, square_coords, true);
                     }
                     // printing potential captures:
-
-
                     selected = false;
                     starts.clear();
                     view_.set_selected_piece(starts);
+
                     return;
                 }
             }
@@ -92,38 +91,31 @@ void Controller::on_mouse_down(ge211::Mouse_button btn,
     return;
 }
 
-//Helper function for on_mouse_down and on_mouse_move. Takes in the
-//position of a mouse click and determines whether the position is
-//within the current square given by (row,col)
+//Ways a mouse posn could be outside the bounding
+//box of this square: left of square_left, right of square_right,
+//above square_top, below square_bottom. If none of these are true,
+//mouse is inside this current box.
 bool Controller::mouse_is_within_square_(ge211::Posn<int> mouse_posn,
                                          int col_ind, int row_ind) {
 
-    //current position we're checking is at (row, col)
-    //a mouse click is inside the square given by this position
-    //if its position is inside its bounding box
     int square_left = col_ind;
     int square_right = col_ind + 1;
     int square_top = row_ind;
     int square_bottom = row_ind + 1;
 
-    // //for converting between screen position and board index
     double mouse_x_board = mouse_posn.x / double(grid_size);
     double mouse_y_board = mouse_posn.y / double(grid_size);
 
-    //ways the mouse click posn could be outside the bounding
-    //box of this square: left of square_left, right of square_right,
-    //above square_top, below square_bottom. if none of these are true,
-    //mouse click is inside this current box
 
     return (!(mouse_x_board < square_left || mouse_x_board > square_right
               || mouse_y_board < square_top || mouse_y_board > square_bottom));
 }
 
-//when we move the mouse, if we move the mouse over a valid position to play in,
-//show the possible flips that will result from that play
+//When we move the mouse, if we move the mouse over a valid position to play in,
+//show the possible flips that will result from that play.
+//Set move_preview to whatever the possible moves for that space are.
 void Controller::on_mouse_move(ge211::Posn<int> mouse_posn) {
 
-    //iterate through all the squares of the board
     for (int col_ind = 0; col_ind < Controller::model_.board().width;
          ++col_ind) {
         for (int row_ind = 0; row_ind < Controller::model_.board().height;
@@ -133,14 +125,11 @@ void Controller::on_mouse_move(ge211::Posn<int> mouse_posn) {
 
             if (Controller::mouse_is_within_square_(mouse_posn, col_ind,
                                                     row_ind)) {
-                // check to see if this move is possible
+
                 Move const* movep = model_.find_move(square_coords);
                 if (movep) {
-                    //if so, send this position set to view and tell them
-                    //to add sprites to the board for these flips
                     view_.set_move_preview(movep -> second);
                 } else {
-                    //give an empty posn set so as to clear out the sprites
                     view_.set_move_preview({{}});
                 }
             }
@@ -148,13 +137,10 @@ void Controller::on_mouse_move(ge211::Posn<int> mouse_posn) {
     }
 }
 
-
+//Updates the time shown on the board for black and white.
+//Accesses the time from the timer, then turns it into a string.
 void Controller::on_frame(double dt) {
 
-    //update the time shown on the board for black and white. this may
-    //eventually be better suited for an on_frame() function
-
-    //cast doubles to ints b/c that's all we need to show
     double black_total_seconds = model_.elapsed_time_black().seconds();
     double white_total_seconds = model_.elapsed_time_white().seconds();
 
@@ -189,5 +175,10 @@ void Controller::on_frame(double dt) {
     view_.update_text_box(Player::black, black_text);
     view_.update_text_box(Player::white, white_text);
 
+    std::string black_text = view_.config.seconds_to_text(black_total_seconds);
+    std::string white_text = view_.config.seconds_to_text(white_total_seconds);
+
+    view_.update_time_text(Player::black, black_text);
+    view_.update_time_text(Player::white, white_text);
 }
 
