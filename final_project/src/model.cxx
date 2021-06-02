@@ -180,34 +180,6 @@ Position_set Model::moves_in_dir_(Position current, Dimensions dir,
     //if last tile in this direction is same as current player, can't move there
     if (board_[current + n * dir].get_player() == turn_) {n--;}
 
-    //find the player at the position we're analyzing
-    // Piece piece_at_curr = operator[](current);
-    // Player curr_player = piece_at_curr.get_player();
-
-    // for(std::size_t ii = 1; ii <= n; ii++){
-    //
-    //     //check to see if model is in check. this is necessary so we don't have
-    //     //an infinite recursion of moves_in_dir() within moves_in_dir,
-    //     //play_move() within play_move(), etc.
-    //     if (check4check) {
-    //         //Find the position where a player will move
-    //         Position temp = current + n * dir;
-    //
-    //         //Make a copy of the Model
-    //         Model m = *this;
-    //
-    //         //If playing this position (start, end) causes the copy of the model
-    //         //to be in check after this turn, it's not valid
-    //         if (m.find_move(current) && m.find_move(current)->second[temp]) {
-    //             m.play_move(current, temp, false);
-    //         }
-    //         if (m.is_in_check(turn_)) {
-    //             continue;
-    //         }
-    //     }
-    //     moves_in_dir[{current + ii * dir}] = true;
-    // }
-
     if (check4check) {
         // Model m = *this;
 
@@ -221,7 +193,7 @@ Position_set Model::moves_in_dir_(Position current, Dimensions dir,
             // if (m.find_move(current) && m.find_move(current)->second[temp]) {
             //     m.play_move(current, temp, false);
             // }
-            // if (m.is_in_check(turn_)) {
+            // if (m.is_in_check(turn_, false)) {
             //     //revert the model
             //     m = *this;
             //     continue;
@@ -238,11 +210,6 @@ Position_set Model::moves_in_dir_(Position current, Dimensions dir,
     //return all the valid moves for a piece in this dir
     return moves_in_dir;
 }
-
-//another function that does something similar to find_moves_in_dir,
-//but without copying making successive copies of the model
-
-
 
 
 //calculate possible moves for pieces that can move unlimited # of spaces
@@ -314,8 +281,7 @@ Position_set Model::spaces_ltd(Piece p, bool check4check)
                                      "have player 'neither'");
         }
         //pawn has special directions of travel depending on what's around
-        //it, so account for there. do using a reference to dirs_travel
-        // COMMENTED OUT FOR NOW
+        //it, so account for there. modify and return a new var
         dirs_travel = board_.modify_pawn_dirs(p, dirs_travel);
         break;
     case Piece_type::knight:
@@ -331,87 +297,67 @@ Position_set Model::spaces_ltd(Piece p, bool check4check)
     //get current position of player
     Position current = p.get_posn();
 
-    //in each direction of travel, take the current posn of piece
-    //and add the vector of the dir_travel to it.
-    // - bounds-check the posn to make sure it's between (0,0) and (7,7)
-    //      --this happens in [], but could throw an error
-    // - move as many free spaces as possible in that direction
-    // - if there's a piece at the end of the line, check if it's an enemy
-    // - piece, in which case we'd be able to take that piece
+    //implemented to prevent infinite recursion
+    if (check4check) {
 
-    // if (p.get_piece_type() != Piece_type::pawn) {
+        // make a copy of model and see if possible moves will cause check
+        // Model m = *this;
+
         for (Dimensions dir : dirs_travel) {
 
-            //find the first position in the direction where we're looking
             //if it's out of bounds, skip
             Position posn = p.get_posn() + dir;
             if (posn.x < 0 || posn.x >= Model::board_.dimensions().width
                 || posn.y < 0 || posn.y >= Model::board_.dimensions().height) {
                 continue;
 
-                //if the square in that direction is occupied by a piece of the
-                //same color as this piece, skip
+                //if occupied by same color, skip
             } else if (board_[posn].get_piece_type() != Piece_type::null
                        && board_[posn].get_player() == p.get_player()) {
                 continue;
 
-                //else: the position is either free or occupied by the opposite
-                //player
+                //else: posn is either free or occupied by enemy
+            } else {
+
+                // //If playing this position (start, end) causes the copy of the model
+                // //to be in check after this turn, it's not valid
+                // if (m.find_move(current) && m.find_move(current)->second[posn]) {
+                //     m.play_move(current, posn, false);
+                // }
+                // if (m.is_in_check(turn_, false)) {
+                //     //revert the model
+                //     m = *this;
+                //     continue;
+                // }
+
+                possible_moves[posn] = true;
+            }
+        }
+
+
+
+    } else {
+        for (Dimensions dir : dirs_travel) {
+
+            //if it's out of bounds, skip
+            Position posn = p.get_posn() + dir;
+            if (posn.x < 0 || posn.x >= Model::board_.dimensions().width
+                || posn.y < 0 || posn.y >= Model::board_.dimensions().height) {
+                continue;
+
+                //if occupied by same color, skip
+            } else if (board_[posn].get_piece_type() != Piece_type::null
+                       && board_[posn].get_player() == p.get_player()) {
+                continue;
+
+                //else: posn is either free or occupied by enemy
             } else {
                 possible_moves[posn] = true;
             }
+        }
     }
-    // else {
-       //deal with this in a minute
-    //
-    //     // custom pawns since the helper in board didnt work quite right
-    //     // will do the check for diagonal takes and moving past the first rank
-    //     Player what_player = p.get_player();
-    //     Position what_posn = p.get_posn();
-    //     for (Dimensions dir : possible_moves) {
-    //
-    //         // normal bound checks and what not.
-    //         Position posn = p.get_posn() + dir;
-    //         if (posn.x < 0 || posn.x >= dimensions().width
-    //             || posn.y < 0 || posn.y >= dimensions().height) {
-    //             continue;
-    //
-    //         } else if (operator[](posn).get_piece_type() != Piece_type::null
-    //                    && operator[](posn).get_player() == p.get_player()) {
-    //             continue;
-    //
-    //         } else {
-    //             // first check if pawn is not blocked and in first rank
-    //             if (what_player==Player::white && what_posn.y!=6 && posn
-    //                                                                         .y+2==what_posn.y) {
-    //                 possible_moves[posn] = false;
-    //
-    //             } else if (what_player==Player::black && what_posn.y!=1 &&
-    //                        posn.y-2 == what_posn.y) {
-    //                 possible_moves[posn] = false;
-    //
-    //                 // check to see if posn is diagonal and detects a piece
-    //             } else if (posn.x-1 == what_posn.x || posn.x+1 == what_posn.x){
-    //                 if (operator[](posn).get_piece_type() != Piece_type::null) {
-    //                     possible_moves[posn] = true;
-    //                 }
-    //
-    //                 // check to see if the posn in front of piece is blocked.
-    //             }else if(operator[]({what_posn.x,what_posn.y-1})
-    //                              .get_piece_type() == Piece_type::null && what_player
-    //                                                                       ==Player::white){
-    //                 possible_moves[posn] = true;
-    //
-    //             }else if(operator[]({what_posn.x,what_posn.y+1})
-    //                              .get_piece_type() == Piece_type::null && what_player ==
-    //                                                                       Player::black){
-    //                 possible_moves[posn] = true;
-    //             }
-    //         }
-    //     }
-    //
-    //
-    //}
+
+
 
     //return all unoccupied or enemy-occupied spaces
     return possible_moves;
@@ -532,13 +478,13 @@ void Model::set_new_posn(Position start, Position end) {
 //     return false;
 // }
 
-bool Model::is_in_check(Player p) const{
+bool Model::is_in_check(Player p, bool check4check) const{
 
     //make a copy of the board so this can be const
     Model m = *this;
     m.turn_ = other_player(p);
     Position king_posn = m.board_.find_king_location(p);
-    m.compute_next_moves_(true);
+    m.compute_next_moves_(check4check);
 
     //if the opposite player has a move that could threaten the
     //king, the current player is in check

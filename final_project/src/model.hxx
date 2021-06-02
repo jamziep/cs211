@@ -95,7 +95,7 @@ public:
     //determines whether or not the model is currently at a state of check.
     //applies to any theoretical model so that we can look at the status of
     // either the current board or another board after a move has been made
-    bool is_in_check(Player p) const;
+    bool is_in_check(Player p, bool check4check) const;
 
     //determines whether the model is at a state of checkmate.
     //takes in a player, then carries out is_in_check for all possible
