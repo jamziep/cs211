@@ -74,6 +74,7 @@ public:
     // for showing valid moves.
     ge211::Circle_sprite const valid_squares;
     ge211::Circle_sprite const valid_pieces;
+    ge211::Circle_sprite const king_check;
     Position_set move_preview;
     Position_set selected_move;
 

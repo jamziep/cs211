@@ -140,7 +140,7 @@ public:
     void change_piece_posn(Piece p, Position posn);
 
     //find the location of the king in either of the piece_sets
-    Position find_king_location(Player);
+    Position find_king_location(Player) const;
 
     //remove a piece from board by setting it to "active = false". search
     //by position because that's more convenient

@@ -18,7 +18,7 @@ static Color black_color = Color(0,0,0);
 static Color white_color = Color(255, 255, 255);
 static Color dark_grey = Color(145,145,145);
 static Color light_grey = Color(200,200,200);
-static Color parchment = Color(201,192,141);
+static Color bright_red = Color(190,0,0);
 
 
 View::View(Model const& model)
@@ -29,7 +29,6 @@ View::View(Model const& model)
           background({1080, 761}, background_color),
           black_matte({240,75}, black_color),
           white_matte({240,75}, white_color),
-          whos_turn({240, 50}, parchment),
           // these are arbitrary values for size and color (for now)
 
           //white sprites:
@@ -56,7 +55,8 @@ View::View(Model const& model)
           valid_pieces(grid_size/2, dark_grey),
           valid_squares(20, light_grey),
           move_preview({{}}),
-          selected_move({{}})
+          selected_move({{}}),
+          king_check(grid_size/2, bright_red)
 // sprite initialization
 {}
 
@@ -151,6 +151,17 @@ void View::draw(Sprite_set& set)
             set.add_sprite(valid_pieces, screen_posn, 4);
         }
     }
+
+    //if either of the kings are in check, draw a red tile behind them
+    if (model_.is_in_check(Player::black)){
+        Position king_posn = model_.find_king(Player::black);
+        Position screen_posn{king_posn.x * grid_size, king_posn.y * grid_size};
+        set.add_sprite(king_check, screen_posn, 4);
+    } else if (model_.is_in_check(Player::white)) {
+        Position king_posn = model_.find_king(Player::white);
+        Position screen_posn{king_posn.x * grid_size, king_posn.y * grid_size};
+        set.add_sprite(king_check, screen_posn, 4);
+    }
 }
 
 
@@ -187,10 +198,6 @@ void View::draw_background(Sprite_set& set)
     // clock:
     set.add_sprite(black_matte, {800,125}, 3);
     set.add_sprite(white_matte, {800,200}, 3);
-
-    // move indicator and piece taken:
-    set.add_sprite(whos_turn, {800, 450}, 3);
-    set.add_sprite(whos_turn, {800, 510}, 3);
 }
 
 View::Dimensions

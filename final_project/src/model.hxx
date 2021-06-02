@@ -95,14 +95,16 @@ public:
     //determines whether or not the model is currently at a state of check.
     //applies to any theoretical model so that we can look at the status of
     // either the current board or another board after a move has been made
-    bool is_in_check(Player p);
+    bool is_in_check(Player p) const;
 
     //determines whether the model is at a state of checkmate.
     //takes in a player, then carries out is_in_check for all possible
     //future states of the board after a move is made
-    bool is_checkmate(Player p);
+    bool is_checkmate(Player p) const;
 
-
+    //finds the king for a player within its board member
+    Position find_king(Player p) const
+    {return board_.find_king_location(p);}
 
 
 #ifdef CS211_TESTING
