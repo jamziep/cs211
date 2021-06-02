@@ -299,51 +299,72 @@ Board::pawn_directions_dark()
 //on the current state of the board. modifies in place based on reference
 // - if the pawn is in its initial row, adds {0,2} or {0,-2} to list
 // - if pawn is near a piece that it can take, add diagonal to list
-void
-Board::modify_pawn_dirs(Piece p, std::vector<Dimensions>& dirs_travel)
+// void
+// Board::modify_pawn_dirs(Piece p, std::vector<Dimensions>& possible_moves)
+// {
+
+std::vector<Board::Dimensions>
+Board::modify_pawn_dirs(Piece p, std::vector<Dimensions> dirs_travel)
 {
-    //if there isn't a piece in front of the pawn in the diagonal directions,
-    //assume the pawn can't move there. this could be modified for en passant
-    Position temp_posn = p.get_posn() + dirs_travel[3];
+    //make a new vector of dims that we'll return
+    std::vector<Board::Dimensions> result;
+
+    //if there ISN'T a piece in front of the pawn, can move forward.
+    //can only do this check if the pawn dir is not out of bounds
+    Position temp_posn = p.get_posn() + dirs_travel[0];
+    if (!(temp_posn.x < 0 || temp_posn.x >= dimensions().width
+        || temp_posn.y < 0 || temp_posn.y >= dimensions().height)) {
+        // dirs_travel.erase(dirs_travel.begin());
+
+        if (operator[](temp_posn).get_piece_type() == Piece_type::null) {
+            // dirs_travel.erase(dirs_travel.begin());
+            result.push_back(dirs_travel[0]);
+
+            //if there is not a piece in front of piece: we are here
+
+            // if the piece is in its starting row, add the second thing of
+            // dirs_travel to result. spaces_ltd will check if there's
+            // already any piece in this space so ignore for now
+            int curr_y = p.get_posn().y;
+            if ( (p.get_player() == Player::black && curr_y == 1)
+                   || (p.get_player() == Player::white && curr_y == 6) ){
+                //dirs_travel.erase(dirs_travel.begin() + 1);
+                result.push_back(dirs_travel[1]);
+            }
+        }
+    }
+
+    // if there isn't a piece in front of the pawn in the diagonal directions,
+    // assume the pawn can't move there. this could be modified for en passant
+    temp_posn = p.get_posn() + dirs_travel[2];
+    //if the position is not out of bounds
+    if (!(temp_posn.x < 0 || temp_posn.x >= dimensions().width
+        || temp_posn.y < 0 || temp_posn.y >= dimensions().height)) {
+        // dirs_travel.erase(dirs_travel.begin() + 2);
+
+        //if there's something there, we can move there
+        if (operator[](temp_posn).get_piece_type() != Piece_type::null) {
+            // dirs_travel.erase(dirs_travel.begin() + 2);
+            result.push_back(dirs_travel[2]);
+        }
+    }
+
+    //check other diagonal
+    temp_posn = p.get_posn() + dirs_travel[3];
 
     //need to do manual bounds check before calling operator[]
-    if (temp_posn.x < 0 || temp_posn.x >= dimensions().width
-           || temp_posn.y < 0 || temp_posn.y >= dimensions().height) {
-        dirs_travel.erase(dirs_travel.begin() + 3);
+    //therefore, if the bounds checking is NOT failed, do check
+    if (!(temp_posn.x < 0 || temp_posn.x >= dimensions().width
+           || temp_posn.y < 0 || temp_posn.y >= dimensions().height)) {
 
-    //then, check the condition for this given square
-    } else if (operator[](temp_posn).get_piece_type() == Piece_type::null){
-        dirs_travel.erase(dirs_travel.begin() + 3);
+        if (operator[](temp_posn).get_piece_type() != Piece_type::null){
+            //dirs_travel.erase(dirs_travel.begin() + 3);
+            result.push_back(dirs_travel[3]);
+        }
     }
 
-
-    temp_posn = p.get_posn() + dirs_travel[2];
-    if (temp_posn.x < 0 || temp_posn.x >= dimensions().width
-        || temp_posn.y < 0 || temp_posn.y >= dimensions().height) {
-        dirs_travel.erase(dirs_travel.begin() + 2);
-
-    } else if (operator[](temp_posn).get_piece_type() == Piece_type::null) {
-        dirs_travel.erase(dirs_travel.begin() + 2);
-    }
-
-    //if the pawn is not in its starting row, remove the second element from
-    //vector as the pawn can't move two spaces otherwise
-    int curr_y = p.get_posn().y;
-    if ( (p.get_player() == Player::black && curr_y != 1)
-           || (p.get_player() == Player::white && curr_y != 6) ){
-        dirs_travel.erase(dirs_travel.begin() + 1);
-    }
-
-    //if there IS a piece in front of the pawn, can't move forward,
-    //so remove the first element from vector
-    temp_posn = p.get_posn() + dirs_travel[0];
-    if (temp_posn.x < 0 || temp_posn.x >= dimensions().width
-        || temp_posn.y < 0 || temp_posn.y >= dimensions().height) {
-        dirs_travel.erase(dirs_travel.begin());
-
-    } else if (operator[](temp_posn).get_piece_type() != Piece_type::null) {
-        dirs_travel.erase(dirs_travel.begin());
-    }
+    //return our modified list of dirs_travel
+    return result;
 }
 
 

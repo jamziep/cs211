@@ -69,7 +69,7 @@ void Controller::on_mouse_down(ge211::Mouse_button btn,
                     Move const* movep = model_.find_move(selected_posn);
                     Position_set possible_moves = movep -> second;
                     if (possible_moves[square_coords]) {
-                        model_.play_move(selected_posn, square_coords);
+                        model_.play_move(selected_posn, square_coords, true);
                     }
                     selected = false;
                     starts.clear();
