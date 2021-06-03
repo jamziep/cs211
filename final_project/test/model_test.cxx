@@ -1,17 +1,6 @@
 #include "model.hxx"
 #include <catch.hxx>
 
-TEST_CASE("example test (TODO: replace this)")
-{
-    CHECK( 1 + 1 == 2 );
-}
-
-//
-// TODO: Write preliminary model tests.
-//
-// These tests should demonstrate at least six of the functional
-// requirements.
-//
 
 TEST_CASE("Model::play_move")
 {
@@ -204,7 +193,7 @@ TEST_CASE("Sam Loyd Stalemate")
     // be about ten moves. This tests stalemate, piece movement, and also a
     // check (but not a mate).
     // initialize model
-    Model m = Model(false);
+    Model m = Model(true);
     //check that model initialized properly
     CHECK(m.turn() == Player::white);
     CHECK(m.winner() == Player::neither);
@@ -219,6 +208,7 @@ TEST_CASE("Sam Loyd Stalemate")
     m.play_move({0, 2}, {7, 2}, false); // Rah6
     m.play_move({0, 3}, {2, 1}, false); // QXc7
     m.play_move({5, 1}, {5, 2}, false); // f6
+
     m.play_move({2, 1}, {3, 1}, true); // Qxd7+ this is
     // causing errors for other tests when set to true for some reason
     // this is the check. Check that moves for black that do not get black
@@ -240,35 +230,46 @@ TEST_CASE("Sam Loyd Stalemate")
     CHECK(king_moves -> second.empty());
 }
 
-
-TEST_CASE("Bishop moves")
+TEST_CASE("Movement of all pieces")
 {
-
+    // tests the movement of all pieces. Explicitly checks for moves for all
+    // Piece_types.
+    // this test case will move pieces in the board until stalemate. Should
+    // be about ten moves. This tests stalemate, piece movement, and also a
+    // check (but not a mate).
+    // initialize model
+    Model m = Model(false);
+    //check that model initialized properly
+    CHECK(m.turn() == Player::white);
+    CHECK(m.winner() == Player::neither);
+    //first check Pawn and knight initially:
+    //Pawn:
+    Move const* white_pawn = m.find_move({4,6});
+    CHECK(white_pawn -> second[{4,4}]);
+    CHECK(white_pawn -> second[{4,5}]);
+    //Knight:
+    Move const* white_knight = m.find_move({1,7});
+    CHECK(white_knight -> second[{0,5}]);
+    CHECK(white_knight -> second[{2,5}]);
+    //Move pawns to cycle to next turn:
+    m.play_move({4,6},{4,4}, false);
+    m.play_move({1,1},{1,3}, false);
+    // Check remaining piece types
+    // Bishop:
+    Move const* white_bishop = m.find_move({5,7});
+    CHECK(white_bishop -> second[{4,6}]);
+    CHECK(white_bishop -> second[{3,5}]);
+    // king:
+    Move const* white_king = m.find_move({4,7});
+    CHECK(white_king -> second[{4,6}]);
+    // queen:
+    Move const* white_queen = m.find_move({3,7});
+    CHECK(white_queen -> second[{4,6}]);
+    CHECK(white_queen -> second[{5,5}]);
+    // Check that the pawn that was moved in turn 1 can only move one spot
+    // forward:
+    white_pawn = m.find_move({4,4});
+    CHECK(white_pawn -> second[{4,3}]);
+    CHECK(!white_pawn -> second[{4,2}]);
 }
 
-
-TEST_CASE("Knight moves")
-{
-
-}
-
-TEST_CASE("King moves")
-{
-
-}
-
-TEST_CASE("Queen moves")
-{
-
-}
-
-TEST_CASE("Rook moves")
-{
-
-}
-
-TEST_CASE("White in check")
-{
-
-
-}
