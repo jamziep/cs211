@@ -148,18 +148,17 @@ TEST_CASE("castling king-side on white")
     CHECK(m.return_piece_type({5,7}) == Piece_type::rook);
 }
 
-// TEST CASE: SCHOLAR'S MATE (3/5)
-// this test will walk through an entire game of chess, testing pawn,
-// knight, bishop, and queen movement as well as checkmate and check. This
-// four-move game is an easy way to test an entire game and important
-// interactions between the players in a possible game.
-// The moves in this test are the following:
-// 1. e4 - e5
-// 2. Bc4 - Nc6
-// 3. Qh5 - Nf6
-// 4. Qxf7 - MATE
+// TEST CASE: FOOL'S MATE (3/5)
+// Whereas the Sam Loyd Stalemate below establishes the important
+// functionality of each of the pieces, playing out a longer game,
+// the Fool's Mate is simply the quickest way to achieve an
+// end-of-game state. Ends in a checkmate--black wins.
+// 1. f3
+// 2. e6
+// 3. g4
+// 4. Qh4 - MATE
 
-TEST_CASE("Scholar's Mate: White")
+TEST_CASE("Fool's Mate: Black")
 {
 
     Model m = Model();
