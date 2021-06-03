@@ -11,9 +11,6 @@ Model::Model()
           black_timer(true),
           white_timer (true)
 {
-
-    //initialize next_moves_ to turn_'s possible next moves,
-    //using the compute_next_moves helper
     Model::compute_next_moves_();
 }
 
@@ -39,7 +36,6 @@ Move const* Model::find_move(Position pos) const
 }
 
 
-// necessary booleans for multiple piece movement in case of a castle.
 bool BRcast = false;
 bool BLcast = false;
 bool WRcast = false;
@@ -124,46 +120,38 @@ void Model::play_move(Position start, Position end)
     }
 }
 
+// Helper for compute next moves. Given a certain position and a direction,
+// will calculate all the possible moves for that piece in that position and
+// in that direction. (Modified from reversi)
 Position_set Model::moves_in_dir_(Position current, Dimensions dir) {
 
-    //taken from reversi. modified to take into account chess logic
     Position_set moves_in_dir {};
     std::size_t n = 1;
 
-    //perform bounds_checking on the next square in the board in the given
-    //direction. if first adjacent square would be out of bounds, do nothing
     Position posn = current + n * dir;
     if (posn.x < 0 || posn.x >= Model::board_.dimensions().width
         || posn.y < 0 || posn.y >= Model::board_.dimensions().height) {
         return moves_in_dir;
     }
 
-    // increments n when we detect the space is occupied by a tile of the
-    // other player
     while (board_[posn].get_piece_type() == Piece_type::null) {
         n++;
 
-        //perform bounds checking. once we reach an out-of-bounds posn,
-        //stop adding to moves_in_dir
         posn = current + n * dir;
         if (posn.x < 0 || posn.x >= Model::board_.dimensions().width
             || posn.y < 0 || posn.y >= Model::board_.dimensions().height) {
 
-            //decrement n so that model only looks at the max valid index
-            // in next part of code
             n--;
             break;
         }
     }
 
-    //if last tile in this direction is same as current player, can't move there
     if (board_[current + n * dir].get_player() == turn_) {n--;}
 
     for (std::size_t ii = 1; ii <= n; ii++) {
         moves_in_dir[{current + ii * dir}] = true;
     }
 
-    //return all the valid moves for a piece in this dir
     return moves_in_dir;
 }
 
@@ -180,11 +168,9 @@ Position_set Model::moves_in_dir_(Position current, Dimensions dir) {
 // - piece, in which case we'd be able to take that piece
 Position_set Model::spaces_ult(Piece p)
 {
-    //initialize sets of data of unknown size
     Position_set possible_moves = Position_set();
     std::vector<Board::Dimensions> dirs_travel;
 
-    //find the directions of travel possible for this piece
     switch(p.get_piece_type()) {
 
     case Piece_type::rook:
@@ -211,7 +197,6 @@ Position_set Model::spaces_ult(Piece p)
         possible_moves.operator|=(moves_in_dir);
     }
 
-    //return all possible moves for this piece
     return possible_moves;
 }
 
@@ -219,17 +204,13 @@ Position_set Model::spaces_ult(Piece p)
 //includes pawn, knight, king
 Position_set Model::spaces_ltd(Piece p)
 {
-    //initialize sets of data of unknown size
     Position_set possible_moves = Position_set();
     std::vector<Board::Dimensions> dirs_travel;
 
-    //find the directions of travel possible for this piece
     switch(p.get_piece_type()) {
 
     case Piece_type::pawn:
 
-        //pawn has different possible directions of travel depending
-        //on which side of the board they're on
         if (p.get_player() == Player::black) {
             dirs_travel = board_.pawn_directions_dark();
         } else if (p.get_player() == Player::white) {
@@ -238,8 +219,7 @@ Position_set Model::spaces_ltd(Piece p)
             throw Client_logic_error("Model::spaces_ltd: pawn cannot"
                                      "have player 'neither'");
         }
-        //pawn has special directions of travel depending on what's around
-        //it, so account for there. modify and return a new var
+
         dirs_travel = board_.modify_pawn_dirs(p, dirs_travel);
         break;
     case Piece_type::knight:
@@ -252,9 +232,6 @@ Position_set Model::spaces_ltd(Piece p)
         throw Client_logic_error("Model::spaces_ult: piece must be kn/ki/p");
     }
 
-    //get current position of player
-    //Position current = p.get_posn();
-
     size_t counter = 0;
     for (Dimensions dir : dirs_travel) {
 
@@ -262,39 +239,30 @@ Position_set Model::spaces_ltd(Piece p)
         if (counter > 8)
         { break; }
 
-        //if it's out of bounds, skip
         Position posn = p.get_posn() + dir;
         if (posn.x < 0 || posn.x >= Model::board_.dimensions().width
             || posn.y < 0 || posn.y >= Model::board_.dimensions().height) {
             continue;
 
-            //if occupied by same color, skip
         } else if (board_[posn].get_piece_type() != Piece_type::null
                    && board_[posn].get_player() == p.get_player()) {
             continue;
 
-            //else: posn is either free or occupied by enemy
         } else {
             possible_moves[posn] = true;
         }
     }
-
-    //return all unoccupied or enemy-occupied spaces
     return possible_moves;
 }
 
-
+// Computes next moves for every piece on the board for each player. (Modified
+// from reversi)
 void Model::compute_next_moves_()
 {
-    // iterate through entire board all call eval_position on every spot.
-    // Only add non empty position sets  to next_moves_.
-    next_moves_.clear(); // first clear out next moves
+    next_moves_.clear();
 
-    //iterate through each space on the board and find the moves associated
-    //with that piece
     for (auto pos : board_.all_positions()) {
 
-        //get the piece at this position, if any
         Piece piece = board_[pos];
 
         if (piece.get_player() == turn_) {
@@ -357,51 +325,21 @@ void Model::compute_next_moves_()
 //takes in next_moves_ and removes any moves from the position
 void Model::modify_next_moves_()
 {
-    //make a copy of model
     Model m = *this;
-
-    //what are the aspects of the model that change in this process?
-    //the board and the next_moves_ change in the model
-
-    //trying to completely reset the board would be tough. however, we can
-    //maybe just use set_new_posn(start, end), compute_next_moves (no
-    // modify_next_moves), and then set_new_posn(end, start) to undo the
-    //change in the position
-
-    //resource acquisition is initialization, so throwing away the entire
-    //complex data structure and initializing a new one seems inefficient
-
-    //other things that play_move() does that we may want to include:
-
-    //in theory the line in "for move& move..." should iterate through the
-    //moves in m, not in THIS, but that was causing errors so wait for now
-    //these errors are only caught in actual execution, not the debugger, so
-    //that's fun too! ;(
-
     Player p = m.turn_;
 
-    //iterate through every move in the move map
     for (Move& move : next_moves_) {
         Position start = move.first;
-        //iterate through every possible place where the position at that
-        // place can move
         for (Position end : move.second) {
 
-            //try playing this move in the model
-            // m.play_move(start, end, false);
             m.set_new_posn(start,end);
             m.compute_next_moves_();
 
-            //if model is now in check, this isn't a valid move, so set it
-            //to false in the position set
             if (m.is_in_check(p)) {
                 move.second[end] = false;
             }
 
-            //reset the model
-            // m = *this;
             m.set_new_posn(end, start);
-            //m.compute_next_moves_();
         }
     }
 }
@@ -410,33 +348,27 @@ void Model::modify_next_moves_()
 //changes the position of that piece
 void Model::set_new_posn(Position start, Position end) {
 
-    //get the piece at a given posn from board
     Piece p = board_[start];
 
-    //if no piece is found, throw error
     if (p.get_piece_type() == Piece_type::null) {
         throw Client_logic_error("Model::set_new_posn: no piece at "
                                  "this start posn");
     }
 
-    //modify the position of this piece
     board_.change_piece_posn(p, end);
 }
 
+// Calculates the if the given player is in check. Ultimately a helper
+// function for checkmate.
 bool Model::is_in_check(Player p) const{
 
-    //make a copy of the board so this can be const
     Model m = *this;
     m.turn_ = other_player(p);
     Position king_posn = m.board_.find_king_location(p);
     m.compute_next_moves_();
 
-    //if the opposite player has a move that could threaten the
-    //king, the current player is in check
     for (Move move : m.next_moves_) {
 
-        //iterate through all the places where this piece can move and
-        //see if player p's king is at one of those pieces
         for (Position posn : move.second) {
             if (posn == king_posn) {
                 return true;
@@ -444,15 +376,14 @@ bool Model::is_in_check(Player p) const{
         }
     }
 
-    //if none of the moves of the other player
-    //could put the king in danger, curr player is not in check
     return false;
 }
 
-
+// Helper for checkmate. Calculates if the given player has no moves left,
+// which can lead to a stalemate or a checkmate depending on a variety of
+// factors on the board.
 bool Model::no_moves_left(Player p) const
 {
-   //iterate through next_moves_
    Model m = *this;
    m.turn_ = p;
    m.compute_next_moves_();
@@ -460,25 +391,21 @@ bool Model::no_moves_left(Player p) const
 
    for (Move move : m.next_moves_) {
 
-       //if there is anything in the position set given by
-       //move.second for any of these moves, there are possible
-       // moves for this player. as such it's not game over
        if (!move.second.empty()) {
            return false;
        }
    }
 
-   //if we got here, no valid moves found
     return true;
 }
 
+// Helper function for compute/play moves. Takes in a variety of positions on
+// the board to see whether or not castling is a valid move option for the
+// king. Also detects if the player has forfeited castling by moving the
+// king/rooks.
 void Model::castle_check(Position start, Position end) {
 
-    //find the location of the king.
     Position king_xy = board_.find_king_location(turn_);
-
-    //if the location of the king is not in its starting place:
-    //implement the castling check
 
     if ((turn_ == Player::white && king_xy != Position{4,7})
             || (turn_ == Player::black && king_xy != Position{4,0})){
@@ -499,8 +426,6 @@ void Model::castle_check(Position start, Position end) {
             set_new_posn({0, 7}, {3, 7});
             Wcastle = true;
 
-        //else, if the piece we just moved was a king, which we can find using
-        //board[end] at this point after we made the turn, set the flag to true
         }else if(board_[end].get_player() == Player::white){
             Wcastle = true;
         } else if (board_[end].get_player() == Player::black){

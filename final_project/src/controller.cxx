@@ -34,8 +34,9 @@ void Controller::on_key(ge211::Key key) {
 
 //on mouse down, select a piece. switch the select bool. If the same tile is
 // clicked again, then we return the select bool back to false. If we click
-// on another valid square, then we move the piece to that square.
-
+// on another valid square, then we move the piece to that square. This
+// function also triggers a lot of the important sprites, such as the capture
+// indicator and the game monitor.
 bool selected = false;
 ge211::Posn<int> selected_posn{0, 0};
 Position_set starts {};
@@ -47,9 +48,6 @@ void Controller::on_mouse_down(ge211::Mouse_button btn,
         for (int row_ind = 0; row_ind < 8; ++row_ind) {
             if (Controller::mouse_is_within_square_(mouse_posn, col_ind,
                                                     row_ind)) {
-                // if selected is false, we switch selected to true and break
-                // out.
-                // gives you selected coordinates
                 ge211::Posn<int> square_coords{col_ind, row_ind};
 
                 if (!selected &&
@@ -60,8 +58,6 @@ void Controller::on_mouse_down(ge211::Mouse_button btn,
                     view_.set_selected_piece(starts);
                     return;
 
-                    // otherwise check for valid move. if valid, play move to
-                    // the newly selected square.
                 } else if(selected) {
 
                     Move const* movep = model_.find_move(selected_posn);
@@ -76,7 +72,7 @@ void Controller::on_mouse_down(ge211::Mouse_button btn,
                         }
                         model_.play_move(selected_posn, square_coords);
                     }
-                    // printing potential captures:
+
                     selected = false;
                     starts.clear();
                     view_.set_selected_piece(starts);
@@ -87,7 +83,6 @@ void Controller::on_mouse_down(ge211::Mouse_button btn,
         }
     }
 
-    //if we got here, mouse click was not associated with any square
     return;
 }
 
@@ -112,8 +107,9 @@ bool Controller::mouse_is_within_square_(ge211::Posn<int> mouse_posn,
 }
 
 //When we move the mouse, if we move the mouse over a valid position to play in,
-//show the possible flips that will result from that play.
-//Set move_preview to whatever the possible moves for that space are.
+//show the possible moves that correspond to the piece in that position via
+// grey dots. When we move the mouse away, the grey dots should disappear or
+// change to whatever player the cursor is hovering over.
 void Controller::on_mouse_move(ge211::Posn<int> mouse_posn) {
 
     for (int col_ind = 0; col_ind < Controller::model_.board().width;

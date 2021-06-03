@@ -5,11 +5,13 @@ using Sprite_set = ge211::Sprite_set;
 
 static int const grid_size = 95;
 
+// Constructs important different things for the view file. Divided into
+// sections as follows: board/background, white sprites, black sprites,
+// clocks/monitors, checks and previews.
 View::View(Model const& model)
         : model_(model),
           config(),
 
-          // board sprites
           board_sprite({8*grid_size, 8*grid_size}, config.board_color),
           dark_squares({grid_size, grid_size}, config.dark_color),
           background(config.board_size, config.background_color),
@@ -17,7 +19,6 @@ View::View(Model const& model)
           white_matte(config.timer_size, config.white_color),
           whos_turn(config.turn_tracker_size, config.parchment),
 
-          //white sprites:
           white_pawn("white_pawn.png"),
           white_rook("white_rook.png"),
           white_knight("white_knight.png"),
@@ -25,7 +26,6 @@ View::View(Model const& model)
           white_king("white_king.png"),
           white_queen("white_queen.png"),
 
-          //black sprites:
           black_pawn("black_pawn.png"),
           black_rook("black_rook.png"),
           black_knight("black_knight.png"),
@@ -33,15 +33,11 @@ View::View(Model const& model)
           black_king("black_king.png"),
           black_queen("black_queen.png"),
 
-          //clock sprites
           black_time_text(),
           white_time_text(),
-
-          // indicators
           capture_text(),
           monitor(),
 
-          //valid moves:
           valid_squares(20, config.light_grey),
           valid_pieces(grid_size/2, config.dark_grey),
           king_check(grid_size/2, config.bright_red),
@@ -49,13 +45,15 @@ View::View(Model const& model)
           selected_move({{}})
 {}
 
+
+// main draw function: Draws the background, board, the white and black
+// pieces in the proper place, the clock, the monitor, the capture indicator,
+// move previews, and the check indicator.
 void View::draw(Sprite_set& set)
 {
-    //draw the background and the board
     draw_board(set);
     draw_background(set);
 
-    //add the text sprites
     set.add_sprite(black_time_text, config.black_timer_location,4);
     set.add_sprite(white_time_text, config.white_timer_location,4);
     if(!capture_text.empty()) {
@@ -63,13 +61,11 @@ void View::draw(Sprite_set& set)
     }
     monitor_update(set);
 
-    // next, iterate through all the squares and draw each piece.
     for (Position posn : View::model_.board()) {
         auto curr_piece = View::model_[posn];
 
         Position screen_posn = {posn.x * grid_size, posn.y * grid_size};
 
-        // draws black pieces
         if (curr_piece.get_player() == Player::black) {
             switch (curr_piece.get_piece_type()) {
             case Piece_type::pawn:
@@ -94,7 +90,7 @@ void View::draw(Sprite_set& set)
                 break;
             }
 
-            // draws white pieces
+
         } else if (curr_piece.get_player() == Player::white) {
             switch (curr_piece.get_piece_type()) {
             case Piece_type::pawn:
@@ -115,16 +111,13 @@ void View::draw(Sprite_set& set)
             case Piece_type::king:
                 set.add_sprite(white_king, screen_posn, 5);
                 break;
-            case Piece_type::null: // skip it
+            case Piece_type::null:
                 break;
             }
         } else {
-            //like the "default" case
         }
     }
 
-    //if the player is previewing a move, take the full list of tiles
-    //overturned by that move, and draw all those tiles in gray to preview
     if (!move_preview.empty()){
         for (Position posn : move_preview) {
             Position screen_posn{posn.x * grid_size + 28, posn.y*grid_size +
@@ -132,7 +125,7 @@ void View::draw(Sprite_set& set)
             set.add_sprite(valid_squares,screen_posn,4);
         }
     }
-    // if the player has selected a move, draw a gray square over the piece.
+
     if (!selected_move.empty()){
         for (Position posn : selected_move){
             Position screen_posn{posn.x * grid_size, posn.y*grid_size};
@@ -140,7 +133,7 @@ void View::draw(Sprite_set& set)
         }
     }
 
-    //if either of the kings are in check, draw a red tile behind them
+
     if (model_.is_in_check(Player::black)){
         Position king_posn = model_.find_king(Player::black);
         Position screen_posn{king_posn.x * grid_size, king_posn.y * grid_size};
@@ -160,10 +153,8 @@ void View::draw(Sprite_set& set)
 // helper for Draw. Draws the background board and the alternating colors.
 void View::draw_board(Sprite_set& set)
 {
-    //draw the board sprite, a rectangle located at 0,0
     set.add_sprite(View::board_sprite, ge211::Posn<int>{0,0} );
 
-    // for putting down a checkerboard
     for (Position posn : View::model_.board()) {
         if (posn.y % 2 == 0) {
             if (posn.x % 2 != 0) {
@@ -179,46 +170,40 @@ void View::draw_board(Sprite_set& set)
     }
 }
 
-// helper for drawing the background and the clock.
+// helper for drawing the background, the clock, and the capture/turn indicator.
 void View::draw_background(Sprite_set& set)
 {
-    // background:
     set.add_sprite(background, {0,0}, 0);
 
-    // clock:
     set.add_sprite(black_matte, config.black_timer_location, 3);
     set.add_sprite(white_matte, config.white_timer_location, 3);
 
-    // capture and turn indicator:
     set.add_sprite(whos_turn, config.capture_location, 3);
     set.add_sprite(whos_turn, config.monitor_location, 3);
 }
 
 View::Dimensions
+// Always returns the same size since board will always be 8x8.
 View::initial_window_dimensions() const
 {
-    // always return this default window size since we will keep the board
-    // and UI constant.
     return config.board_size;
 }
 
 std::string
 View::initial_window_title() const
 {
-    // You can change this if you want:
     return "Chess";
 }
 
+// Helper for the clocks. Builds the clock time and converts the total amount
+// of seconds into standard time (i.e 0:00)
 void View::update_time_text(Player p, std::string text)
 {
-    //make a new builder for text
     ge211::Font sans30{"open_sans.ttf", 30};
     ge211::Text_sprite::Builder text_builder(sans30);
 
-    //add the text to our builder and reconfigure
     text_builder.message(text);
 
-    //different colors and sprites for black and white
     if (p == Player::black) {
         text_builder.color(config.white_color);
         black_time_text.reconfigure(text_builder);
@@ -236,7 +221,6 @@ void View::update_time_text(Player p, std::string text)
 //text box
 void View::update_capture_text(Piece a, Piece b)
 {
-    // new builder for text:
     ge211::Font sans20{"sans.ttf", 17};
     ge211::Text_sprite::Builder text_builder(sans20);
     std::string atype = " ";
@@ -244,7 +228,6 @@ void View::update_capture_text(Piece a, Piece b)
     std::string takes = "takes ";
     std::string aplayer = " ";
     std::string bplayer = " ";
-    // text for players.
 
     if (a.get_player() == Player::white){
         aplayer = "White ";
@@ -253,7 +236,7 @@ void View::update_capture_text(Piece a, Piece b)
         aplayer = "Black ";
         bplayer = "white ";
     }
-    // Piece a type:
+
     switch(a.get_piece_type()) {
         case Piece_type::pawn: {
            atype = "pawn ";
@@ -284,7 +267,7 @@ void View::update_capture_text(Piece a, Piece b)
             break;
         }
     }
-    // Piece b type:
+
     switch(b.get_piece_type()) {
         case Piece_type::pawn: {
             btype = "pawn.";
@@ -311,13 +294,16 @@ void View::update_capture_text(Piece a, Piece b)
             break;
         }
     }
-    // final string:
     takes = aplayer + atype + takes + bplayer + btype;
     text_builder.message(takes);
     text_builder.color(config.capture_color);
     capture_text.reconfigure(text_builder);
 }
 
+// updates the monitor on the sidebar of the chessboard. This monitor will
+// display important information, like who's turn it is and if a checkmate
+// has been served. Also checks to see if the clocks have run out of time and
+// prints out winner on time.
 void View::monitor_update(Sprite_set& set)
 {
     ge211::Font sans20{"sans.ttf", 17};

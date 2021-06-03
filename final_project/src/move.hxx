@@ -2,13 +2,8 @@
 
 #include "position_set.hxx"
 
-//#include <ge211.hxx>
-
 #include <unordered_map>
 #include <utility>
-
-//NOTE: this has been modified for the sake of the CHESS game.
-//see changes to what "first" and "second" mean.
 
 /// A move. The two fields are:
 ///
