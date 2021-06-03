@@ -240,7 +240,7 @@ TEST_CASE("Movement of all pieces")
     // be about ten moves. This tests stalemate, piece movement, and also a
     // check (but not a mate).
     // initialize model
-    Model m = Model(false);
+    Model m = Model();
     //check that model initialized properly
     CHECK(m.turn() == Player::white);
     CHECK(m.winner() == Player::neither);
@@ -254,8 +254,8 @@ TEST_CASE("Movement of all pieces")
     CHECK(white_knight -> second[{0,5}]);
     CHECK(white_knight -> second[{2,5}]);
     //Move pawns to cycle to next turn:
-    m.play_move({4,6},{4,4}, false);
-    m.play_move({1,1},{1,3}, false);
+    m.play_move({4,6},{4,4});
+    m.play_move({1,1},{1,3});
     // Check remaining piece types
     // Bishop:
     Move const* white_bishop = m.find_move({5,7});
