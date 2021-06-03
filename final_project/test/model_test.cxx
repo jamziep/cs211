@@ -161,7 +161,7 @@ TEST_CASE("castling king-side on white")
     CHECK(white_moves -> second[{2,4}]);
     m.play_move({5,7}, {2,4}, false); //Bf1 -> c4
     m.play_move({7,2},{6,0}, false); //knight repeats
-    m.play_move({6,7}, {5,5}, false); //Kg1 -> f3
+    m.play_move({6,7}, {5,5}, false); //Ng1 -> f3
     m.play_move({6,0},{7,2}, false); //knight repeats
     // castle kingside:
     m.play_move({4,7},{6,7}, false);
@@ -198,6 +198,49 @@ TEST_CASE("Scholar's Mate: White")
     CHECK(m.winner() == Player::white);
 }
 
+TEST_CASE("Sam Loyd Stalemate")
+{
+    // this test case will move pieces in the board until stalemate. Should
+    // be about ten moves. This tests stalemate, piece movement, and also a
+    // check (but not a mate).
+    // initialize model
+    Model m = Model();
+    //check that model initialized properly
+    CHECK(m.turn() == Player::white);
+    CHECK(m.winner() == Player::neither);
+    //progression:
+    m.play_move({4, 6}, {4, 5}, false); // e3
+    m.play_move({0, 1}, {0, 3}, false); // a5
+    m.play_move({3, 7}, {7, 3}, false); // Qh5
+    m.play_move({0, 0}, {0, 2}, false); // Ra6
+    m.play_move({7, 3}, {0, 3}, false); // Qxa5
+    m.play_move({7, 1}, {7, 3}, false); // h5
+    m.play_move({7, 6}, {7, 4}, false); // h4
+    m.play_move({0, 2}, {7, 2}, false); // Rah6
+    m.play_move({0, 3}, {2, 1}, false); // QXc7
+    m.play_move({5, 1}, {5, 2}, false); // f6
+    m.play_move({2, 1}, {3, 1}, true); // Qxd7+ this is
+    // causing errors for other tests when set to true for some reason
+    // this is the check. Check that moves for black that do not get black
+    // out of check are invalid.
+    Move const* empty_moves = m.find_move({5,2});
+    CHECK(empty_moves -> second.empty());
+    m.play_move({4, 0}, {5, 1}, false); // Kf7
+    m.play_move({3, 1}, {1, 1}, false); // Qxb7
+    m.play_move({3, 0}, {3, 5}, false); // Qd3
+    m.play_move({1, 1}, {1, 0}, false); // Qxb8
+    m.play_move({3, 5}, {7, 1}, false); // Qh7
+    m.play_move({1, 0}, {2, 0}, false); // Qxc8
+    m.play_move({5, 1}, {6, 2}, false); // Kg6
+    m.play_move({2, 0}, {4, 2}, false); // Qe6
+    // king should now be in stalemate. Check to see that the king has no
+    // valid moves. (Currently fails this because stalemate has not been
+    // implemented yet)
+    Move const* king_moves = m.find_move({6,2});
+    CHECK(king_moves -> second.empty());
+}
+
+
 TEST_CASE("Bishop moves")
 {
 
@@ -227,15 +270,5 @@ TEST_CASE("Rook moves")
 TEST_CASE("White in check")
 {
 
-
-}
-
-TEST_CASE("Black in checkmate")
-{
-
-}
-
-TEST_CASE("White in stalemate")
-{
 
 }

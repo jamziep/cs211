@@ -172,11 +172,12 @@ void Controller::on_frame(double dt) {
     }
     white_text += std::to_string(white_seconds);
 
-    view_.update_text_box(Player::black, black_text);
-    view_.update_text_box(Player::white, white_text);
+    //view_.update_time_text(Player::black, black_text);
+    //view_.update_time_text(Player::white, white_text);
 
-    std::string black_text = view_.config.seconds_to_text(black_total_seconds);
-    std::string white_text = view_.config.seconds_to_text(white_total_seconds);
+    //std::string black_text = view_.config.seconds_to_text (black_total_seconds);
+    //std::string white_text = view_.config.seconds_to_text
+    // (white_total_seconds);
 
     view_.update_time_text(Player::black, black_text);
     view_.update_time_text(Player::white, white_text);

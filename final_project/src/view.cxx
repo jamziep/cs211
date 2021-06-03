@@ -329,10 +329,10 @@ void View::monitor_update(Sprite_set& set)
         monitors = "It is white's turn.";
     } else if (model_.turn() == Player::black){
         monitors = "It is black's turn.";
-    } else if (model_.winner() == Player::black){
-        monitors = "Checkmate. Black wins.";
-    }else if (model_.winner() == Player::black){
+    } else if (model_.winner() == Player::white){
         monitors = "Checkmate. White wins.";
+    }else if (model_.winner() == Player::black){
+        monitors = "Checkmate. Black wins.";
     }
     text_builder.message(monitors);
     text_builder.color(config.capture_color);
