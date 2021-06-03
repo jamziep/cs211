@@ -148,18 +148,14 @@ TEST_CASE("castling king-side on white")
     CHECK(m.return_piece_type({5,7}) == Piece_type::rook);
 }
 
-// TEST CASE: SCHOLAR'S MATE (3/5)
+// TEST CASE: FOOL'S MATE (3/5)
 // this test will walk through an entire game of chess, testing pawn,
 // knight, bishop, and queen movement as well as checkmate and check. This
-// four-move game is an easy way to test an entire game and important
+// two-move game is an easy way to test an entire game and important
 // interactions between the players in a possible game.
 // The moves in this test are the following:
-// 1. e4 - e5
-// 2. Bc4 - Nc6
-// 3. Qh5 - Nf6
-// 4. Qxf7 - MATE
 
-TEST_CASE("Scholar's Mate: White")
+TEST_CASE("Fool's Mate: Black")
 {
 
     Model m = Model();
@@ -167,15 +163,12 @@ TEST_CASE("Scholar's Mate: White")
     CHECK(m.turn() == Player::white);
     CHECK(m.winner() == Player::neither);
 
-    m.play_move({4,6},{4,4}); // e4
-    m.play_move({4,1},{4,3}); // e5
-    m.play_move({5,7},{2,4}); // Bc4
-    m.play_move({1,0},{2,2}); // Nc6
-    m.play_move({3,7},{7,3}); // Qh5
-    m.play_move({6,0},{5,2}); // Nf6
-    m.play_move({7,3},{5,1}); // Qxf7 and mate
+    m.play_move({5,6},{5,5}); // f3
+    m.play_move({4,1},{4,2}); // e6
+    m.play_move({6,6},{6,4}); // g4
+    m.play_move({3,0},{7,4}); // Qh4+ mate
 
-    CHECK(m.winner() == Player::white);
+    CHECK(m.winner() == Player::black);
 }
 
 // TEST CASE: SAM LOYD STALEMATE (4/5)
