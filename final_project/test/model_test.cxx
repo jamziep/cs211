@@ -206,7 +206,7 @@ TEST_CASE("Sam Loyd Stalemate")
     m.play_move({7, 1}, {7, 3}); // h5
     m.play_move({7, 6}, {7, 4}); // h4
     m.play_move({0, 2}, {7, 2}); // Rah6
-    m.play_move({0, 3}, {2, 1}); // QXc7
+    m.play_move({0, 3}, {2, 1}); // Qxc7
     m.play_move({5, 1}, {5, 2}); // f6
     m.play_move({2, 1}, {3, 1}); // Qxd7+ this is
     // causing errors for other tests when set to true for some reason
@@ -222,12 +222,13 @@ TEST_CASE("Sam Loyd Stalemate")
     m.play_move({1, 0}, {2, 0}); // Qxc8
     m.play_move({5, 1}, {6, 2}); // Kg6
     m.play_move({2, 0}, {4, 2}); // Qe6
-    // king should now be in stalemate. Check to see that the king has no
-    // valid moves. (Currently fails this because stalemate has not been
-    // implemented yet)
+    // king should now be in stalemate. Check to see that the model has
+    // successfully recognized the game as over and that the winner is still
+    // neither.
     auto king_ = m.return_piece_type({6,2});
     CHECK(king_ == Piece_type::king);
     CHECK(m.winner() == Player::neither);
+    CHECK(m.turn() == Player::neither);
     //Move const* king_moves = m.find_move({6,2});
     //CHECK(king_moves -> second.empty());
 }
@@ -274,4 +275,5 @@ TEST_CASE("Movement of all pieces")
     CHECK(white_pawn -> second[{4,3}]);
     CHECK(!white_pawn -> second[{4,2}]);
 }
+
 
