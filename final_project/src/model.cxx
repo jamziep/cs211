@@ -101,14 +101,6 @@ void Model::play_move(Position start, Position end)
             return;
         }
 
-        if (black_timer.elapsed_time().seconds() > config_.time_limit) {
-            winner_ = Player::white;
-            turn_ = Player::out_of_time;
-            return;
-        } else if (white_timer.elapsed_time().seconds() > config_.time_limit) {
-            winner_ = Player::black;
-            turn_ = Player::out_of_time;
-        }
 
         Model::turn_ = other_player(Model::turn_);
         Model::compute_next_moves_();
@@ -453,7 +445,7 @@ bool Model::Rrook_castle (Player plr)
                 board_[{5, 7}].get_piece_type() == Piece_type::null &&
                 !Wcastle) {
                 WRcast = true;
-                return true;
+                return WRcast;
             } else {
                 return false;
             }
@@ -466,7 +458,7 @@ bool Model::Rrook_castle (Player plr)
                 board_[{5, 0}].get_piece_type() == Piece_type::null &&
                 !Bcastle) {
                 BRcast = true;
-                return true;
+                return BRcast;
             } else {
                 return false;
             }
@@ -489,7 +481,7 @@ bool Model::Lrook_castle (Player plr)
                 board_[{3, 7}].get_piece_type() == Piece_type::null &&
                 !Wcastle) {
                 WLcast = true;
-                return true;
+                return WLcast;
             } else {
                 return false;
             }
@@ -503,7 +495,7 @@ bool Model::Lrook_castle (Player plr)
                 board_[{3, 0}].get_piece_type() == Piece_type::null &&
                 !Bcastle) {
                 BLcast = true;
-                return true;
+                return BLcast;
             } else {
                 return false;
             }
@@ -540,4 +532,18 @@ Piece_type Model::return_piece_type(Position posn)
     return piece.get_piece_type();
 }
 
+void Model::set_out_of_time(int time_limit) {
 
+    if (black_timer.elapsed_time().seconds() > time_limit) {
+        winner_ = Player::white;
+        turn_ = Player::out_of_time;
+        black_timer.pause();
+        white_timer.pause();
+
+    } else if (white_timer.elapsed_time().seconds() > time_limit) {
+        winner_ = Player::black;
+        turn_ = Player::out_of_time;
+        black_timer.pause();
+        white_timer.pause();
+    }
+}
