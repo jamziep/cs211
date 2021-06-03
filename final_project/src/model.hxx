@@ -137,6 +137,9 @@ private:
     ge211::Pausable_timer black_timer;
     ge211::Pausable_timer white_timer;
 
+    bool valid_moves_white;
+    bool valid_moves_black;
+
     //for deciding if board should calculate for stalemate
     bool use_stalemate;
 
