@@ -328,9 +328,21 @@ void View::monitor_update(Sprite_set& set)
     } else if (model_.turn() == Player::black){
         monitors = "It is black's turn.";
     } else if (model_.winner() == Player::white){
-        monitors = "Checkmate. White wins.";
+
+        if (model_.turn() == Player::out_of_time) {
+            monitors = "Out of time! White wins.";
+        } else {
+            monitors = "Checkmate. White wins.";
+        }
+
     }else if (model_.winner() == Player::black){
-        monitors = "Checkmate. Black wins.";
+
+        if (model_.turn() == Player::out_of_time) {
+            monitors = "Out of time! Black wins.";
+        } else {
+            monitors = "Checkmate. Black wins.";
+        }
+
     } else if (model_.winner() == Player::neither) {
         monitors = "Stalemate.";
     }

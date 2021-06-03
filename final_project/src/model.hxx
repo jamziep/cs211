@@ -1,9 +1,7 @@
 #pragma once
 
-#ifndef CHESS_MODEL_HXX
-  #define CHESS_MODEL_HXX
-
 #include "board.hxx"
+#include "game_config.hxx"
 
 // Represents the state of the game.
 class Model
@@ -38,11 +36,6 @@ public:
     /// Returns a rectangle containing all the positions of the board.
     /// This can be used to iterate over the positions.
     Rectangle board() const;
-
-    /// Returns whether the game is finished. This is true when neither
-    /// player can move.
-    bool is_game_over() const
-    {return turn() == Player::neither;}
 
     /// Returns the current turn, or `Player::neither` if the game is
     /// over.
@@ -114,13 +107,6 @@ public:
     Position find_king(Player p) const
     {return board_.find_king_location(p);}
 
-
-#ifdef CS211_TESTING
-    // When this class is compiled for testing, members of a struct named
-    // Test_access will be allowed to access private members of this class.
-    friend struct Test_access;
-#endif
-
 private:
     //
     // PRIVATE MEMBER VARIABLES
@@ -136,6 +122,8 @@ private:
     //for timing in view.cxx
     ge211::Pausable_timer black_timer;
     ge211::Pausable_timer white_timer;
+
+    Game_config config_;
 
     bool valid_moves_white;
     bool valid_moves_black;
@@ -202,6 +190,4 @@ public:
     Piece_type
     return_piece_type(Position posn);
 };
-
-#endif //chess_model_hxx
 

@@ -46,6 +46,6 @@ struct Game_config {
     Dimensions timer_size;
     Dimensions turn_tracker_size;
 
-
-
+    //max time on timer, in seconds
+    int time_limit = 600;
 };

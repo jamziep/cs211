@@ -39,7 +39,7 @@ Move const* Model::find_move(Position pos) const
 }
 
 
-// necessary bools for multiple piece movement in case of a castle.
+// necessary booleans for multiple piece movement in case of a castle.
 bool BRcast = false;
 bool BLcast = false;
 bool WRcast = false;
@@ -89,8 +89,8 @@ void Model::play_move(Position start, Position end)
                 winner_ = Player::white;
             } else {
                 winner_ = Player::neither;
-                return;
             }
+            return;
 
         } else if (!valid_moves_white) {
             Model::turn_ = Player::neither;
@@ -101,8 +101,17 @@ void Model::play_move(Position start, Position end)
                 winner_ = Player::black;
             } else {
                 winner_ = Player::neither;
-                return;
             }
+            return;
+        }
+
+        if (black_timer.elapsed_time().seconds() > config_.time_limit) {
+            winner_ = Player::white;
+            turn_ = Player::out_of_time;
+            return;
+        } else if (white_timer.elapsed_time().seconds() > config_.time_limit) {
+            winner_ = Player::black;
+            turn_ = Player::out_of_time;
         }
 
         Model::turn_ = other_player(Model::turn_);
@@ -443,8 +452,6 @@ bool Model::is_in_check(Player p) const{
 
 bool Model::no_moves_left(Player p) const
 {
-   //TODO: change this to checking if next_moves_ is empty for a player
-
    //iterate through next_moves_
    Model m = *this;
    m.turn_ = p;

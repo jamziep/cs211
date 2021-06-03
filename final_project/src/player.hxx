@@ -8,7 +8,8 @@ enum class Player
     black,
     white,
     neither,
-    null
+    null,
+    out_of_time
 };
 
 // Returns the other player.
