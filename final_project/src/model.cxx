@@ -520,7 +520,7 @@ bool Model::Rrook_castle (Player plr)
                 board_[{5, 7}].get_piece_type() == Piece_type::null &&
                 !Wcastle) {
                 WRcast = true;
-                return true;
+                return WRcast;
             } else {
                 return false;
             }
@@ -533,7 +533,7 @@ bool Model::Rrook_castle (Player plr)
                 board_[{5, 0}].get_piece_type() == Piece_type::null &&
                 !Bcastle) {
                 BRcast = true;
-                return true;
+                return BRcast;
             } else {
                 return false;
             }
@@ -556,7 +556,7 @@ bool Model::Lrook_castle (Player plr)
                 board_[{3, 7}].get_piece_type() == Piece_type::null &&
                 !Wcastle) {
                 WLcast = true;
-                return true;
+                return WLcast;
             } else {
                 return false;
             }
@@ -570,7 +570,7 @@ bool Model::Lrook_castle (Player plr)
                 board_[{3, 0}].get_piece_type() == Piece_type::null &&
                 !Bcastle) {
                 BLcast = true;
-                return true;
+                return BLcast;
             } else {
                 return false;
             }
