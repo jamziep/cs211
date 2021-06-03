@@ -1,7 +1,6 @@
 #pragma once
 
 #include "board.hxx"
-#include "game_config.hxx"
 
 // Represents the state of the game.
 class Model
@@ -107,6 +106,9 @@ public:
     Position find_king(Player p) const
     {return board_.find_king_location(p);}
 
+    //lets the view communicate with the model and set "out of time"
+    void set_out_of_time(int time_limit);
+
 private:
     //
     // PRIVATE MEMBER VARIABLES
@@ -122,8 +124,6 @@ private:
     //for timing in view.cxx
     ge211::Pausable_timer black_timer;
     ge211::Pausable_timer white_timer;
-
-    Game_config config_;
 
     bool valid_moves_white;
     bool valid_moves_black;

@@ -105,14 +105,6 @@ void Model::play_move(Position start, Position end)
             return;
         }
 
-        if (black_timer.elapsed_time().seconds() > config_.time_limit) {
-            winner_ = Player::white;
-            turn_ = Player::out_of_time;
-            return;
-        } else if (white_timer.elapsed_time().seconds() > config_.time_limit) {
-            winner_ = Player::black;
-            turn_ = Player::out_of_time;
-        }
 
         Model::turn_ = other_player(Model::turn_);
         Model::compute_next_moves_();
@@ -615,4 +607,18 @@ Piece_type Model::return_piece_type(Position posn)
     return piece.get_piece_type();
 }
 
+void Model::set_out_of_time(int time_limit) {
 
+    if (black_timer.elapsed_time().seconds() > time_limit) {
+        winner_ = Player::white;
+        turn_ = Player::out_of_time;
+        black_timer.pause();
+        white_timer.pause();
+
+    } else if (white_timer.elapsed_time().seconds() > time_limit) {
+        winner_ = Player::black;
+        turn_ = Player::out_of_time;
+        black_timer.pause();
+        white_timer.pause();
+    }
+}

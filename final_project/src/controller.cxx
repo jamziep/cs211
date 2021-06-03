@@ -149,5 +149,10 @@ void Controller::on_frame(double dt) {
 
     view_.update_time_text(Player::black, black_text);
     view_.update_time_text(Player::white, white_text);
+
+    if (model_.elapsed_time_black().seconds() > view_.config.time_limit
+        || model_.elapsed_time_white().seconds() > view_.config.time_limit) {
+        model_.set_out_of_time(view_.config.time_limit);
+    }
 }
 
