@@ -204,7 +204,7 @@ TEST_CASE("Sam Loyd Stalemate")
     // be about ten moves. This tests stalemate, piece movement, and also a
     // check (but not a mate).
     // initialize model
-    Model m = Model();
+    Model m = Model(false);
     //check that model initialized properly
     CHECK(m.turn() == Player::white);
     CHECK(m.winner() == Player::neither);
