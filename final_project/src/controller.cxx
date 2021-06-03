@@ -2,8 +2,8 @@
 
 static int const grid_size = 95;
 
-Controller::Controller()
-        : model_(),
+Controller::Controller(bool use_stalemate)
+        : model_(use_stalemate),
           view_(model_)
 { }
 

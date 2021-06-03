@@ -40,8 +40,6 @@ View::View(Model const& model)
           // indicators
           capture_text(),
           monitor(),
-          // black_capture_text(),
-          // white_capture_text(),
 
           //valid moves:
           valid_squares(20, config.light_grey),

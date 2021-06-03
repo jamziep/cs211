@@ -5,12 +5,12 @@
 
 using namespace ge211;
 
-Model::Model()
+Model::Model(bool stalemate)
         : board_({8,8}),
           next_moves_(),
           black_timer(true),
-          white_timer (true)
-          //pieces_taken_()
+          white_timer (true),
+          use_stalemate(stalemate)
 {
 
     //initialize next_moves_ to turn_'s possible next moves,
@@ -116,11 +116,16 @@ void Model::play_move(Position start, Position end, bool check4check)
         //doesn't account for stalemate or moves that put your player
         //in check
 
-        //if (check4check) {
+        if (use_stalemate) {
+            if (check4check) {
+                Model::modify_next_moves_();
+            }
+
+        } else {
             if (is_in_check(turn_) && check4check) {
                 Model::modify_next_moves_();
             }
-        //}
+        }
     }
 }
 
