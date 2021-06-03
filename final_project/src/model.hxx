@@ -108,7 +108,7 @@ public:
     //determines whether this player is at a state of checkmate.
     //takes in a player, then carries out is_in_check for all possible
     //future states of the board after a move is made
-    bool is_checkmated(Player p) const;
+    bool no_moves_left(Player p) const;
 
     //finds the king for a player within its board member
     Position find_king(Player p) const

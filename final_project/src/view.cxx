@@ -331,6 +331,8 @@ void View::monitor_update(Sprite_set& set)
         monitors = "Checkmate. Black wins.";
     }else if (model_.winner() == Player::black){
         monitors = "Checkmate. White wins.";
+    } else if (model_.winner() == Player::neither) {
+        monitors = "Stalemate.";
     }
     text_builder.message(monitors);
     text_builder.color(config.capture_color);

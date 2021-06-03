@@ -83,22 +83,37 @@ void Model::play_move(Position start, Position end, bool check4check)
         }
 
         if (check4check) {
+
             if (is_in_check(Player::black)
                 || is_in_check(Player::white)) {
 
-                if (is_checkmated(Player::black)) {
+                if (no_moves_left(Player::black)) {
                     Model::turn_ = Player::neither;
                     winner_ = Player::white;
                     black_timer.pause();
                     white_timer.pause();
                     return;
 
-                } else if (is_checkmated(Player::white)) {
+                } else if (no_moves_left(Player::white)) {
                     Model::turn_ = Player::neither;
                     winner_ = Player::black;
                     black_timer.pause();
                     white_timer.pause();
                     return;
+                }
+            } else {
+
+                if (no_moves_left(Player::black)) {
+                    Model::turn_ = Player::neither;
+                    winner_ = Player::neither;
+                    black_timer.pause();
+                    white_timer.pause();
+
+                } else if (no_moves_left(Player::white)) {
+                    Model::turn_ = Player::neither;
+                    winner_ = Player::neither;
+                    black_timer.pause();
+                    white_timer.pause();
                 }
             }
         }
@@ -205,7 +220,12 @@ Position_set Model::spaces_ult(Piece p)
         throw Client_logic_error("Model::spaces_ult: piece must be r/b/q");
     }
 
+    size_t counter = 0;
     for (Dimensions dir : dirs_travel) {
+
+        counter++;
+        if (counter > 8)
+        { break; }
 
         Position_set moves_in_dir = moves_in_dir_(p.get_posn(), dir);
         possible_moves.operator|=(moves_in_dir);
@@ -412,7 +432,7 @@ bool Model::is_in_check(Player p) const{
 }
 
 
-bool Model::is_checkmated(Player p) const
+bool Model::no_moves_left(Player p) const
 {
    //TODO: change this to checking if next_moves_ is empty for a player
 
