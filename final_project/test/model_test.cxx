@@ -16,7 +16,7 @@ TEST_CASE("example test (TODO: replace this)")
 TEST_CASE("Model::play_move")
 {
     //initialize a model
-    Model m = Model(false);
+    Model m = Model();
 
     //check the possible moves. current player is white
     CHECK(m.turn() == Player::white);
@@ -44,7 +44,7 @@ TEST_CASE("Model::play_move")
                             Position{2,4}));
 
     //try to play a move
-    m.play_move({2,6}, {2,4}, false);
+    m.play_move({2,6}, {2,4});
 
     //check that the piece is now here
     CHECK(m[{2,4}] == Piece(Piece_type::pawn, Player::white,
@@ -56,7 +56,7 @@ TEST_CASE("Model::play_move")
                                   Position{2,3}));
 
     //make a move
-    m.play_move({2,1}, {2,3}, false);
+    m.play_move({2,1}, {2,3});
     CHECK(m[{2,3}] == Piece(Piece_type::pawn, Player::black,
                                   Position{2,3}));
 
@@ -67,7 +67,7 @@ TEST_CASE("Model::play_move")
 TEST_CASE("Pawn moves") {
 
     //initialize a model
-    Model m = Model(false);
+    Model m = Model();
 
     //check that model initialized properly
     CHECK(m.turn() == Player::white);
@@ -93,7 +93,7 @@ TEST_CASE("Pawn promotion"){
     // reaches the back rank of the opponent. It also tests pawn, knight, and
     // queen movement and special pawn movement like starting with a
     // two-square move and capturing pieces diagonally.
-    Model m = Model(false);
+    Model m = Model();
 
     //check that model initialized properly
     CHECK(m.turn() == Player::white);
@@ -104,29 +104,29 @@ TEST_CASE("Pawn promotion"){
     CHECK(white_pawn_moves);
     CHECK(white_pawn_moves -> second[{5,4}]);
     // play the move. (pawn to f4)
-    m.play_move({5,6},{5,4}, false);
+    m.play_move({5,6},{5,4});
 
     // check moves for the black pawn to be taken.
     Move const* black_pawn_moves = m.find_move({6,1});
     CHECK(black_pawn_moves);
     CHECK(black_pawn_moves -> second[{6,3}]);
     // play move. (black pawn to g5)
-    m.play_move({6,1},{6,3}, false);
+    m.play_move({6,1},{6,3});
 
     // sequence:
     // white pawn takes black pawn on g5.
     white_pawn_moves = m.find_move({5,4});
     CHECK(white_pawn_moves -> second[{6,3}]);
-    m.play_move({5,4},{6,3}, false);
+    m.play_move({5,4},{6,3});
     // repeat knight to h6 over and over as pawn moves towards back rank.
-    m.play_move({6,0},{7,2}, false); //knight
-    m.play_move({6,3},{6,2}, false); //pawn
-    m.play_move({7,2},{6,0}, false); //knight
-    m.play_move({6,2},{6,1}, false); //pawn
-    m.play_move({6,0},{7,2}, false); //knight
-    m.play_move({6,1},{6,0}, false); //pawn ----> queen
+    m.play_move({6,0},{7,2}); //knight
+    m.play_move({6,3},{6,2}); //pawn
+    m.play_move({7,2},{6,0}); //knight
+    m.play_move({6,2},{6,1}); //pawn
+    m.play_move({6,0},{7,2}); //knight
+    m.play_move({6,1},{6,0}); //pawn ----> queen
     // move a random black pawn to switch sides back to white.
-    m.play_move({1,1},{1,2}, false); // b7 -> b6
+    m.play_move({1,1},{1,2}); // b7 -> b6
     // check to see if the pawn has properly promoted to queen.
     Move const* promoted = m.find_move({6,0});
     // these should all be valid if the pawn was promoted properly.
@@ -141,7 +141,7 @@ TEST_CASE("castling king-side on white")
     // movement. This will test king and rook movement, as well as special
     // exception rules in chess.
     // initialize model
-    Model m = Model(false);
+    Model m = Model();
 
     //check that model initialized properly
     CHECK(m.turn() == Player::white);
@@ -154,17 +154,17 @@ TEST_CASE("castling king-side on white")
     // Castle 0-0
     Move const* white_moves = m.find_move({4,6});
     CHECK(white_moves -> second[{4,4}]);
-    m.play_move({4,6},{4,4}, false); // e2 -> e4
-    m.play_move({6,0},{7,2}, false); //black knight repeats
+    m.play_move({4,6},{4,4}); // e2 -> e4
+    m.play_move({6,0},{7,2}); //black knight repeats
     // check bishop
     white_moves = m.find_move({5,7});
     CHECK(white_moves -> second[{2,4}]);
-    m.play_move({5,7}, {2,4}, false); //Bf1 -> c4
-    m.play_move({7,2},{6,0}, false); //knight repeats
-    m.play_move({6,7}, {5,5}, false); //Ng1 -> f3
-    m.play_move({6,0},{7,2}, false); //knight repeats
+    m.play_move({5,7}, {2,4}); //Bf1 -> c4
+    m.play_move({7,2},{6,0}); //knight repeats
+    m.play_move({6,7}, {5,5}); //Ng1 -> f3
+    m.play_move({6,0},{7,2}); //knight repeats
     // castle kingside:
-    m.play_move({4,7},{6,7}, false);
+    m.play_move({4,7},{6,7});
     // check if castling was completed properly:
     CHECK(m.return_piece_type({6,7}) == Piece_type::king);
     CHECK(m.return_piece_type({5,7}) == Piece_type::rook);
@@ -175,7 +175,7 @@ TEST_CASE("Scholar's Mate: White")
     // this test will walk through an entire game of chess, testing pawn,
     // knight, bishop, and queen movement as well as checkmate.
     // initialize model
-    Model m = Model(false);
+    Model m = Model();
 
     //check that model initialized properly
     CHECK(m.turn() == Player::white);
@@ -186,13 +186,13 @@ TEST_CASE("Scholar's Mate: White")
     // 2. Bc4 - Nc6
     // 3. Qh5 - Nf6
     // 4. Qxf7 - MATE
-    m.play_move({4,6},{4,4}, false); // e4
-    m.play_move({4,1},{4,3}, false); // e5
-    m.play_move({5,7},{2,4}, false); // Bc4
-    m.play_move({1,0},{2,2}, false); // Nc6
-    m.play_move({3,7},{7,3}, false); // Qh5
-    m.play_move({6,0},{5,2}, false); // Nf6
-    m.play_move({7,3},{5,1}, true); // Qxf7 and mate
+    m.play_move({4,6},{4,4}); // e4
+    m.play_move({4,1},{4,3}); // e5
+    m.play_move({5,7},{2,4}); // Bc4
+    m.play_move({1,0},{2,2}); // Nc6
+    m.play_move({3,7},{7,3}); // Qh5
+    m.play_move({6,0},{5,2}); // Nf6
+    m.play_move({7,3},{5,1}); // Qxf7 and mate
 
     // this should be white with checkmate.
     CHECK(m.winner() == Player::white);
@@ -204,35 +204,35 @@ TEST_CASE("Sam Loyd Stalemate")
     // be about ten moves. This tests stalemate, piece movement, and also a
     // check (but not a mate).
     // initialize model
-    Model m = Model(false);
+    Model m = Model();
     //check that model initialized properly
     CHECK(m.turn() == Player::white);
     CHECK(m.winner() == Player::neither);
     //progression:
-    m.play_move({4, 6}, {4, 5}, false); // e3
-    m.play_move({0, 1}, {0, 3}, false); // a5
-    m.play_move({3, 7}, {7, 3}, false); // Qh5
-    m.play_move({0, 0}, {0, 2}, false); // Ra6
-    m.play_move({7, 3}, {0, 3}, false); // Qxa5
-    m.play_move({7, 1}, {7, 3}, false); // h5
-    m.play_move({7, 6}, {7, 4}, false); // h4
-    m.play_move({0, 2}, {7, 2}, false); // Rah6
-    m.play_move({0, 3}, {2, 1}, false); // QXc7
-    m.play_move({5, 1}, {5, 2}, false); // f6
-    m.play_move({2, 1}, {3, 1}, true); // Qxd7+ this is
+    m.play_move({4, 6}, {4, 5}); // e3
+    m.play_move({0, 1}, {0, 3}); // a5
+    m.play_move({3, 7}, {7, 3}); // Qh5
+    m.play_move({0, 0}, {0, 2}); // Ra6
+    m.play_move({7, 3}, {0, 3}); // Qxa5
+    m.play_move({7, 1}, {7, 3}); // h5
+    m.play_move({7, 6}, {7, 4}); // h4
+    m.play_move({0, 2}, {7, 2}); // Rah6
+    m.play_move({0, 3}, {2, 1}); // QXc7
+    m.play_move({5, 1}, {5, 2}); // f6
+    m.play_move({2, 1}, {3, 1}); // Qxd7+ this is
     // causing errors for other tests when set to true for some reason
     // this is the check. Check that moves for black that do not get black
     // out of check are invalid.
     Move const* empty_moves = m.find_move({5,2});
     CHECK(empty_moves -> second.empty());
-    m.play_move({4, 0}, {5, 1}, false); // Kf7
-    m.play_move({3, 1}, {1, 1}, false); // Qxb7
-    m.play_move({3, 0}, {3, 5}, false); // Qd3
-    m.play_move({1, 1}, {1, 0}, false); // Qxb8
-    m.play_move({3, 5}, {7, 1}, false); // Qh7
-    m.play_move({1, 0}, {2, 0}, false); // Qxc8
-    m.play_move({5, 1}, {6, 2}, false); // Kg6
-    m.play_move({2, 0}, {4, 2}, false); // Qe6
+    m.play_move({4, 0}, {5, 1}); // Kf7
+    m.play_move({3, 1}, {1, 1}); // Qxb7
+    m.play_move({3, 0}, {3, 5}); // Qd3
+    m.play_move({1, 1}, {1, 0}); // Qxb8
+    m.play_move({3, 5}, {7, 1}); // Qh7
+    m.play_move({1, 0}, {2, 0}); // Qxc8
+    m.play_move({5, 1}, {6, 2}); // Kg6
+    m.play_move({2, 0}, {4, 2}); // Qe6
     // king should now be in stalemate. Check to see that the king has no
     // valid moves. (Currently fails this because stalemate has not been
     // implemented yet)

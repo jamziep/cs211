@@ -2,8 +2,8 @@
 
 static int const grid_size = 95;
 
-Controller::Controller(bool use_stalemate)
-        : model_(use_stalemate),
+Controller::Controller()
+        : model_(),
           view_(model_)
 { }
 
@@ -74,7 +74,7 @@ void Controller::on_mouse_down(ge211::Mouse_button btn,
                         if(to_piece.get_piece_type() != Piece_type::null) {
                             view_.update_capture_text(selected_piece, to_piece);
                         }
-                        model_.play_move(selected_posn, square_coords, true);
+                        model_.play_move(selected_posn, square_coords);
                     }
                     // printing potential captures:
                     selected = false;

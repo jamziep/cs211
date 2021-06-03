@@ -25,7 +25,7 @@ public:
     ///
     ///  - Throws `ge211::Client_logic_error` if `size` is less than 2
     ///    or greater than 8.
-    explicit Model(bool use_stalemate);
+    explicit Model();
 
     /// Constructs a model with the given width and height.
     ///
@@ -98,7 +98,7 @@ public:
     ///  - Throws `ge211::Client_logic_error` if the move is not currently
     ///    allowed for the current player.
     ///
-    void play_move(Position, Position, bool check4check);
+    void play_move(Position, Position);
 
     //determines whether or not the model is currently at a state of check.
     //applies to any theoretical model so that we can look at the status of
@@ -139,9 +139,6 @@ private:
 
     bool valid_moves_white;
     bool valid_moves_black;
-
-    //for deciding if board should calculate for stalemate
-    bool use_stalemate;
 
     // INVARIANT:
     //  - `next_moves_` is always current for the state of the game.

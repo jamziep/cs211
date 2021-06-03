@@ -5,12 +5,11 @@
 
 using namespace ge211;
 
-Model::Model(bool stalemate)
+Model::Model()
         : board_({8,8}),
           next_moves_(),
           black_timer(true),
-          white_timer (true),
-          use_stalemate(stalemate)
+          white_timer (true)
 {
 
     //initialize next_moves_ to turn_'s possible next moves,
@@ -49,7 +48,7 @@ bool Wcastle = false;
 bool Bcastle = false;
 
 
-void Model::play_move(Position start, Position end, bool check4check)
+void Model::play_move(Position start, Position end)
 {
     Move const* movep = find_move(start);
     if (!movep) {
@@ -66,11 +65,7 @@ void Model::play_move(Position start, Position end, bool check4check)
             board_.remove_by_posn(end);
         }
 
-        //castle_check(start, end);
         set_new_posn(start, end);
-
-        //the current place where I want to put this: after the king
-        //has been placed, but before we change "turn_"
         castle_check(start, end);
         p_promo(end);
 
@@ -82,97 +77,41 @@ void Model::play_move(Position start, Position end, bool check4check)
             resume_black();
         }
 
-        // if (check4check) {
-        //
-        //     if (is_in_check(Player::black)
-        //         || is_in_check(Player::white)) {
-        //
-        //         if (no_moves_left(Player::black)) {
-        //             Model::turn_ = Player::neither;
-        //             winner_ = Player::white;
-        //             black_timer.pause();
-        //             white_timer.pause();
-        //             return;
-        //
-        //         } else if (no_moves_left(Player::white)) {
-        //             Model::turn_ = Player::neither;
-        //             winner_ = Player::black;
-        //             black_timer.pause();
-        //             white_timer.pause();
-        //             return;
-        //         }
-        //     } else {
-        //
-        //         if (no_moves_left(Player::black)) {
-        //             Model::turn_ = Player::neither;
-        //             winner_ = Player::neither;
-        //             black_timer.pause();
-        //             white_timer.pause();
-        //
-        //         } else if (no_moves_left(Player::white)) {
-        //             Model::turn_ = Player::neither;
-        //             winner_ = Player::neither;
-        //             black_timer.pause();
-        //             white_timer.pause();
-        //         }
-        //     }
-        // }
+        valid_moves_black = !no_moves_left(Player::black);
+        valid_moves_white = !no_moves_left(Player::white);
 
-        if (check4check) {
+        if (!valid_moves_black) {
+            Model::turn_ = Player::neither;
+            black_timer.pause();
+            white_timer.pause();
 
-            valid_moves_black = !no_moves_left(Player::black);
-            valid_moves_white = !no_moves_left(Player::white);
+            if (is_in_check(Player::black)) {
+                winner_ = Player::white;
+            } else {
+                winner_ = Player::neither;
+                return;
+            }
 
-            if (!valid_moves_black) {
-                Model::turn_ = Player::neither;
-                black_timer.pause();
-                white_timer.pause();
+        } else if (!valid_moves_white) {
+            Model::turn_ = Player::neither;
+            black_timer.pause();
+            white_timer.pause();
 
-                if (is_in_check(Player::black)) {
-                    winner_ = Player::white;
-                } else {
-                    winner_ = Player::neither;
-                    return;
-                }
-
-            } else if (!valid_moves_white) {
-                Model::turn_ = Player::neither;
-                black_timer.pause();
-                white_timer.pause();
-
-                if (is_in_check(Player::white)) {
-                    winner_ = Player::black;
-                } else {
-                    winner_ = Player::neither;
-                    return;
-                }
+            if (is_in_check(Player::white)) {
+                winner_ = Player::black;
+            } else {
+                winner_ = Player::neither;
+                return;
             }
         }
-
 
         Model::turn_ = other_player(Model::turn_);
         Model::compute_next_moves_();
 
         //trying this out
         castle_check(start, end);
+        Model::modify_next_moves_();
 
-        //if we're looking to prevent the player from making moves,
-        //modify next_moves to check for that
-
-        //this version is to make the code a bit faster, though it
-        //doesn't account for stalemate or moves that put your player
-        //in check
-
-        if (use_stalemate) {
-            if (check4check) {
-                Model::modify_next_moves_();
-            }
-
-        } else {
-            if (is_in_check(turn_) && check4check) {
-                Model::modify_next_moves_();
-            }
-        }
     }
 }
 
@@ -348,46 +287,6 @@ void Model::compute_next_moves_()
 
         //get the piece at this position, if any
         Piece piece = board_[pos];
-
-        // if (piece.get_piece_type() != Piece_type::null
-        //         && piece.get_player() == turn_) {
-        //
-        //     //get the possible positions of motion for this turn; add Move
-        //     if (piece.get_piece_type() == Piece_type::bishop
-        //             || piece.get_piece_type() == Piece_type::rook
-        //             || piece.get_piece_type() == Piece_type:: queen) {
-        //
-        //         //for the pieces that have unlimited movement
-        //         Position_set curr_moves = spaces_ult(piece);
-        //         next_moves_[pos] = curr_moves;
-        //
-        //     } else if (piece.get_piece_type() == Piece_type::pawn
-        //             || piece.get_piece_type() == Piece_type::knight
-        //             || piece.get_piece_type() == Piece_type::king) {
-        //
-        //         //for the pieces that have limited movement
-        //         Position_set curr_moves = spaces_ltd(piece);
-        //         // check for castling. Adds the move to the moves of the king.
-        //         if (piece.get_piece_type() == Piece_type::king) {
-        //             if (Rrook_castle(piece.get_player())) {
-        //                 if (piece.get_player() == Player::white) {
-        //                     curr_moves[{6, 7}] = true;
-        //                 } else {
-        //                     curr_moves[{6, 0}] = true;
-        //                 }
-        //             }
-        //             if (Lrook_castle(piece.get_player())) {
-        //                 if (piece.get_player() == Player::white) {
-        //                     curr_moves[{2, 7}] = true;
-        //                 } else {
-        //                     curr_moves[{2, 0}] = true;
-        //                 }
-        //             }
-        //         }
-        //
-        //         next_moves_[pos] = curr_moves;
-        //     }
-        // }
 
         if (piece.get_player() == turn_) {
             switch(piece.get_piece_type()) {
