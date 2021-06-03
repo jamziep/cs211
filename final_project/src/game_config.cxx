@@ -38,7 +38,6 @@ std::string Game_config::seconds_to_text(double total_seconds)
     int minutes = (int)total_seconds / 60;
     int seconds = (int)total_seconds % 60;
 
-    //turn these times into strings
     std::string text = "";
     if (minutes < 10) {
         text += "0";

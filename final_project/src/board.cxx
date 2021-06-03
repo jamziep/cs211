@@ -49,16 +49,10 @@ std::vector<Piece> white_start_moves{
 };
 
 
-//for debug
-// Piece piece(Piece_type::rook,Player::dark,{0,0});
-// Piece_set pieces({piece});
-
 Board::Board(Dimensions dims)
         : dims_(dims),
         white_(white_start_moves),
         black_(black_start_moves)
-        // light_(pieces),
-        // dark_(pieces)
 {
     if (dims_.width < 2 || dims_.height < 2) {
         throw Client_logic_error("Board::Board: dims too small");
@@ -96,10 +90,8 @@ Board::operator[](Position pos) const
 //using board.white_ or black_
 void Board::change_piece_posn(Piece p, Position end) {
 
-    //find the starting position of piece
     Position start = p.get_posn();
 
-    //modify the appropriate Piece_set
     if (p.get_player() == Player::white) {
         white_.change_posn(start, end);
     } else if (p.get_player() == Player::black) {
@@ -108,47 +100,40 @@ void Board::change_piece_posn(Piece p, Position end) {
         throw Client_logic_error("Model::change_piece_posn: cannot"
                                  "change the position of Player::neither");
     }
-
-
 }
 
-//find the king in either of the piece_sets, and return its location
-//commented out for now, but KEEP WORKING on it
+//Find the king in either of the piece_sets, and return its location.
+//Can apply to either player and either piece set.
 
 Position Board::find_king_location(Player p) const
 {
-    //decide which piece_set to iterate through
     if (p == Player::black) {
-        //iterate through the piece_set and try to find a piece that has
-        //piece_type king
         Piece_set pcset = black_;
+
         for (size_t ii = 0; ii < pcset.size(); ++ii) {
             Piece curr_piece = pcset[ii];
+
             if (curr_piece.get_piece_type() == Piece_type::king) {
-                //return the position of the king
                 return curr_piece.get_posn();
             }
         }
 
-        //if no king is found, that's a problem
+        //if no king is found
         throw Client_logic_error("Board::find_king_location: no king"
-                                 "found for dark");
+                                 " found for dark");
 
     } else if (p == Player::white) {
-        //iterate through the piece_set and try to find a piece that has
-        //piece_type king
         Piece_set pcset = white_;
+
         for (size_t ii = 0; ii < pcset.size(); ++ii) {
             Piece curr_piece = pcset[ii];
             if (curr_piece.get_piece_type() == Piece_type::king) {
-                //return the position of the king
                 return curr_piece.get_posn();
             }
         }
 
-        //if no king is found, that's a problem
         throw Client_logic_error("Board::find_king_location: no king"
-                                 "found for light");
+                                 " found for light");
 
     } else {
         throw Client_logic_error("Board::find_king_location: can't find"
@@ -156,20 +141,21 @@ Position Board::find_king_location(Player p) const
     }
 }
 
+//First, finds a piece that matches this posn, then goes into the
+//piece_set and "removes" the piece. Really does this by setting
+//piece.active_ = false, so it can't be played anymore.
+
 void Board::remove_by_posn(Position posn) {
 
-    //first, find a piece that matches this posn
     Piece piece = operator[](posn);
 
     if (piece.get_player() == Player::white) {
-        //black_.remove(piece);
         white_.remove(piece);
     } else if (piece.get_player() == Player::black) {
-        //white_.remove(piece)
         black_.remove(piece);
     } else {
         throw Client_logic_error("Board::remove_by_posn: can't remove"
-                                 "a player of type 'neither'");
+                                 " a player of type 'neither'");
     }
 }
 
@@ -236,8 +222,6 @@ Board::rook_directions()
 std::vector<Board::Dimensions> const&
 Board::bishop_directions()
 {
-    //modify this so it uses only the diagonals
-    //use an AND: both x and y must exist
     static std::vector<Board::Dimensions> result;
 
     for (int dx = -1; dx <= 1; ++dx) {
@@ -277,7 +261,7 @@ Board::pawn_directions_dark()
     return result;
 }
 
-//takes in a vector of directions of travel, and modifies them based
+//Takes in a vector of directions of travel, and modifies them based
 //on the current state of the board. returns a new vector.
 // - if the pawn is in its initial row, adds {0,2} or {0,-2} to list
 // - if pawn is near a piece that it can take, add diagonal to list
@@ -285,11 +269,8 @@ Board::pawn_directions_dark()
 std::vector<Board::Dimensions>
 Board::modify_pawn_dirs(Piece p, std::vector<Dimensions> dirs_travel)
 {
-    //make a new vector of dims that we'll return
     std::vector<Board::Dimensions> result;
 
-    //if there ISN'T a piece in front of the pawn, can move forward.
-    //can only do this check if the pawn dir is not out of bounds
     Position temp_posn = p.get_posn() + dirs_travel[0];
     if (!(temp_posn.x < 0 || temp_posn.x >= dimensions().width
         || temp_posn.y < 0 || temp_posn.y >= dimensions().height)) {
@@ -297,11 +278,7 @@ Board::modify_pawn_dirs(Piece p, std::vector<Dimensions> dirs_travel)
         if (operator[](temp_posn).get_piece_type() == Piece_type::null) {
             result.push_back(dirs_travel[0]);
 
-            //if there is not a piece in front of piece: we are here
-
-            // if the piece is in its starting row, add the second thing of
-            // dirs_travel to result. need to also check if the space 2 in front
-            // is occupied
+            //checking for space 2 in front is only valid if space 1 is free
             temp_posn = p.get_posn() + dirs_travel[1];
             int curr_y = p.get_posn().y;
 
@@ -314,24 +291,16 @@ Board::modify_pawn_dirs(Piece p, std::vector<Dimensions> dirs_travel)
         }
     }
 
-    // if there isn't a piece in front of the pawn in the diagonal directions,
-    // assume the pawn can't move there. this could be modified for en passant
     temp_posn = p.get_posn() + dirs_travel[2];
-    //if the position is not out of bounds
     if (!(temp_posn.x < 0 || temp_posn.x >= dimensions().width
         || temp_posn.y < 0 || temp_posn.y >= dimensions().height)) {
 
-        //if there's something there, we can move there
         if (operator[](temp_posn).get_piece_type() != Piece_type::null) {
             result.push_back(dirs_travel[2]);
         }
     }
 
-    //check other diagonal
     temp_posn = p.get_posn() + dirs_travel[3];
-
-    //need to do manual bounds check before calling operator[]
-    //therefore, if the bounds checking is NOT failed, do check
     if (!(temp_posn.x < 0 || temp_posn.x >= dimensions().width
            || temp_posn.y < 0 || temp_posn.y >= dimensions().height)) {
 
@@ -340,7 +309,6 @@ Board::modify_pawn_dirs(Piece p, std::vector<Dimensions> dirs_travel)
         }
     }
 
-    //return our modified list of dirs_travel
     return result;
 }
 
@@ -366,7 +334,6 @@ Board::get_piece_(Position pos) const
         return black_piece;
     } else {
         return Piece{Piece_type::null, Player::null, Position{0, 0}};
-
     }
 }
 
@@ -393,26 +360,18 @@ operator!=(Board const& b1, Board const& b2)
     return !(b1 == b2);
 }
 
-Board::multi_reference::multi_reference(
-        Board& board,
-        Position_set pos_set) noexcept
-        : board_(board),
-          pos_set_(pos_set)
-{ }
-
-// set piece type on board
+//Sets the piece type on board by modifying the appropriate Piece_set.
+//Used primarily for pawn promotion to change type to "queen".
 void Board::set_piece_as(Piece piece)
 {
     Position start = piece.get_posn();
-
-    //modify the appropriate Piece_set
     if (piece.get_player() == Player::white) {
         white_.change_piece_as(start);
     } else if (piece.get_player() == Player::black) {
         black_.change_piece_as(start);
     } else {
         throw Client_logic_error("board::set_piece_as: cannot"
-                                 "promote");
+                                 " promote");
     }
 }
 

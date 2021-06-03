@@ -27,22 +27,15 @@ public:
     /// Board rectangles will use `int` coordinates.
     using Rectangle = ge211::Rect<int>;
 
-    // Defined and documented below.
-    class reference;
-
 private:
-    //
-    // PRIVATE DATA MEMBERS
-    //
 
     Dimensions dims_;
 
-    //changed this member data to be a vector of pieces
+    //Two vectors of type Piece to represent the chess pieces.
     Piece_set white_;
     Piece_set black_;
 
-    // INVARIANT: (light_ & dark_) at initial board state
-
+    // INVARIANT: (light_ & dark_) at initial chess board state
 
 public:
     //
@@ -69,32 +62,15 @@ public:
     /// ## Errors
     ///
     ///  - throws `ge211::Client_logic_error` if `!good_position(pos)`.
-    //Player operator[](Position pos) const;
     Piece operator[](Position pos) const;
 
-    //Piece operator[](Position pos) const;
-
+    ///Sets the piece type on board by modifying the appropriate Piece_set.
+    ///Used primarily for pawn promotion to change type to "queen".
     void set_piece_as(Piece piece);
 
     //
     // PUBLIC CONSTRUCTOR & FUNCTION MEMBERS
     //
-
-    /// Returns a reference to the `Player` stored at `pos`. This can
-    /// be assigned to update the board:
-    ///
-    /// ```
-    /// // Light player plays at (3, 4)
-    /// board[{3, 4}] = Player::light;
-    /// ```
-    ///
-    /// ## Errors
-    ///
-    ///  - throws `ge211::Client_logic_error` if `!good_position(pos)`.
-    //reference operator[](Position pos);
-
-    /// Counts the number of occurrences of the given player in the board.
-    size_t count_player(Player) const;
 
     /// Returns a rectangle containing all the positions of the board. This
     /// can be used to iterate over the positions:
@@ -130,7 +106,9 @@ public:
     //directions of travel for rook
     static std::vector<Dimensions> const& rook_directions();
 
-    //directions of travel for pawn
+    //directions of travel for pawn. Modify_pawn_dirs() takes in the basic
+    //info on all directions a pawn can move, and sees if these are feasible
+    //based on the pieces around the pawn.
     static std::vector<Dimensions> const& pawn_directions_light();
     static std::vector<Dimensions> const& pawn_directions_dark();
     std::vector<Dimensions> modify_pawn_dirs(Piece, std::vector<Dimensions>);
@@ -149,27 +127,12 @@ public:
     /// Equality for boards.
     friend bool operator==(Board const&, Board const&);
 
-    /// Defined and documented below.
-    class multi_reference;
-
-    /// Returns an object that allows assigning to all the positions in
-    /// `set`. See below for the documentation of
-    /// `Board::multi_reference::operator=(Player)`.
-    ///
-    /// ## Errors
-    ///
-    ///  - behavior is undefined if any positions in the `Position_set`
-    ///    are out of bounds.
-    multi_reference at_set(Position_set set);
-
 private:
     //
     // PRIVATE HELPER FUNCTION MEMBERS
     //
 
-    Player get_(Position where); //const before
-    Piece get_piece_(Position where) const; //const before I changed it
-    void set_(Position where, Player who);
+    Piece get_piece_(Position where) const;
     void bounds_check_(Position where) const;
 
 #ifdef CS211_TESTING
@@ -191,67 +154,5 @@ operator!=(Board const&, Board const&);
 /// Board printing, suitable for debugging.
 std::ostream&
 operator<<(std::ostream&, Board const&);
-
-
-//
-// HELPER CLASSES
-//
-
-/// Class returned by `operator[](Position)` that simulates
-/// an assignable reference to a `Posn<int>`. This is what allows
-/// you to write
-///
-///     board[pos] = player;
-///
-/// to place `player` at `pos`.
-///
-/// The definition of the class follows this definition of the
-/// `Board` class.
-class Board::reference
-{
-    Board& board_;
-    Piece piece_;
-
-public:
-    /// Assigns the value of `that` to the object of `this`.
-    reference& operator=(reference const&) noexcept;
-
-    /// Assigns to the object of the reference.
-    reference& operator=(Player) noexcept;
-
-    /// Returns the value of the reference.
-    operator Player() const noexcept;
-
-private:
-    friend class Board;
-
-    reference(Board&, Position) noexcept;
-};
-
-
-/// Class returned by `at_set(Position_set)` that allows assigning
-/// one player to all the positions in the given `Position_set`.
-class Board::multi_reference
-{
-    Board& board_;
-    Position_set pos_set_;
-
-public:
-    /// Assigns the given player to all the positions of this
-    /// multi-reference, which are all the positions in the set that
-    /// was given to `Board::at_set(Position_set)`. Thus, you can
-    /// mass-assign a player to a set of positions like so:
-    ///
-    ///     // Sets three positions to dark:
-    ///     Position_set positions{{0, 0}, {1, 1}, {2, 2}};
-    ///     board.at_set(positions) = Player::dark;
-    ///
-    multi_reference& operator=(Player) noexcept;
-
-private:
-    friend class Board;
-
-    multi_reference(Board&, Position_set) noexcept;
-};
 
 
